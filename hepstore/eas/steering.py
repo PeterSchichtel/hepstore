@@ -21,8 +21,6 @@ import collections
 ## user imports
 from hepstore.eas.shower import *
 from hepstore.eas.analysis import *
-from hepstore.plot import *
-import hepstore.tools
 
 #######################################################################################
 # set up dictinories for unambigous plotting
