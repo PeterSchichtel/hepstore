@@ -21,7 +21,7 @@ import collections
 ## user imports
 from hepstore.eas.shower import *
 from hepstore.eas.analysis import *
-from hepstore.eas.plot import *
+from hepstore.plot import *
 import hepstore.tools
 
 #######################################################################################
@@ -341,40 +341,5 @@ class steer:
                 pass 
             print "--list: %-60s || %12s %12s %12s %12s" % (self.path,evstr,shstr,lstr,astr)
             pass #while
-        pass
-    def plot(self):
-        # generat a figure for each filepath availbale
-        self.plotter=corsikaplotter(self.options.figure)
-        for config in self.options.plot:
-            self.begin()
-            self.plotter.begin(config,self.options)
-            while self.next():
-                energy    = self.path.strip("./").split("/")[0].strip()
-                element   = self.path.strip("./").split("/")[1].strip()
-                process   = self.path.strip("./").split("/")[2].strip()
-                generator = self.path.strip("./").split("/")[3].strip()
-                model     = self.path.strip("./").split("/")[4].strip()
-                final     = self.path.strip("./").split("/")[5].strip()
-                ##print self.path
-                try:
-                    # load data
-                    self.plotter.load(os.path.join(self.path,"analysis"))
-                    # plot data
-                    self.plotter.plot( style_dict[process],marker_dict[element],r"%s: %s $\rightarrow$ $%s$" % (element_dict[element],process_dict[process],final_dict[final]) )
-                    pass
-                except ValueError:
-                    continue
-                except IOError as ierr:
-                    if not os.path.exists(os.path.join(self.path,"analysis","histogram.dat")):
-                        continue
-                    else:
-                        raise ierr
-                    pass
-                except Exception as err:
-                    print err
-                    raise err
-                pass
-            self.plotter.save()
-            pass
-        pass
+        pass #list
     pass #steer
