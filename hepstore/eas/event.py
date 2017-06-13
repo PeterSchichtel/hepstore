@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import numpy as np
-from tools import *
 import glob
 
 mass_dict={ 1  :[0.0,"photon"],
