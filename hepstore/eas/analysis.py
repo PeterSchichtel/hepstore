@@ -68,7 +68,7 @@ class analysis:
             self.analysis = [useranalysis()]
             pass
         pass
-`    def begin(self,path,options):
+    def begin(self,path,options):
         if os.path.isdir(os.path.join(path,"showers")):
             self.path=os.path.join(path,"showers")
             pass
