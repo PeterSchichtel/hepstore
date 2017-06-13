@@ -5,7 +5,7 @@ import glob
 import subprocess
 import errno
 import shutil
-from hepstore.eas.tools import *
+from hepstore.tools import *
 import subprocess
 import shutil
 
