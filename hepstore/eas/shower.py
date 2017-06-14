@@ -85,7 +85,7 @@ class runcard:
         pass # create
     pass #runcards
 
-class corsikashower:
+class shower:
     def __init__(self,num,options):
         self.num     = num
         self.options = options

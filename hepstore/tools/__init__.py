@@ -55,3 +55,50 @@ class data:
         self.datalist = []
         pass
     pass #data
+
+# create folder tree including constraints
+# unresolved constraints will result in entries without
+# corrresponding path
+def listoffolders(pathes=["./"],all_constrains=[]):
+    fullList = []
+    try:
+        constrains = all_constrains[0]
+        pass
+    except IndexError:
+        constrains = []
+        pass
+    try:
+        remained_constrains = all_constrains[1:]
+        pass
+    except IndexError:
+        remained_constrains = []
+        pass
+    # recursive step
+    for path in pathes:
+        folders=glob.glob(os.path.join(path,"*/"))
+        # filter
+        i=0
+        while len(folders)>i:
+            folder = folders[i]
+            if (folder.strip('/').split('/')[-1] in ['events','showers','analysis']) or (constrains!=[] and folder.strip('/').split('/')[-1] not in constrains):
+                folders.remove(folder)
+                pass
+            else:
+                i+=1
+                pass
+            pass
+        # add non existant constrains as would be folders
+        for constrain in constrains:
+            if not any(constrain in folder for folder in folders):
+                folders.append(os.path.join(path,constrain))
+                pass
+            pass
+        # check for end of recursion
+        if folders==[]:
+            fullList.append(path)
+            pass
+        else:
+            fullList=(fullList+listOfFolders(folders,remained_constrains))
+            pass
+        pass
+    return fullList
