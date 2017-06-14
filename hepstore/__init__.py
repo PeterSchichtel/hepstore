@@ -1,4 +1,9 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
+
+import eas
+import learn
+import plot
+import tools
 import interface
 import herwig
 
