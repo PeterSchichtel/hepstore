@@ -104,13 +104,13 @@ class analysis:
         print "--analyse[%i]: analysed %i events" % (self.num,eventcounter)
         pass
     def finalize(self):
-        for analysis in self.analyses:
+        for analysis in self.analysis:
             analysis.finalize()
             pass
     def save(self):
         path = os.path.join(os.path.dirname(self.path),"analysis")
         mkdir(path)
-        for analysis in self.analyses:
+        for analysis in self.analysis:
             analysis.save(path) 
             pass
         pass
