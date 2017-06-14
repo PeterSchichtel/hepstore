@@ -75,7 +75,7 @@ class analysis:
         else:
             return False
         self.nevents=options.nevents
-        for analysis in self.analyses:
+        for analysis in self.analysis:
             analysis.begin()
             pass
             pass
