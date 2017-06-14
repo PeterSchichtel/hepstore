@@ -64,8 +64,9 @@ class useranalysis:
 class analysis:
     def __init__(self,num=0,analyses=[]):
         self.num    = num
+        self.analysis = [useranalysis()]
         for anlysis in analyses:
-            self.analysis = [useranalysis()]
+            #self.analysis = [useranalysis()]
             pass
         pass
     def begin(self,path,options):
