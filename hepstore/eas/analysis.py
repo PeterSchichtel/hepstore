@@ -54,9 +54,9 @@ class useranalysis:
         pass
     def finalize(self):
         pass
-    def save(self):
+    def save(self,path):
         for d in self.data.values():
-            d.save( os.path.join(os.path.dirname(self.path),"analysis",d.name) )
+            d.save( os.path.join(path,d.name) )
             pass
         pass
     pass
