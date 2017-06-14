@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import .eas
-import learn
+import hepstore.eas
+import hepstore.learn
 import plot
 import tools
 import interface
