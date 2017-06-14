@@ -8,7 +8,6 @@ import analysis
 
 def interact(num,pipe,options):
     output_p, input_p = pipe
-    input_p.close()    # We are only reading
     app=interaction.interaction(num=num)
     while True:
         try:
@@ -21,6 +20,8 @@ def interact(num,pipe,options):
         except EOFError:
             break
         pass
+    input_p.close()
+    output_p.close()
     pass
 
 def shower(num,pipe,options):
@@ -73,7 +74,6 @@ def shower(num,pipe,options):
 
 def analyse(num,pipe,options):
     output_p, input_p = pipe
-    input_p.close()    # We are only reading
     app=analysis.analysis(num=num)
     while True:
         try:
@@ -87,4 +87,6 @@ def analyse(num,pipe,options):
         except EOFError:
             break
         pass
+    input_p.close()
+    output_p.close()
     pass
