@@ -49,7 +49,7 @@ class useranalysis:
                 rho_0 = rho_unweighted
                 pass
             pass
-        self.data["xmax"].append(x_max)
+        self.data["x_max"].append(x_max)
         self.data["x_rho"].append([x_max,rho_0])
         pass
     def finalize(self):
