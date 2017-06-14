@@ -87,6 +87,7 @@ def analyse(num,pipe,options):
         except EOFError:
             break
         pass
+    print "bye"
     input_p.close()
     output_p.close()
     pass
