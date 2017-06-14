@@ -1,6 +1,14 @@
+#!/usr/bin/env python
+
 import os
 
-from hepstore.eas.steering import steer
+import hepstore.eas.steering    as steering
+import hepstore.eas.analysis    as analysis
+import hepstore.eas.event       as event
+import hepstore.eas.interaction as interaction
+import hepstore.eas.shower      as shower
+import hepstore.eas.steering    as steering
+import hepstore.eas.worker      as worker
 
 ############################################################################
 ## run the app
@@ -52,7 +60,7 @@ def run():
     os.chdir(args.directory)
 
     # prepare folder/steering structure
-    steerer=steer(args)
+    steerer=steering.steer(args)
 
     # if we want to list stats
     if args.list:
