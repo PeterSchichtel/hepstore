@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import interaction as an_interaction
-import shower      as a_shower
-import analysis    as an_analysis
+import interaction
+import shower
+import analysis
 
 # contains workers for multi processed interaction/shower/analysis
 
@@ -74,7 +74,7 @@ def shower(num,pipe,options):
 def analyse(num,pipe,options):
     output_p, input_p = pipe
     input_p.close()    # We are only reading
-    analysis=an_analysis(num=num)
+    analysis=analysis.analysis(num=num)
     while True:
         try:
             path = output_p.recv()    # Read from the output pipe and do nothing
