@@ -146,13 +146,13 @@ class steer:
             p.start()
             processes.append(p)
             pass
-        output_p.close()       # We no longer need this part of the Pipe()
         # feed the data into the processes
         while self.next():
             input_p.send(self.path)
             pass #while
         # wait for processes to finish
-        input_p.close()  
+        input_p.close()
+        output_p.close()
         for p in processes:
             p.join()
             pass
