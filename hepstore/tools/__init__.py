@@ -39,7 +39,7 @@ class data:
         self.name     = name
         pass
     def save(self,filename,allow_pickle=False,fix_imports=True):
-        np.save(filename,self.data(),allow_pickle=allow_pickle,fix_import=fix_imports)
+        np.save(filename,self.data(),allow_pickle=allow_pickle,fix_imports=fix_imports)
         pass
     def load(self,filename, mmap_mode=None, allow_pickle=False, fix_imports=True, encoding='ASCII'):
         self.datalist = np.ndarray.tolist( np.load(filename, mmap_mode=mmap_mode, allow_pickle=allow_pickle, fix_imports=fix_imports, encoding=encoding) )

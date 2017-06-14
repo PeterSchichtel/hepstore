@@ -109,6 +109,7 @@ class analysis:
             pass
     def save(self):
         path = os.path.join(os.path.dirname(self.path),"analysis")
+        print path
         mkdir(path)
         for analysis in self.analysis:
             analysis.save(path) 
