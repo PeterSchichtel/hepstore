@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import eas
+import .eas
 import learn
 import plot
 import tools
