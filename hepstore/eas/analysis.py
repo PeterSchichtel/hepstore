@@ -23,7 +23,7 @@ class useranalysis:
             d.clear()
             pass
         pass
-    def analyse(self,event):
+    def analyse(self,ev):
         ## create analysis objects
         muons     = [ev.find("muon",i) for i in range(0,self.levels)]
         antimuons = [ev.find("antimuon",i) for i in range(0,self.levels)]
