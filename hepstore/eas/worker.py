@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#import hepstore.eas as eas
+import ..eas
 
 # contains workers for multi processed interaction/shower/analysis
 
