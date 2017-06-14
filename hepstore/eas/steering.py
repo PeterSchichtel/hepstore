@@ -154,6 +154,7 @@ class steer:
         input_p.close()
         output_p.close()
         for p in processes:
+            print p
             p.join()
             pass
         pass #analyse
