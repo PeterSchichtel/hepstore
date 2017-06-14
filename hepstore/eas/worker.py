@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-import interaction
-import shower
-import analysis
+import interaction as an_interaction
+import shower      as a_shower
+import analysis    as an_analysis
 
 # contains workers for multi processed interaction/shower/analysis
 
 def interact(num,pipe,options):
     output_p, input_p = pipe
     input_p.close()    # We are only reading
-    interaction=interaction(num=num)
+    interaction=an_interaction(num=num)
     while True:
         try:
             path = output_p.recv()    # Read from the output pipe and do nothing
@@ -28,7 +28,7 @@ def shower(num,pipe,options):
     print "--shower[%i]: start subprocess" % num
     output_p, input_p = pipe
     ## load shower module
-    shower=shower(num,options)
+    shower=a_shower(num,options)
     while True:
         try:
             tfile    = output_p.recv()    # Read from the output pipe and do nothing
@@ -74,7 +74,7 @@ def shower(num,pipe,options):
 def analyse(num,pipe,options):
     output_p, input_p = pipe
     input_p.close()    # We are only reading
-    analysis=analysis(num=num)
+    analysis=an_analysis(num=num)
     while True:
         try:
             path = output_p.recv()    # Read from the output pipe and do nothing
