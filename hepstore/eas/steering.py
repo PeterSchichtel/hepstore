@@ -19,8 +19,8 @@ import time
 import collections
 
 ## user imports
-from hepstore.tools import *
-import hepstore.eas.worker as worker
+from ..tools import *
+import worker
 
 class steer:
     def __init__(self,options):
@@ -57,7 +57,11 @@ class steer:
         try:
             self.path    = self.iter_pathes.next()
             self.files   = self.pathes[self.path]
-            self.energy,self.element,self.process,self.generator,self.final,self.model = self.path.split('/')[1:]
+            try:
+                self.energy,self.element,self.process,self.generator,self.final,self.model = os.path.normpath(self.path).split('/')
+                pass
+            except ValueError:
+                return self.next()
             if os.path.isdir(self.path):
                 return True
             else:
@@ -167,13 +171,13 @@ class steer:
             analyses    = len(glob.glob(os.path.join(self.path,"analysis","histograms.dat")))
             for num in nums:
                 if num==0:
-                    pstr = bcolors.FAIL    + "%12i" % eventfiles + bcolors.END
+                    pstr = bcolors.FAIL    + "%12i" % num + bcolors.END
                     pass
                 elif num<self.options.nevents:
-                    pstr = bcolors.WARNING + "%12i" % eventfiles + bcolors.END
+                    pstr = bcolors.WARNING + "%12i" % num + bcolors.END
                     pass
                 else:
-                    pstr = bcolors.OKGREEN + "%12i" % eventfiles + bcolors.END
+                    pstr = bcolors.OKGREEN + "%12i" % num + bcolors.END
                     pass
                 print_strings.append(pstr)
                 pass

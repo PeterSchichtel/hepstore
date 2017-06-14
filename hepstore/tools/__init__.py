@@ -5,6 +5,7 @@
 import os
 import errno
 import numpy as np
+import glob
 
 # create new dir mkdir -p
 def mkdir(path): 
@@ -98,7 +99,7 @@ def listoffolders(pathes=["./"],all_constrains=[]):
             fullList.append(path)
             pass
         else:
-            fullList=(fullList+listOfFolders(folders,remained_constrains))
+            fullList=(fullList+listoffolders(folders,remained_constrains))
             pass
         pass
     return fullList

@@ -2,13 +2,7 @@
 
 import os
 
-import hepstore.eas.steering    as steering
-import hepstore.eas.analysis    as analysis
-import hepstore.eas.event       as event
-import hepstore.eas.interaction as interaction
-import hepstore.eas.shower      as shower
-import hepstore.eas.steering    as steering
-import hepstore.eas.worker      as worker
+import steering
 
 ############################################################################
 ## run the app

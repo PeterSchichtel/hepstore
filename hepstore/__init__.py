@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 
-import hepstore.eas
-import hepstore.learn
-import plot
-import tools
-import interface
-import herwig
-
-import os,sys
+import sys
 
 ############################################################################
 ## main
@@ -31,4 +24,11 @@ def main():
         
     pass # main
 ############################################################################
+
+############################################################################
+if __name__=="__main__":
+    main()
+    pass
+############################################################################
+
 ### a gui might be added here :)
