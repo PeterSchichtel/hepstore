@@ -109,7 +109,7 @@ class event:
                     #self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
                     pass
                 pass #for
-            fin.close()
+            #fin.close()
             pass
         pass
     def xmax_from_file(self,path):
