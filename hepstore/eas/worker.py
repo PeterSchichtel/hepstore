@@ -79,6 +79,8 @@ def analyse(num,pipe,options):
         try:
             print "S"
             path = output_p.recv()    # Read from the output pipe and do nothing
+            if path=="DONE":
+                break
             print "1"
             if not app.begin(path,options):
                 print "--info: skipping  %s" % path

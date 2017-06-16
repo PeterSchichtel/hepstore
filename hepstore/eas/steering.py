@@ -128,8 +128,6 @@ class steer:
         for i,p in enumerate(processes):
             print "--info: send finish to %i" % i
             p[2].send("DONE")
-            pass
-        for p in processes:
             p[1].close()
             p[2].close()
             p[0].join()
@@ -138,23 +136,25 @@ class steer:
     def analyse(self):
         ## start an analysis in each available file path
         self.begin()
-        output_p, input_p = Pipe()
         processes=[]
         # fire up the processes
         for n in range(0,self.options.job):
+            output_p, input_p = Pipe()
             p = Process(target=worker.analyse, args=(n,(output_p, input_p),self.options))
             p.start()
-            processes.append(p)
+            processes.append([p, output_p, input_p])
             pass
         # feed the data into the processes
+        count=0
         while self.next():
-            input_p.send(self.path)
+            processes[count%self.options.job][2].send(self.path)
+            count+=1
             pass #while
         # wait for processes to finish
-        input_p.close()
-        output_p.close()
         for p in processes:
-            print p
+            p[2].send("DONE")
+            p[1].close()
+            p[2].close()
             p.join()
             pass
         pass #analyse
