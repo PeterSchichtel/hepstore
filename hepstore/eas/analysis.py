@@ -104,7 +104,7 @@ class analysis:
             for analysis in self.analysis:
                 analysis.analyse(ev)
                 pass
-            if eventcounter>=self.nevents:
+            if eventcounter>=self.options.nevents:
                 break
             eventcounter+=1
             pass
