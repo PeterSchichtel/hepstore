@@ -122,7 +122,7 @@ class analysis:
     def finalize(self):
         for analysis in self.analysis:
             analysis.finalize()
-            analysis.statistic()
+            ##analysis.statistic()
             pass
         self.save()
         pass
