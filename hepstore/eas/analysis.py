@@ -103,8 +103,8 @@ class analysis:
                 pass
             # create event
             ev=event()
-            #ev.particles_from_file(pfile)
-            #ev.xmax_from_file(xfile)
+            ev.particles_from_file(pfile)
+            ev.xmax_from_file(xfile)
             # analyse event
             for analysis in self.analysis:
              #   analysis.analyse(ev)
