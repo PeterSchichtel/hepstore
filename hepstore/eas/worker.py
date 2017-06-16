@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from multiprocessing import Process, Pipe
+
 import interaction
 import shower
 import analysis
