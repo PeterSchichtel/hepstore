@@ -64,6 +64,11 @@ class event:
         self.xmax=0.0
         self.theta=0.0
         pass
+    def __del__(self):
+        for particle in self.particles:
+            del particle
+            pass
+        pass
     def add_particle(self,p):
         self.particles.append(p)
         pass
@@ -80,34 +85,34 @@ class event:
         with open(path,'r') as fin:
             is_particledata=False
             for line in fin.readlines():
-                if   "#--< begin_particle_data >--" in line:
-                    is_particledata=True
-                    continue
-                elif "#--< end_particle_data >--" in line:
-                    is_particledata=False
-                    pass
-                elif "#--<" in line:
-                    is_particledata=False
-                    pass
-                if is_particledata:
-                    words=line.strip().split()
-                    pid=int(float(words[0]))/1000
-                    obs=int(float(words[0]))%10
-                    if pid==75 or pid==76 or pid==0:
-                        continue
-                    px=float(words[1])
-                    py=float(words[2])
-                    pz=float(words[3])
-                    x=float(words[4])
-                    y=float(words[5])
-                    t=float(words[6])
-                    weight=float(words[7])
-                    if not pid in mass_dict.keys():
-                        continue
-                    mass,name=mass_dict[pid]
-                    energy=np.sqrt( px**2 + py**2 + pz**2 + mass**2  )
-                    #self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
-                    pass
+               # if   "#--< begin_particle_data >--" in line:
+               #     is_particledata=True
+               #     continue
+               # elif "#--< end_particle_data >--" in line:
+               #     is_particledata=False
+               #     pass
+               # elif "#--<" in line:
+               #     is_particledata=False
+               #     pass
+               # if is_particledata:
+               #     words=line.strip().split()
+               #     pid=int(float(words[0]))/1000
+               #     obs=int(float(words[0]))%10
+               #     if pid==75 or pid==76 or pid==0:
+               #         continue
+               #     px=float(words[1])
+               #     py=float(words[2])
+               #     pz=float(words[3])
+               #     x=float(words[4])
+               #     y=float(words[5])
+               #     t=float(words[6])
+               #     weight=float(words[7])
+               #     if not pid in mass_dict.keys():
+               #          continue
+               #     mass,name=mass_dict[pid]
+               #     energy=np.sqrt( px**2 + py**2 + pz**2 + mass**2  )
+               #     #self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
+               #     pass
                 pass #for
             #fin.close()
             pass
