@@ -74,32 +74,8 @@ class steer:
             return False
         pass
     def isStackin(self):
-        return "stackin" in self.options.corsika
+        return "stackin" in self.options.corsika.lower()
     def interaction(self):
-        self.begin()
-        output_p, input_p = Pipe()
-        processes=[]
-        # fire up the processes
-        for n in range(0,self.options.job):
-            p = Process( target=worker.interact, args=(analysis.analysis(options=self.options,num=n),(output_p, input_p)) )
-            p.start()
-            processes.append(p)
-            pass
-        output_p.close()       # We no longer need this part of the Pipe()
-        # feed the data into the processes
-        while self.next():
-            input_p.send(self.path)
-            pass #while
-        # wait for processes to finish
-        for i,p in enumerate(processes):
-            print "--info: send finish to %i" % i
-            p[2].send("DONE")
-            pass
-        for p in processes:
-            p[1].close()
-            p[2].close()
-            p[0].join()
-            pass
         pass
     def shower(self):
         ## start a corsika shower in each available file path
@@ -160,8 +136,8 @@ class steer:
             nums.append(len(glob.glob(os.path.join(self.path,"events","event-*"   ))))
             nums.append(len(glob.glob(os.path.join(self.path,"showers","particle*"))))
             nums.append(len(glob.glob(os.path.join(self.path,"showers","*long"    ))))
+            nums.append(len(glob.glob(os.path.join(self.path,"analysis","*npy"    ))))
             print_strings =[]
-            analyses    = len(glob.glob(os.path.join(self.path,"analysis","histograms.dat")))
             for num in nums:
                 if num==0:
                     pstr = bcolors.FAIL    + "%12i" % num + bcolors.END
@@ -174,16 +150,7 @@ class steer:
                     pass
                 print_strings.append(pstr)
                 pass
-            if analyses==0:
-                astr = bcolors.WARNING + "          no" + bcolors.END
-                pass
-            elif analyses==1:
-                astr = bcolors.OKGREEN + "         yes" + bcolors.END
-                pass
-            else:
-                astr = bcolors.FAIL + "%i" % analyses + bcolors.END
-                pass
-            evstr,shstr,lstr = print_strings
+            evstr,shstr,lstr,astr = print_strings
             print "--list: %-60s || %12s %12s %12s %12s" % (self.path,evstr,shstr,lstr,astr)
             pass #while
         pass #list

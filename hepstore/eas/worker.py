@@ -61,24 +61,6 @@ def finalize(processes):
     pass
 
 
-def interact(num,pipe,options):
-    output_p, input_p = pipe
-    app=interaction.interaction(num=num)
-    while True:
-        try:
-            path = output_p.recv()    # Read from the output pipe and do nothing
-            if not app.begin(path,options):
-                print "--info: skipping  %s" % path
-                continue
-            app.run()
-            pass
-        except EOFError:
-            break
-        pass
-    input_p.close()
-    output_p.close()
-    pass
-
 def shower(num,pipe,options):
     filerror=False
     print "--shower[%i]: start subprocess" % num
@@ -125,21 +107,4 @@ def shower(num,pipe,options):
     # close pipes
     output_p.close()
     input_p.close()
-    pass
-
-def analyse(num,pipe,options):
-    output_p, input_p = pipe
-    app=analysis.analysis(num=num)
-    while True:
-        path = output_p.recv()    # Read from the output pipe and do nothing
-        if path=="DONE":
-            break
-        if not app.begin(path,options):
-            print "--info: skipping  %s" % path
-            continue
-        app.run()
-        app.save()
-        pass
-    input_p.close()
-    output_p.close()
     pass
