@@ -3,9 +3,6 @@
 from multiprocessing import Process, Pipe
 import os
 
-import interaction
-import shower
-import analysis
 
 # contains worker classes for multiprocessing
 

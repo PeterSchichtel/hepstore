@@ -23,7 +23,7 @@ import interaction
 import shower
 import analysis
 from ..tools import *
-from ..multiprocess import multipipeline
+from ..multiprocess.pipes import multipipeline
 
 class steer:
     def __init__(self,options):
