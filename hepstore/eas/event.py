@@ -80,7 +80,7 @@ class event:
                 pass
             pass
         return items
-    @profile
+    ###@profile
     def particles_from_file(self,path):
         with open(path,'r') as fin:
             is_particledata=False
