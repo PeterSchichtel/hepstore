@@ -111,7 +111,7 @@ class event:
                         continue
                     mass,name=mass_dict[pid]
                     energy=np.sqrt( px**2 + py**2 + pz**2 + mass**2  )
-                    #self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
+                    self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
                     pass
                 pass #for
             #fin.close()
