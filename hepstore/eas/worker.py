@@ -77,15 +77,21 @@ def analyse(num,pipe,options):
     app=analysis.analysis(num=num)
     while True:
         try:
+            print "S"
             path = output_p.recv()    # Read from the output pipe and do nothing
             if not app.begin(path,options):
                 print "--info: skipping  %s" % path
                 continue
             app.run()
             app.save()
+            print "E"
             pass
         except EOFError:
+            print "F"
             break
+        except Exception as e:
+            print e
+            raise e
         pass
     print "bye"
     input_p.close()
