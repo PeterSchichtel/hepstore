@@ -152,7 +152,7 @@ class steer:
             pass #while
         # wait for processes to finish
         for p in processes:
-            #p[2].send("DONE")
+            p[2].send("DONE")
             p[1].close()
             p[2].close()
             p[0].join()
