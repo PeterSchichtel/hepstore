@@ -55,7 +55,7 @@ class useranalysis:
         self.data["x_rho"].append([x_max,rho_0])
         pass
     def finalize(self):
-        self.statistic()
+        #self.statistic()
         pass
     def save(self,path):
         for d in self.data.values():
@@ -69,6 +69,8 @@ class useranalysis:
             pass
         print "--size: %fMB" % (float(size)/1000000.)
     pass
+
+from memory_profiler import profile
 
 class analysis:
     def __init__(self,options=None,analyses=[]):
@@ -88,6 +90,7 @@ class analysis:
             analysis.begin()
             pass
         return True
+    @profile
     def run(self,path):
         if not self.validate(path):
             return False
