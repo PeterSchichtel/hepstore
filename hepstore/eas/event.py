@@ -80,7 +80,7 @@ class event(object):
                 pass
             pass
         return items
-    @profile
+    ##@profile
     def particles_from_file(self,path):
         with open(path,'r') as fin:
             is_particledata=False
@@ -111,7 +111,9 @@ class event(object):
                         continue
                     mass,name=mass_dict[pid]
                     energy=np.sqrt( px**2 + py**2 + pz**2 + mass**2  )
-                    self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
+                    if obs==0:
+                        self.particles.append( particle(energy,px,py,pz,mass,t,x,y,pid,obs,name,weight) )
+                        pass
                     pass
                 pass #for
             #fin.close()
