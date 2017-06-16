@@ -118,7 +118,7 @@ class analysis:
         mkdir(path)
         for analysis in self.analysis:
             analysis.finalize()
-            analysis.save()
+            analysis.save(path)
             pass
         pass
     pass
