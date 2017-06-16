@@ -102,9 +102,6 @@ class analysis:
         for pfile,xfile in zip(glob.glob(os.path.join(self.path,"particle_file*")),glob.glob(os.path.join(self.path,"DAT*.long"))):
             if eventcounter%100==0:
                 print "--analysis[%i]: at event %i" % (os.getpid(),eventcounter)
-                for analysis in self.analysis:
-                    analysis.statistic()
-                    pass
                 pass
             # create event
             ev=event()
@@ -124,6 +121,7 @@ class analysis:
     def finalize(self):
         for analysis in self.analysis:
             analysis.finalize()
+            analysis.statistic()
             pass
         self.save()
         pass
