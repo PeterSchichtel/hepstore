@@ -63,6 +63,7 @@ class useranalysis:
         pass
     def statistic(self):
         for d in self.data.values():
+            print d.name
             print len(d.datalist)
             print d.data().nbytes
             pass
