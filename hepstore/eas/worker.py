@@ -77,11 +77,7 @@ def analyse(num,pipe,options):
     app=analysis.analysis(num=num)
     while True:
         try:
-            print "S"
             path = output_p.recv()    # Read from the output pipe and do nothing
-            if path=="DONE":
-                print "2"
-                break
             print "1"
             if not app.begin(path,options):
                 print "--info: skipping  %s" % path
