@@ -2,6 +2,8 @@
 
 import numpy as np
 import glob
+import os
+
 from hepstore.tools import *
 from hepstore.eas.event import *
 
@@ -62,9 +64,8 @@ class useranalysis:
     pass
 
 class analysis:
-    def __init__(self,options=None,num=0,analyses=[]):
+    def __init__(self,options=None,analyses=[]):
         self.options  = options
-        self.num      = num
         self.analysis = [useranalysis()]
         for anlysis in analyses:
             #self.analysis = [useranalysis()]
@@ -86,7 +87,6 @@ class analysis:
         for analysis in self.analysis:
             analysis.begin()
             pass
-            pass
         return True
     def run(self):
         print "--info: analysing %s " % self.path
@@ -94,7 +94,7 @@ class analysis:
         eventcounter=1
         for pfile,xfile in zip(glob.glob(os.path.join(self.path,"particle_file*")),glob.glob(os.path.join(self.path,"DAT*.long"))):
             if eventcounter%100==0:
-                print "--analyse[%i]: at event %i" % (self.num,eventcounter)
+                print "--analysis[%i]: at event %i" % (os.getpid(),eventcounter)
                 pass
             # create event
             ev=event()
@@ -108,7 +108,7 @@ class analysis:
                 break
             eventcounter+=1
             pass
-        print "--analyse[%i]: analysed %i events" % (self.num,eventcounter)
+        print "--analysis[%i]: analysed %i events" % (os.getpid(),eventcounter)
         pass
     def finalize(self):
         for analysis in self.analysis:
