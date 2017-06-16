@@ -23,7 +23,7 @@ import interaction
 import shower
 import analysis
 from ..tools import *
-import worker
+from ..multiprocess import multipipeline
 
 class steer:
     def __init__(self,options):
@@ -75,15 +75,13 @@ class steer:
         # set itaretors to start
         self.begin()
         # create multiprocessing processes
-        processes = worker.worker( app, self.options, self.options.job )
+        processes = multipipeline( app=app, args=self.options, job=self.options.job )
         # feed the data into the processes
-        count=0
         while self.next():
-            processes.send(count%self.options.job,self.path)
-            count+=1
+            processes.send(self.path)
             pass #while
         # finalize processes
-        processes.finalize()
+        processes.close()
         pass #analyse
     def interaction(self):
         pass

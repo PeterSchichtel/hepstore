@@ -7,38 +7,37 @@ import interaction
 import shower
 import analysis
 
-# contains workers for multi processed interaction/shower/analysis
+# contains worker classes for multiprocessing
 
 class test(object):
     def __init__(self):
         self.pid = None
         pass
-    def validate(self,info):
+    def validate(self,data):
         if self.pid==None:
             self.pid = os.getpid()
             pass
         return True
-    def run(self):
+    def run(self,data):
+        if not self.validate(data):
+            return False
         print self.pid
-        pass
-    def finalize(self):
+        return True
         pass
     pass
 
-class worker(object):
-    def __init__(self,app,args,job=1):
+class multipipeline(object):
+    def __init__(self,app=None,args=None,job=1):
         #####################################
         # local worker
         def worker(app,pipe):
             output_p, input_p = pipe
             while True:
-                info = output_p.recv()    # Read from the output pipe
+                data = output_p.recv()    # Read from the output pipe
                 if info == "END":
                     break
-                if not app.validate(info):
+                elif not app.run(data):
                     continue
-                app.run()
-                app.finalize()
                 pass
             input_p.close()
             output_p.close()
@@ -53,11 +52,13 @@ class worker(object):
             p.start()
             self.processes.append([p, output_p, input_p])
             pass
+        self.count = 0
         pass
-    def send(self,n,info):
-        self.processes[count%self.options.job][2].send(self.path)
+    def send(self,data=None):
+        self.processes[self.count%self.job][2].send(data)
+        self.count+=1
         pass
-    def finalize(self):
+    def close(self):
         for p in self.processes:
             p[2].send("END")
             p[1].close()
