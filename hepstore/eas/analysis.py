@@ -70,7 +70,6 @@ class useranalysis:
         print "--size: %fMB" % (float(size)/1000000.)
     pass
 
-from memory_profiler import profile
 
 class analysis:
     def __init__(self,options=None,analyses=[]):
@@ -90,7 +89,6 @@ class analysis:
             analysis.begin()
             pass
         return True
-    @profile
     def run(self,path):
         if not self.validate(path):
             return False

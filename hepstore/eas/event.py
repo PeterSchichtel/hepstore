@@ -55,6 +55,8 @@ class particle:
         return np.sqrt( self.x**2 + self.y**2 )
     pass
 
+from memory_profiler import profile
+
 class event:
     def __init__(self):
         self.particles=[]
@@ -73,6 +75,7 @@ class event:
                 pass
             pass
         return items
+    @profile
     def particles_from_file(self,path):
         with open(path,'r') as fin:
             is_particledata=False
