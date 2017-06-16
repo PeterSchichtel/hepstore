@@ -80,6 +80,7 @@ def analyse(num,pipe,options):
             print "S"
             path = output_p.recv()    # Read from the output pipe and do nothing
             if path=="DONE":
+                print "2"
                 break
             print "1"
             if not app.begin(path,options):

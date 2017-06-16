@@ -155,7 +155,7 @@ class steer:
             p[2].send("DONE")
             p[1].close()
             p[2].close()
-            p.join()
+            p[0].join()
             pass
         pass #analyse
     def list(self):
