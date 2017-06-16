@@ -140,8 +140,7 @@ class steer:
         ## start an analysis in each available file path
         self.begin()
         # create multiprocessing processes
-        #processes=worker.create( analysis.analysis(options=self.options), self.options.jobs )
-        processes=worker.create( worker.test(), self.options.job )
+        processes=worker.create( analysis.analysis(options=self.options), self.options.jobs )
         # feed the data into the processes
         count=0
         while self.next():
