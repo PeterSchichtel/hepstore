@@ -57,7 +57,7 @@ class worker(object):
     def send(self,n,info):
         self.processes[count%self.options.job][2].send(self.path)
         pass
-    def finalize(self)::
+    def finalize(self):
         for p in self.processes:
             p[2].send("END")
             p[1].close()
