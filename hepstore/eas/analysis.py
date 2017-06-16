@@ -62,11 +62,11 @@ class useranalysis:
             pass
         pass
     def statistic(self):
+        size = 0
         for d in self.data.values():
-            print d.name
-            print len(d.datalist)
-            print d.data().nbytes
+            size += d.data().nbytes
             pass
+        print "--size: %i " % size
     pass
 
 class analysis:
