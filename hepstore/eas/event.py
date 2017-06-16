@@ -30,7 +30,7 @@ mass_dict={ 1  :[0.0,"photon"],
             402:[4.003,"helium-4"],
 }
 
-class particle:
+class particle(object):
     def __init__(self,energy=0.0,px=0.0,py=0.0,pz=0.0,mass=0.0,t=0.0,x=0.0,y=0.0,pid=0.0,obs=0.0,name="",weight=1.0):
         self.energy=energy
         self.px=px
@@ -57,7 +57,7 @@ class particle:
 
 from memory_profiler import profile
 
-class event:
+class event(object):
     def __init__(self):
         self.particles=[]
         self.energy=0.0
@@ -80,7 +80,7 @@ class event:
                 pass
             pass
         return items
-    ###@profile
+    @profile
     def particles_from_file(self,path):
         with open(path,'r') as fin:
             is_particledata=False
@@ -133,7 +133,7 @@ class event:
                     self.xmax=float(words[0])
                     pass
                 pass #for
-            fin.close()
+            #fin.close()
             pass #fin
         pass
     pass
