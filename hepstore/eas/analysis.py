@@ -67,7 +67,7 @@ class useranalysis:
         for d in self.data.values():
             size += d.data().nbytes
             pass
-        print "--size: %i " % size
+        print "--size: %iMB" % (float(size)/1000000.)
     pass
 
 class analysis:
