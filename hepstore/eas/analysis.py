@@ -55,6 +55,7 @@ class useranalysis:
         self.data["x_rho"].append([x_max,rho_0])
         pass
     def finalize(self):
+        self.statistic()
         pass
     def save(self,path):
         for d in self.data.values():
@@ -75,13 +76,6 @@ class analysis:
         self.analysis = [useranalysis()]
         for anlysis in analyses:
             #self.analysis = [useranalysis()]
-            pass
-        pass
-    def save(self):
-        path = os.path.join(os.path.dirname(self.path),"analysis")
-        mkdir(path)
-        for analysis in self.analysis:
-            analysis.save(path) 
             pass
         pass
     def validate(self,path):
@@ -120,10 +114,11 @@ class analysis:
         self.finalize()
         return True
     def finalize(self):
+        path = os.path.join(os.path.dirname(self.path),"analysis")
+        mkdir(path)
         for analysis in self.analysis:
             analysis.finalize()
-            ##analysis.statistic()
+            analysis.save()
             pass
-        self.save()
         pass
     pass
