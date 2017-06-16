@@ -27,11 +27,11 @@ class multipipeline(object):
     def __init__(self,app=None,args=None,job=1):
         #####################################
         # local worker
-        def worker(app,pipe):
+        def local_worker(app,pipe):
             output_p, input_p = pipe
             while True:
                 data = output_p.recv()    # Read from the output pipe
-                if info == "END":
+                if data == "END":
                     break
                 elif not app.run(data):
                     continue
@@ -43,7 +43,7 @@ class multipipeline(object):
         self.job       = job
         self.processes = []
         # fire up the processes
-        for n in range(0,ncores):
+        for n in range(0,job):
             output_p, input_p = Pipe()
             p = Process( target=local_worker,  args=(app(args),(output_p, input_p)) )
             p.start()

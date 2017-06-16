@@ -93,7 +93,9 @@ class analysis:
             analysis.begin()
             pass
         return True
-    def run(self):
+    def run(self,path):
+        if not self.validate(path):
+            return False
         print "--info: analysing %s " % self.path
         # loop through events
         eventcounter=1
@@ -117,7 +119,8 @@ class analysis:
             eventcounter+=1
             pass
         print "--analysis[%i]: analysed %i events" % (os.getpid(),eventcounter)
-        pass
+        self.finalize()
+        return True
     def finalize(self):
         for analysis in self.analysis:
             analysis.finalize()

@@ -71,7 +71,7 @@ def run():
 
     # if we want to analyse sth
     if args.analyse:
-        steerer.process(analysis.analysis)
+        steerer.run(analysis.analysis)
         pass #analysis
 
     # if we want to plot sth

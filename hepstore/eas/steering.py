@@ -71,7 +71,7 @@ class steer:
         pass
     def isStackin(self):
         return "stackin" in self.options.corsika.lower()
-    def process(self,app):
+    def run(self,app):
         # set itaretors to start
         self.begin()
         # create multiprocessing processes
