@@ -61,6 +61,11 @@ class useranalysis:
             d.save( os.path.join(path,d.name) )
             pass
         pass
+    def statistic(self):
+        for d in self.data.values():
+            print len(d.datalist)
+            print d.data().nbytes
+            pass
     pass
 
 class analysis:
@@ -95,6 +100,9 @@ class analysis:
         for pfile,xfile in zip(glob.glob(os.path.join(self.path,"particle_file*")),glob.glob(os.path.join(self.path,"DAT*.long"))):
             if eventcounter%100==0:
                 print "--analysis[%i]: at event %i" % (os.getpid(),eventcounter)
+                for analysis in self.analysis:
+                    analysis.statistic()
+                    pass
                 pass
             # create event
             ev=event()

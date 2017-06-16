@@ -3,6 +3,7 @@
 import os
 
 import steering
+import analysis
 
 ############################################################################
 ## run the app
@@ -70,8 +71,7 @@ def run():
 
     # if we want to analyse sth
     if args.analyse:
-        steerer.begin()
-        steerer.analyse()
+        steerer.process(analysis.analysis)
         pass #analysis
 
     # if we want to plot sth

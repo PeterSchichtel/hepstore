@@ -71,6 +71,20 @@ class steer:
         pass
     def isStackin(self):
         return "stackin" in self.options.corsika.lower()
+    def process(self,app):
+        # set itaretors to start
+        self.begin()
+        # create multiprocessing processes
+        processes = worker.worker( app, self.options, self.options.job )
+        # feed the data into the processes
+        count=0
+        while self.next():
+            processes.send(count%self.options.job,self.path)
+            count+=1
+            pass #while
+        # finalize processes
+        processes.finalize()
+        pass #analyse
     def interaction(self):
         pass
     def shower(self):
@@ -108,20 +122,6 @@ class steer:
             p[0].join()
             pass
         pass #shower
-    def analyse(self):
-        ## start an analysis in each available file path
-        self.begin()
-        # create multiprocessing processes
-        processes=worker.create( analysis.analysis,self.options,self.options.job )
-        # feed the data into the processes
-        count=0
-        while self.next():
-            processes[count%self.options.job][2].send(self.path)
-            count+=1
-            pass #while
-        # finalize processes
-        worker.finalize(processes)
-        pass #analyse
     def list(self):
         ## list all folders and the progress within in nice color code
         self.begin()

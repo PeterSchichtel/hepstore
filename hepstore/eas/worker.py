@@ -25,40 +25,46 @@ class test(object):
         pass
     pass
 
-def worker(app,pipe):
-    output_p, input_p = pipe
-    while True:
-        info = output_p.recv()    # Read from the output pipe
-        if info == "END":
-            break
-        if not app.validate(info):
-            continue
-        app.run()
-        app.finalize()
+class worker(object):
+    def __init__(self,app,args,job=1):
+        #####################################
+        # local worker
+        def worker(app,pipe):
+            output_p, input_p = pipe
+            while True:
+                info = output_p.recv()    # Read from the output pipe
+                if info == "END":
+                    break
+                if not app.validate(info):
+                    continue
+                app.run()
+                app.finalize()
+                pass
+            input_p.close()
+            output_p.close()
+            pass
+        ######################################
+        self.job       = job
+        self.processes = []
+        # fire up the processes
+        for n in range(0,ncores):
+            output_p, input_p = Pipe()
+            p = Process( target=local_worker,  args=(app(args),(output_p, input_p)) )
+            p.start()
+            self.processes.append([p, output_p, input_p])
+            pass
         pass
-    input_p.close()
-    output_p.close()
-    pass
-
-def create(app,args,ncores=1):
-    processes=[]
-    # fire up the processes
-    for n in range(0,ncores):
-        output_p, input_p = Pipe()
-        p = Process( target=worker,  args=(app(args),(output_p, input_p)) )
-        p.start()
-        processes.append([p, output_p, input_p])
+    def send(self,n,info):
+        self.processes[count%self.options.job][2].send(self.path)
         pass
-    return processes
-
-def finalize(processes):
-    for p in processes:
-        p[2].send("END")
-        p[1].close()
-        p[2].close()
-        p[0].join()
+    def finalize(self)::
+        for p in self.processes:
+            p[2].send("END")
+            p[1].close()
+            p[2].close()
+            p[0].join()
+            pass
         pass
-    pass
 
 
 def shower(num,pipe,options):
