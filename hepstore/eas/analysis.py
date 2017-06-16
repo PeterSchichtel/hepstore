@@ -62,20 +62,27 @@ class useranalysis:
     pass
 
 class analysis:
-    def __init__(self,num=0,analyses=[]):
-        self.num    = num
+    def __init__(self,options=None,num=0,analyses=[]):
+        self.options  = options
+        self.num      = num
         self.analysis = [useranalysis()]
         for anlysis in analyses:
             #self.analysis = [useranalysis()]
             pass
         pass
-    def begin(self,path,options):
+    def save(self):
+        path = os.path.join(os.path.dirname(self.path),"analysis")
+        mkdir(path)
+        for analysis in self.analysis:
+            analysis.save(path) 
+            pass
+        pass
+    def validate(self,path):
         if os.path.isdir(os.path.join(path,"showers")):
             self.path=os.path.join(path,"showers")
             pass
         else:
             return False
-        self.nevents=options.nevents
         for analysis in self.analysis:
             analysis.begin()
             pass
@@ -107,12 +114,6 @@ class analysis:
         for analysis in self.analysis:
             analysis.finalize()
             pass
-    def save(self):
-        path = os.path.join(os.path.dirname(self.path),"analysis")
-        #print path
-        mkdir(path)
-        for analysis in self.analysis:
-            analysis.save(path) 
-            pass
+        self.save()
         pass
     pass

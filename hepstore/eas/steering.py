@@ -19,6 +19,9 @@ import time
 import collections
 
 ## user imports
+import interaction
+import shower
+import analysis
 from ..tools import *
 import worker
 
@@ -78,7 +81,7 @@ class steer:
         processes=[]
         # fire up the processes
         for n in range(0,self.options.job):
-            p = Process(target=worker.interact, args=(n,(output_p, input_p),self.options))
+            p = Process( target=worker.interact, args=(analysis.analysis(options=self.options,num=n),(output_p, input_p)) )
             p.start()
             processes.append(p)
             pass
@@ -136,27 +139,17 @@ class steer:
     def analyse(self):
         ## start an analysis in each available file path
         self.begin()
-        processes=[]
-        # fire up the processes
-        for n in range(0,self.options.job):
-            output_p, input_p = Pipe()
-            p = Process(target=worker.analyse, args=(n,(output_p, input_p),self.options))
-            p.start()
-            processes.append([p, output_p, input_p])
-            pass
+        # create multiprocessing processes
+        #processes=worker.create( analysis.analysis(options=self.options), self.options.jobs )
+        processes=worker.create( worker.test(), self.options.job )
         # feed the data into the processes
         count=0
         while self.next():
             processes[count%self.options.job][2].send(self.path)
             count+=1
             pass #while
-        # wait for processes to finish
-        for p in processes:
-            p[2].send("DONE")
-            p[1].close()
-            p[2].close()
-            p[0].join()
-            pass
+        # finalize processes
+        worker.finalize(processes)
         pass #analyse
     def list(self):
         ## list all folders and the progress within in nice color code

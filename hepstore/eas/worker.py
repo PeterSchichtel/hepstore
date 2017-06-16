@@ -6,6 +6,58 @@ import analysis
 
 # contains workers for multi processed interaction/shower/analysis
 
+class test(object):
+    def __init__(self):
+        self.pid = None
+        pass
+    def validate(self,info):
+        if self.pid==None:
+            self.pid = os.getpid()
+            pass
+        return True
+    def run(self):
+        print self.pid
+        pass
+    def finalize(self):
+        pass
+    pass
+
+def worker(app,pipe):
+    output_p, input_p = pipe
+    while True:
+        info = output_p.recv()    # Read from the output pipe
+        if info == "END":
+            break
+        if not app.validate(info):
+            continue
+        app.run()
+        app.finalize()
+        pass
+    input_p.close()
+    output_p.close()
+    pass
+
+def create(app,ncores=1):
+    processes=[]
+    # fire up the processes
+    for n in range(0,ncores):
+        output_p, input_p = Pipe()
+        p = Process( target=worker,  args=(app,(output_p, input_p)) )
+        p.start()
+        processes.append([p, output_p, input_p])
+        pass
+    return processes
+
+def finalize(processes):
+    for p in processes:
+        p[2].send("END")
+        p[1].close()
+        p[2].close()
+        p[0].join()
+        pass
+    pass
+
+
 def interact(num,pipe,options):
     output_p, input_p = pipe
     app=interaction.interaction(num=num)
