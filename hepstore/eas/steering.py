@@ -65,11 +65,7 @@ class steer:
                 pass
             except ValueError:
                 return self.next()
-            if os.path.isdir(self.path):
-                return True
-            else:
-                return self.next()
-            pass
+            return True
         except StopIteration:
             return False
         pass
@@ -116,7 +112,7 @@ class steer:
         ## start an analysis in each available file path
         self.begin()
         # create multiprocessing processes
-        processes=worker.create( analysis.analysis(options=self.options), self.options.job )
+        processes=worker.create( analysis.analysis,self.options,self.options.job )
         # feed the data into the processes
         count=0
         while self.next():

@@ -40,12 +40,12 @@ def worker(app,pipe):
     output_p.close()
     pass
 
-def create(app,ncores=1):
+def create(app,args,ncores=1):
     processes=[]
     # fire up the processes
     for n in range(0,ncores):
         output_p, input_p = Pipe()
-        p = Process( target=worker,  args=(app,(output_p, input_p)) )
+        p = Process( target=worker,  args=(app(args),(output_p, input_p)) )
         p.start()
         processes.append([p, output_p, input_p])
         pass
