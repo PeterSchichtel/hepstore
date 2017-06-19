@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-from histogram import *
-from unbinned import *
-from fileIO import *
+# run on  a server (ie no display)
+import matplotlib
+matplotlib.use('Agg')
+
+# imports 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import math,os,sys
@@ -10,15 +12,29 @@ import scipy.optimize as opt
 from matplotlib.mlab import griddata
 from cycler import cycler
 from itertools import cycle
-import tools
+import ..tools
 import numpy as np
+from plotter import plotter as plotter
 
-class corsikaplotter:
-    def __init__(self,path):
-        self.figurepath=path
-        self.format = "pdf"
-        self.dpi    = 400
+def make_contour(x,y,z):
+    return [x,y,z]
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
+    pass # main
+
+
+
+'''
+class plotter(object):
+    def __init__(self,options=None):
+        self.options = options
+        self.figure  = plt.figure()
         pass
+        
     def begin(self,config,options):
         self.options=options
         self.config={
@@ -42,7 +58,6 @@ class corsikaplotter:
             self.config[words[0]]=words[1]
             pass
         print "--info: working on figure %s " % self.config["name"]
-        self.fig = plt.figure(1,figsize=(6.2, 6.2))
         plt.rcParams.update({'font.size': 4})
         plt.rcParams['legend.numpoints'] = 1
        # print options.color
@@ -97,38 +112,6 @@ class corsikaplotter:
         else:
             line=next(self.lcycle).strip()
             pass
-        # normalised
-        if self.options.normalised:
-            self.histogram.normalise()
-            pass
-        # different plotting options
-        if self.options.histogram:
-            hist, bins = self.histogram.hist(axis=self.options.axis[0])
-            width = 0.7 * (bins[1] - bins[0])
-            center = (bins[:-1] + bins[1:]) / 2
-            sp.plot(
-                self.histogram.data()[0]+style["offset"],self.histogram.data()[1],marker[0],
-                color=color, 
-                label=label, markersize=float(self.config["markersize"])
-                )
-            pass
-        if self.options.fit:
-            afit=self.histogram.fit(self.config["fit"],self.options.axis[0])
-            sp.plot(
-                afit[0],afit[1],label=label, ##"%s fit" % self.config["fit"],
-                color=color,
-                linestyle=line
-            )
-            pass
-        if self.options.interpolate:
-            aline=self.histogram.line(self.options.axis[0])
-            sp.plot(aline[0],aline[1],color=color,linestyle=line)
-            pass
-        if self.options.scatter:
-            x,y=self.histogram.scatter(axis=self.options.axis,random=True)
-            x=np.array(x)
-            y=np.array(y)
-            sp.plot(x,y,",",label=label)
             pass
         if self.options.contour:
             try:
@@ -202,3 +185,4 @@ class corsikaplotter:
         plt.close(self.fig)
         pass
     pass
+'''
