@@ -1,31 +1,113 @@
 #!/usr/bin/env python
 
 # run on  a server (ie no display)
-import matplotlib
-matplotlib.use('Agg')
+#import matplotlib
+#matplotlib.use('Agg')
 
-# imports 
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-import math,os,sys
-import scipy.optimize as opt
-from matplotlib.mlab import griddata
-from cycler import cycler
-from itertools import cycle
-import ..tools
-import numpy as np
-from plotter import plotter as plotter
+# imports
+import os
+import plotter
 
-def make_contour(x,y,z):
-    return [x,y,z]
+def run():
+    
+    # we need to setup the arg parser
+    import argparse
+    parser = argparse.ArgumentParser(description="This App allows to plot data saved from numpy arrays")
 
-def main():
-    pass
+    # setup arg parser
+    parser.add_argument("-f", "--file", default=[],
+                        help="list of data files to be plotted (.npy format)",
+                        required=True, nargs='+')
+    # main option
+    parser.add_argument("-k", "--kind", default=["1*histogram"],
+                        help="cycle of kind of plot to be used, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument("-p", "--plot", default=["1*1"],
+                        help="cycle of subplots to be used, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument("-c", "--color", default=['1*black'],
+                        help="cycle of colors to be used for plotting, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument("-m", "--marker", default=['1*,'],
+                        help="cycle of markers to be used for plotting, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument("-l", "--linestyle", default=['1*-'],
+                        help="cycle of linestyles to be used for plotting, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument("-s", "--markersize", default=['1*1.0'],
+                        help="cycle of markersizes to be used for plotting, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument("-w", "--linewidth", default=['1*1.0'],
+                        help="cycle of linewidths to be used for contour, understands multiplication",
+                        nargs='+',
+                        type=str)
+    parser.add_argument(      "--legend", default=['1*data'],
+                        help="cycle of legends to be used for contour, understands multiplication",
+                        nargs='+',
+                        type=str)
+    # further options
+    parser.add_argument("-b", "--bins", default=100,
+                        help="how many bins for histograms",
+                        type=int)
+    parser.add_argument("-n", "--normed", action="store_true",
+                        help="normalize data before plotting")
+    parser.add_argument("-a", "--axis", default=[0,1,2],
+                        help="select axis of data to be plotted (x,y,z)",
+                        nargs='+')
+    parser.add_argument(      "--xmin", default=0.0,
+                              help="x axes min")
+    parser.add_argument(      "--ymin", default=0.0,
+                             help="y axes min")
+    parser.add_argument(      "--zmin", default=0.0,
+                              help="z axes min")
+    parser.add_argument(      "--xmax", default=1.0,
+                              help="x axes max")
+    parser.add_argument(      "--ymax", default=1.0,
+                              help="y axes max")
+    parser.add_argument(      "--zmax", default=1.0,
+                              help="z axes max")
+    parser.add_argument(      "--alpha", default=1.0,
+                              help="alpha parameter for plt.plot",
+                              type=float)
+    parser.add_argument(      "--contour_levels", default=[],
+                              help="levelsfor contour plot",
+                              nargs='+')
+    parser.add_argument(      "--figure_size", default=(6.2,6.2),
+                              help="figure size",
+                              type=tuple)
+    parser.add_argument(      "--dpi", default=300,
+                              help="dpi for plot")
+    parser.add_argument(      "--format", default="pdf")
+    parser.add_argument(      "--path", default=os.path.join(os.getcwd(),'figure.pdf'),
+                              help="path and name of the file to save figure")
+    parser.add_argument(      "--rows", default=1,
+                              help="how many rows of plots")
+    parser.add_argument(      "--columns", default=1,
+                              help="how many columns of plots")
+    parser.add_argument(      "--title", default=[],
+                              help="figure title and subfigure titles as list",
+                              nargs='+')
+    parser.add_argument(      "--xlabel", default=[],
+                              help="x axis label as list",
+                              nargs='+')
+    parser.add_argument(      "--ylabel", default=[],
+                              help="y axis label as list",
+                              nargs='+')
+    
+    # parse args   
+    args = parser.parse_args()
 
-if __name__ == "__main__":
-    main()
-    pass # main
-
+    figure = plotter.figure(args)
+    figure.plot()
+    figure.save()
+    
+    pass #run
 
 
 '''
@@ -174,15 +256,11 @@ class plotter(object):
         plt.tick_params(axis='both', which='minor', labelsize=int(0.8*float(self.config["fontsize"])))   
         plt.subplots_adjust(left=0.1, right=0.65, top=0.9, bottom=0.1)
         mkdir(self.figurepath)
-        savepath = os.path.join(self.figurepath,self.config["name"])
-        print "--info: saving figure to %s" % savepath
-        tools.mkdir(self.figurepath)
-        self.fig.savefig(savepath+"."+self.format, format=self.format, dpi=self.dpi)
+     
         with open(savepath+".txt",'w') as fout:
             self.write(fout)
             fout.close()
             pass
-        plt.close(self.fig)
         pass
     pass
 '''

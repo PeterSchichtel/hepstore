@@ -4,11 +4,8 @@
 import numpy as np
 import sys,os
 
-from hepstore.eas.tools import *
+import hepstore.tools as tools
 
-import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-from matplotlib import cm
 from sklearn.preprocessing import StandardScaler 
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
@@ -16,102 +13,56 @@ from sklearn.model_selection import validation_curve
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
-import random
 
-class DataUnit:
-    def __init__(self,crossection=0.0,label=[],data=None,name="signal"):
-        self.crossection = crossection
-        self.data        = data
-        self.label       = label
-        self.name        = name
+class DataUnit(object):
+
+    def __init__(self,data=None,classification=None):
+        self.data           = data
+        self.classification = classification
         pass
+
     def __add__(self,other):
         result = DataUnit()
-        result.crossection = self.crossection + other.crossection
-        result.data        = np.concatenate((self.data,other.data))
-        result.label       = (self.label+other.label)
-        result.name        = self.name
+        result.data            = np.concatenate((self.data,           other.data))
+        result.classification  = np.concatenate((self.classification, other.classification))
         return result
-    def train_test_split(self,test_size=0.25, random_state=0):
-        return train_test_split(self.data,self.label,test_size=test_size,random_state=random_state)
+
+    def train_test_split(self,test_size=0.25,random_state=0):
+        return train_test_split(self.data,self.classification,test_size=test_size,random_state=random_state)
         pass
-    def oneD(self,axis=0):
-        return self.data[:,axis]
-    def twoD(self,axis=[0,1]):
-        return self.data[:,axis[0]],self.data[:,axis[1]]
-    def loadFromUnbinned(self,data,label):
-        dlist      = []
-        self.label = []
-        for sdata in data.data:
-            dlist.append(sdata.coordinates)
-            self.label.append(label)
-            pass
-        self.data = np.array(dlist)
-        pass
-    def enhance(self,arg_list):
-        num        = int(arg_list[0])
-        if num>1:
-            spread     = arg_list[1:]
-            new_points = []
-            new_labels = []
-            for d,label in zip(self.data,self.label):
-                for i in range(0,num):
-                    coordinates=[]
-                    for val,delta in zip(d,spread):
-                        coordinates.append( random.uniform( val-abs(val*delta),val+abs(val*delta) ) )
-                        pass
-                    new_points.append(coordinates)
-                    new_labels.append(label)
-                    pass
-                pass
-            self.data = np.concatenate((self.data,np.array(new_points)))
-            self.label= (self.label+new_labels)
-            pass
-        pass
+
+    def zip(self):
+        return zip(self.data,self.classification)
+
     pass
 
-class DataAnalysis:
-    def __init__(self,random_state=0,test_size=0.25,classifier="svc",luminosity=20000.,crossection=[0.5,0.5]):
-        self.data         = {}
+class Learner(object):
+
+    def __init__(self,random_state=0,test_size=0.25,classifier="svc",):
+        self.data         = DataUnit()
         self.random_state = random_state
         self.test_size    = test_size
-        self.luminosity   = luminosity
-        self.crossection  = crossection
         if classifier.lower() == "svc":
             self.classifier = SVC(C=1.0,kernel='rbf',probability=True,random_state=self.random_state)
             pass
         elif classifier.lower() == "mlp":
             self.classifier = MLPClassifier()
-        self.enhance    = 1
-        self.ntotal     = 1
-        self.use_labels = ['s','b']
         pass
-    def addData(self,data):
-        self.data[data.name] = data
+
+    def add_data(self,data):
+        self.data += data
         pass
+
     def prepare(self):
         # generate train and test data
-        self.data_train  = None
-        self.label_train = None
-        self.data_test   = None
-        self.label_test  = None
-        alldata          = None
-        for name in self.data:
-            data=self.data[name]
-            if alldata==None:
-                alldata = data
-                pass
-            else:
-                alldata = alldata + data
-                pass
-            pass
-        self.data_train,self.data_test,self.label_train,self.label_test = alldata.train_test_split()
+        self.data_train,self.data_test,self.label_train,self.label_test = self.data.train_test_split()
         # scale
         self.scaler            = StandardScaler()
         self.scaler.fit(self.data_train)
         self.data_train_scaled = self.scaler.transform(self.data_train)
         self.data_test_scaled  = self.scaler.transform(self.data_test)
         pass
+
     def train(self):
         self.classifier.fit(self.data_train_scaled,self.label_train)
         results_train={}
@@ -125,6 +76,7 @@ class DataAnalysis:
             pass
         self.train_results = results_train
         pass
+
     def test(self):
         results_test={}
         for label,classification in zip(self.label_test,self.classifier.predict_proba(self.data_test_scaled)):
@@ -137,6 +89,8 @@ class DataAnalysis:
             pass
         self.test_results = results_test
         pass
+
+    pass
     def probabilityMap(self,axes=[0,1],zoom=0.15,npoints=2000):
         data=np.concatenate((self.data_train,self.data_test))
         field=[]
