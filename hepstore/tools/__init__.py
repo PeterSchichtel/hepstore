@@ -103,3 +103,26 @@ def listoffolders(pathes=["./"],all_constrains=[]):
             pass
         pass
     return fullList
+
+
+def options_to_list(options):
+    full_list = []
+    for option in options:
+        try:
+            num  = int(option.split('*')[0])
+            kind = option.split('*')[1]
+            for i in range(0,num):
+                full_list.append(kind)
+                pass
+            pass
+        except Exception:
+            full_list.append(option)
+            pass
+        pass
+    return full_list
+
+def shake(data):
+    for item in np.nditer(data,op_flags=['readwrite']):
+        item[...] = (1.0 + 0.1 * (np.random.random()-0.5)) * item
+        pass
+    return data

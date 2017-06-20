@@ -103,9 +103,9 @@ def run():
     # parse args   
     args = parser.parse_args()
 
+    # plot figures
     figure = plotter.figure(args)
     figure.plot()
-    figure.save()
     
     pass #run
 

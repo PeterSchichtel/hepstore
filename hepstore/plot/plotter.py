@@ -5,30 +5,9 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import math,os,sys
 from itertools import cycle
-from hepstore.tools import mkdir
+from hepstore.tools import *
 import numpy as np
 
-def options_to_list(options):
-    full_list = []
-    for option in options:
-        try:
-            num  = int(option.split('*')[0])
-            kind = option.split('*')[1]
-            for i in range(0,num):
-                full_list.append(kind)
-                pass
-            pass
-        except Exception:
-            full_list.append(option)
-            pass
-        pass
-    return full_list
-
-def shake(data):
-    for item in np.nditer(data,op_flags=['readwrite']):
-        item[...] = (1.0 + 0.1 * (np.random.random()-0.5)) * item
-        pass
-    return data
 
 class subplot(object):
     
@@ -193,6 +172,7 @@ class figure(object):
             else:
                 raise ValueError("unknown kind of plot '%s'" % kind)
             pass
+        self.save()
         pass
 
     def save(self):

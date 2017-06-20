@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 
-class DataUnit(object):
+class dataunit(object):
 
     def __init__(self,data=None,classification=None):
         self.data           = data
@@ -36,10 +36,10 @@ class DataUnit(object):
 
     pass
 
-class Learner(object):
+class student(object):
 
     def __init__(self,random_state=0,test_size=0.25,classifier="svc",):
-        self.data         = DataUnit()
+        self.data         = dataunit()
         self.random_state = random_state
         self.test_size    = test_size
         if classifier.lower() == "svc":
@@ -91,6 +91,35 @@ class Learner(object):
         pass
 
     pass
+
+class analyis(object):
+
+    def __init__(self,options):
+        self.options = options
+        self.student = student(random_state=self.options.random_state,test_size=self.options.test_size,classifier=self.options.classifier)
+        # create cyclers for options
+        self.label   = cycle(options_to_list(options.label))
+        pass
+
+    def run(self):
+        # load data
+        for fin in options.file:
+            raw_data = np.load(fin)
+            data     = dataunit(raw_data,[float(next(self.label))]*len(raw_data))
+            self.student.add_data(data)
+            pass
+        # train student
+        self.student.prepare()
+        self.student.train()
+        self.student.test()
+        # save results and cross checks
+        self.save()
+        pass
+
+    def save(self):
+        mkdir(self.options.path)
+        pass
+
     def probabilityMap(self,axes=[0,1],zoom=0.15,npoints=2000):
         data=np.concatenate((self.data_train,self.data_test))
         field=[]
@@ -112,6 +141,7 @@ class Learner(object):
             z.append(classification[0])
             pass
         return x,y,z
+    
     def ROC(self,nbins=1000,labels=['s','b']):
         delta=1./float(nbins)
         data={labels[0]:[],labels[1]:[]}
@@ -125,6 +155,7 @@ class Learner(object):
         x = [ sum(counts_signal[:pos])*delta        for pos in range(0,len(counts_signal    )) ]
         y = [ 1.-sum(counts_background[:pos])*delta for pos in range(0,len(counts_background)) ]
         return x,y
+    
     def significance(self,labels=['s','b'],nbins=1000):
         delta=1./float(nbins)
         data={labels[0]:[],labels[1]:[]}
@@ -149,15 +180,7 @@ class Learner(object):
             y.append(sig)
             pass
         return x,y
-    def getData(self,label='s'):
-        result = []
-        for data in self.data.values():
-            for point,l in zip(data.data,data.label):
-                if label==l:
-                    result.append(point)
-                pass
-            pass
-        return np.array(result)
+    
     def plot(self,path):
 
         colors = ['red','blue','green','pink','purple','orange']
@@ -206,6 +229,7 @@ class Learner(object):
         mkdir(path)
         fig.savefig(os.path.join(path,"learn.pdf"),format="pdf",dpi=300)
         pass
+    
     def maxSignificance(self,labels=['s','b']):
         sig_effs,sig_pois = self.significance(labels=labels)
         use_s=[]
@@ -219,11 +243,13 @@ class Learner(object):
         index_s = use_s[:,1].tolist().index(max_s)
         max_es  = use_s[index_s,0]
         return max_s,max_es
+    
     def twoSigmaLuminosity(self,labels=['s','b']):
         max_s,max_es = self.maxSignificance(labels=labels)
         es,eb        = self.ROC(labels=labels)
         index = es.index(max_es)
         return 4.0 * ( max_es * self.crossection[0]  +  eb[index] * self.crossection[1] ) / ( max_es**2 * self.crossection[0]**2 )
+    
     def minCrossection(self,labels=['s','b']):
         old_xsec = self.crossection
         max_sign = []
@@ -247,6 +273,7 @@ class Learner(object):
         max_s = next(x for x in sorted(max_sign) if x > 1.999)
         xsec  = xsecs[max_sign.index(max_s)]
         return max_s,xsec
+    
     def __str__(self):
         max_s,max_es = self.maxSignificance(self.use_labels)
         thestr = "--significance: sigma = %f at epsilon_s =  %f \n" % (max_s,max_es,)
@@ -256,80 +283,4 @@ class Learner(object):
         thestr+= "--significance: xsec  = %f at sigma     =  %f \n" % (xsec,max_s)
         return thestr
     pass
-        
-if __name__=='__main__': 
-        
-    analysis =  DataAnalysis()
-    
-    
-    ## generate data
-    nsig        = 600
-    signal      = DataUnit(name="signal")
-    signal.data = np.vstack((np.random.multivariate_normal([1.,-2.5],[[1,-0.5],[-0.5,1]], 3*nsig/4),np.random.multivariate_normal([-4.,3.5],[[1,-0.5],[-0.5,1]], nsig/4)))
-    signal.label= ['s']*nsig
-    
-    nbkg            = 600
-    background      = DataUnit(name="background")
-    background.data = np.random.multivariate_normal([0.,0.],[[4.,0],[0,25.]], nbkg)
-    background.label= ['b']*nbkg
-    
-    ## add data
-    analysis.addData(signal)
-    analysis.addData(background)
-    
-    ## prepare run
-    analysis.prepare()
-    
-    ## train and test
-    analysis.train()
-    analysis.test()
-    
-    print "plotting"
-    fig = plt.figure(1,figsize=(18.6, 6.2))
-    
-    ## plot training vs testing classifier
-    print "a"
-    plt.subplot(131)
-    nbins=20
-    
-    plt.hist(analysis.train_results['s'],bins=nbins,normed=True,range=(0,1),alpha=0.5,color='red')
-    plt.hist(analysis.train_results['b'],bins=nbins,normed=True,range=(0,1),alpha=0.5,color='blue')
-    
-    counts_sig,bin_edges_sig = np.histogram(analysis.test_results['s'],bins=nbins,range=(0.,1.),normed=True)
-    bin_centres_sig = (bin_edges_sig[:-1] + bin_edges_sig[1:])/2.
-    err_sig = np.sqrt(counts_sig)/np.sqrt(nsig)
-    plt.errorbar(bin_centres_sig, counts_sig, yerr=err_sig, fmt='o', color='red')
-    
-    counts_bkg,bin_edges_bkg = np.histogram(analysis.test_results['b'],bins=nbins,range=(0.,1.),normed=True)
-    bin_centres_bkg = (bin_edges_bkg[:-1] + bin_edges_bkg[1:])/2.
-    err_bkg = np.sqrt(counts_bkg)/np.sqrt(nbkg)
-    plt.errorbar(bin_centres_bkg, counts_bkg, yerr=err_bkg, fmt='o', color='blue')
-    
-    ## plot data vs learned function
-    print "b"
-    plt.subplot(132)
-    plt.plot(background.oneD(axis=0),background.oneD(axis=1),",",color="black",alpha=0.8)
-    plt.plot(signal.oneD(axis=0),signal.oneD(axis=1)        ,",",color="red"  ,alpha=0.8)
-    x,y,z = analysis.probabilityMap()
-    triang = tri.Triangulation(x, y)
-    plt.tricontourf(x,y,z,
-                    cmap=cm.Blues_r,
-                    V=[0.,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95],
-                    alpha=0.6,
-    )
-    
-    ## plot ROC and significance
-    print "c"
-    plt.subplot(133)
-    ax1 = plt.gca()
-    ax2 = ax1.twinx()
-    
-    sig_effs,bkg_effs = analysis.ROC()
-    ax1.plot(sig_effs,bkg_effs,linestyle="-",color='black')
-    
-    sig_effs,sig_pois = analysis.significance(luminosity=1000,crossection=[0.1,20])
-    ax2.plot(sig_effs,sig_pois,linestyle="-",color='green')
-    
-    
-    fig.savefig("plot.pdf",format="pdf",dpi=300)
-    
+ 
