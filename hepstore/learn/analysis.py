@@ -151,6 +151,7 @@ class analysis(object):
         np.save(os.path.join(self.options.path,"roc.npy")            ,self.roc())
 
         # significance
+        np.save(os.path.join(self.options.path,"significance.npy")   ,self.significance())
         
         pass
 
@@ -179,11 +180,11 @@ class analysis(object):
             result.append(([classification[0]]+coordinates))
             pass
         return np.array(result)
-    
-    def roc(self,bins=1000):
+
+    def efficiency(self,is_signal,bins=1000):
+        # load data
         data_scaled = np.concatenate((self.student.data_train_scaled, self.student.data_test_scaled))
         labels      = np.concatenate((self.student.label_train      , self.student.label_test))
-        delta       = 1./float(bins) 
         data        = {}
         for label in np.unique(labels):
             data[label] = []
@@ -192,28 +193,25 @@ class analysis(object):
             data[label].append(classification[0])
             pass
         # collect signal and background
-        signal     = None
-        background = None
+        results     = None
         for label in data:
-            if label in self.options.signal:
-                if signal == None:
-                    signal = data[label]
+            if not is_signal or label in self.options.signal:
+                if results == None:
+                    results = data[label]
                     pass
                 else:
-                    signal = np.concatenate((signal,data[label]))
+                    results = np.concatenate((signal,data[label]))
                     pass
-                pass
-            else:
-                if background == None:
-                    background = data[label]
-                    pass
-                else:
-                    background = np.concatenate((background,data[label]))
                 pass
             pass
         # compute signal and background efficiencies
-        counts_signal,bin_edges_signal         = np.histogram(signal,    bins=bins,range=(0,1),normed=True)
-        counts_background,bin_edges_background = np.histogram(background,bins=bins,range=(0,1),normed=True)
+        return np.histogram(results,bins=bins,range=(0,1),normed=True)
+        
+    def roc(self,bins=1000):
+        delta       = 1./float(bins) 
+        counts_signal    , bin_edges_signal     = self.efficiency(True ,bins=bins)
+        counts_background, bin_edges_background = self.efficiency(False,bins=bins)
+        # generate ROC
         points = []
         for i in range(0,bins):
             x = sum(counts_signal[:i])*delta
@@ -222,75 +220,41 @@ class analysis(object):
             pass
         return np.array(points)
     
-    def significance(self,labels=['s','b'],nbins=1000):
-        delta=1./float(nbins)
-        data={labels[0]:[],labels[1]:[]}
-        for label,classification in zip( np.concatenate((self.label_train,self.label_test)) , self.classifier.predict_proba( np.concatenate((self.data_train_scaled,self.data_test_scaled)) )):
-            if label in data:
-                data[label].append(classification[0])
-                pass
-            pass
-        counts_signal,bin_edges_signal         = np.histogram(data[labels[0]],bins=nbins,range=(0,1),normed=True)
-        counts_background,bin_edges_background = np.histogram(data[labels[1]],bins=nbins,range=(0,1),normed=True)
-        x = [ sum(counts_signal[:pos])*delta        for pos in range(0,len(counts_signal    )) ]
-        y = []
-        for pos in range(0,len(counts_signal)):
-            es  = sum(counts_signal[:pos]    )*delta
-            eb  = sum(counts_background[:pos])*delta
+    def significance(self,bins=1000):
+        delta       = 1./float(bins) 
+        counts_signal    , bin_edges_signal     = self.efficiency(True ,bins=bins) 
+        counts_background, bin_edges_background = self.efficiency(False,bins=bins)
+        # generate significance curve
+        points = []
+        for i in range(0,bins):
+            es  = sum(counts_signal[:i]    )*delta
+            eb  = sum(counts_background[:i])*delta
             if es>0.0 or eb>0.0:
                 sig = np.sqrt( (self.luminosity * es**2 * self.crossection[0]**2 )/( es * self.crossection[0]  +  eb * self.crossection[1] ) )
                 pass
             else:
                 sig = 0.0
                 pass
-            y.append(sig)
+            points.append([es,sig])
             pass
-        return x,y
+        return np.array(points)
 
     
-    def maxSignificance(self,labels=['s','b']):
-        sig_effs,sig_pois = self.significance(labels=labels)
-        use_s=[]
-        for es,s in zip(sig_effs,sig_pois):
-            if es>0.05:
-                use_s.append([es,s])
-                pass
-            pass
-        use_s = np.array(use_s)
-        max_s   = max(use_s[:,1])
-        index_s = use_s[:,1].tolist().index(max_s)
-        max_es  = use_s[index_s,0]
-        return max_s,max_es
+    def maximum_significance(self,bins=1000):
+        sig   = max(self.significance()[:,1])
+        index = np.argmax(self.significance()[:,1])
+        es    = self.significance()[index,0]
+        return (es,sig,index)
     
-    def twoSigmaLuminosity(self,labels=['s','b']):
-        max_s,max_es = self.maxSignificance(labels=labels)
-        es,eb        = self.ROC(labels=labels)
-        index = es.index(max_es)
-        return 4.0 * ( max_es * self.crossection[0]  +  eb[index] * self.crossection[1] ) / ( max_es**2 * self.crossection[0]**2 )
+    def two_sigma_luminosity(self,bins=1000):
+        max_s,max_es,index = self.maximum_significance(bins=bins)
+        max_eb             = self.efficiency(False,bins=bins)[index]
+        return 4.0 * ( max_es * self.crossection[0]  +  max_eb * self.crossection[1] ) / ( max_es**2 * self.crossection[0]**2 )
     
-    def minCrossection(self,labels=['s','b']):
-        old_xsec = self.crossection
-        max_sign = []
-        xsecs    = []
-        step=1
-        if self.ntotal>50:
-            step = 2*self.ntotal/50
-            pass
-        for i in range(0,self.ntotal,step):
-            try:
-                xsec_sig = float(i)/float(self.luminosity)
-                xsec_bkg = float(self.ntotal-i)/float(self.luminosity)
-                self.crossection = [xsec_sig,xsec_bkg]
-                max_s,max_es = self.maxSignificance(labels=labels)
-                max_sign.append(max_s)
-                xsecs.append(xsec_sig)
-                pass
-            except Exception:
-                pass
-            pass
-        max_s = next(x for x in sorted(max_sign) if x > 1.999)
-        xsec  = xsecs[max_sign.index(max_s)]
-        return max_s,xsec
+    def excluded_crossection(self,bins=1000):
+        # save signal cross section
+        old_signal_crossection = self.crossection[0]
+        # scan signal modifier to find maximum significance of 2
     
     def __str__(self):
         max_s,max_es = self.maxSignificance(self.use_labels)
