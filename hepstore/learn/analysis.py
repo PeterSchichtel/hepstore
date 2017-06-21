@@ -131,28 +131,23 @@ class analysis(object):
 
     def save(self):
         tools.mkdir(self.options.path)
-
         # preparation results
         if self.options.explore:
             pass
-
         # training data
         np.save(os.path.join(self.options.path,"data_train.npy")     ,self.student.data_train)
         np.save(os.path.join(self.options.path,"label_train.npy")    ,self.student.label_train)
-
         # testing data
         np.save(os.path.join(self.options.path,"data_test.npy")      ,self.student.data_test)
         np.save(os.path.join(self.options.path,"label_test.npy")     ,self.student.label_test)
-
         # classifier map
         np.save(os.path.join(self.options.path,"probability_map.npy"),self.probability_map())
-
         # ROC
         np.save(os.path.join(self.options.path,"roc.npy")            ,self.roc())
-
         # significance
         np.save(os.path.join(self.options.path,"significance.npy")   ,self.significance())
-        
+        # info on screen
+        print self
         pass
 
     def probability_map(self):
@@ -200,7 +195,7 @@ class analysis(object):
                     results = data[label]
                     pass
                 else:
-                    results = np.concatenate((signal,data[label]))
+                    results = np.concatenate((results,data[label]))
                     pass
                 pass
             pass
@@ -230,7 +225,7 @@ class analysis(object):
             es  = sum(counts_signal[:i]    )*delta
             eb  = sum(counts_background[:i])*delta
             if es>0.0 or eb>0.0:
-                sig = np.sqrt( (self.luminosity * es**2 * self.crossection[0]**2 )/( es * self.crossection[0]  +  eb * self.crossection[1] ) )
+                sig = np.sqrt( (self.options.luminosity * es**2 * self.options.crossection[0]**2 )/( es * self.options.crossection[0]  +  eb * self.options.crossection[1] ) )
                 pass
             else:
                 sig = 0.0
@@ -241,28 +236,39 @@ class analysis(object):
 
     
     def maximum_significance(self,bins=1000):
-        sig   = max(self.significance()[:,1])
-        index = np.argmax(self.significance()[:,1])
-        es    = self.significance()[index,0]
-        return (es,sig,index)
+        sig   = max(      self.significance(bins=bins)[:,1])
+        index = np.argmax(self.significance(bins=bins)[:,1])
+        es    =           self.significance(bins=bins)[index,0]
+        return (sig,es,index)
     
     def two_sigma_luminosity(self,bins=1000):
         max_s,max_es,index = self.maximum_significance(bins=bins)
-        max_eb             = self.efficiency(False,bins=bins)[index]
-        return 4.0 * ( max_es * self.crossection[0]  +  max_eb * self.crossection[1] ) / ( max_es**2 * self.crossection[0]**2 )
+        max_eb             = self.efficiency(False,bins=bins)[0][index]
+        return 4.0 * ( max_es * self.options.crossection[0]  +  max_eb * self.options.crossection[1] ) / ( max_es**2 * self.options.crossection[0]**2 )
     
     def excluded_crossection(self,bins=1000):
         # save signal cross section
-        old_signal_crossection = self.crossection[0]
+        old_signal_crossection           = self.options.crossection[0]
         # scan signal modifier to find maximum significance of 2
+        if self.maximum_significance(bins=bins)[0]<2.0:
+            while self.maximum_significance(bins=bins)[0]<2.0:
+                self.options.crossection[0] *= 1.1
+                pass
+            pass
+        else:
+            while self.maximum_significance(bins=bins)[0]>2.0:
+                self.options.crossection[0] *= 0.9
+                pass
+            pass
+        exclusion_limit                  = self.options.crossection[0]
+        self.options.crossection[0]      = old_signal_crossection
+        return exclusion_limit
     
     def __str__(self):
-        max_s,max_es = self.maxSignificance(self.use_labels)
-        thestr = "--significance: sigma = %f at epsilon_s =  %f \n" % (max_s,max_es,)
-        lumi         = self.twoSigmaLuminosity(self.use_labels)
-        thestr+= "--significance: lumi  = %f at sigma     =  %f \n" % (lumi,2.0)
-        max_s,xsec   = self.minCrossection(self.use_labels)
-        thestr+= "--significance: xsec  = %f at sigma     =  %f \n" % (xsec,max_s)
+        thestr = "--analysis: sigma = %f at epsilon_s = %f  \n" % self.maximum_significance()[0:2]
+        thestr+= "--analysis: lumi  = %f at sigma     = 2.0 \n" % self.two_sigma_luminosity()
+        thestr+= "--analysis: excluded above xsec = %f  " % self.excluded_crossection()
         return thestr
+    
     pass
  
