@@ -6,6 +6,8 @@ import sys,os
 
 import hepstore.tools as tools
 
+
+from itertools import cycle
 from sklearn.preprocessing import StandardScaler 
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
@@ -22,7 +24,7 @@ class dataunit(object):
         pass
 
     def __add__(self,other):
-        result = DataUnit()
+        result = dataunit()
         result.data            = np.concatenate((self.data,           other.data))
         result.classification  = np.concatenate((self.classification, other.classification))
         return result
@@ -38,14 +40,13 @@ class dataunit(object):
 
 class student(object):
 
-    def __init__(self,random_state=0,test_size=0.25,classifier="svc",):
-        self.data         = dataunit()
-        self.random_state = random_state
-        self.test_size    = test_size
-        if classifier.lower() == "svc":
-            self.classifier = SVC(C=1.0,kernel='rbf',probability=True,random_state=self.random_state)
+    def __init__(self,options,data):
+        self.options      = options
+        self.data         = data
+        if options.classifier.lower() == "svc":
+            self.classifier = SVC(C=1.0,kernel='rbf',probability=True,random_state=self.options.random_state)
             pass
-        elif classifier.lower() == "mlp":
+        elif options.classifier.lower() == "mlp":
             self.classifier = MLPClassifier()
         pass
 
@@ -53,14 +54,21 @@ class student(object):
         self.data += data
         pass
 
+    def explore(self):
+        pass
+
     def prepare(self):
         # generate train and test data
-        self.data_train,self.data_test,self.label_train,self.label_test = self.data.train_test_split()
+        self.data_train,self.data_test,self.label_train,self.label_test = self.data.train_test_split(test_size=self.options.test_size,random_state=self.options.random_state)
         # scale
         self.scaler            = StandardScaler()
         self.scaler.fit(self.data_train)
         self.data_train_scaled = self.scaler.transform(self.data_train)
         self.data_test_scaled  = self.scaler.transform(self.data_test)
+        # explore the classifier
+        if self.options.explore:
+            self.explore()
+            pass
         pass
 
     def train(self):
@@ -92,21 +100,26 @@ class student(object):
 
     pass
 
-class analyis(object):
+class analysis(object):
 
     def __init__(self,options):
         self.options = options
-        self.student = student(random_state=self.options.random_state,test_size=self.options.test_size,classifier=self.options.classifier)
+        self.student = None
         # create cyclers for options
-        self.label   = cycle(options_to_list(options.label))
+        self.label = cycle(tools.options_to_list(options.label))
         pass
 
     def run(self):
         # load data
-        for fin in options.file:
+        for fin in self.options.file:
             raw_data = np.load(fin)
-            data     = dataunit(raw_data,[float(next(self.label))]*len(raw_data))
-            self.student.add_data(data)
+            data     = dataunit(raw_data,[next(self.label)]*len(raw_data))
+            if self.student == None:
+                self.student = student(self.options,data)
+                pass
+            else:
+                self.student.add_data(data)
+                pass
             pass
         # train student
         self.student.prepare()
@@ -117,44 +130,97 @@ class analyis(object):
         pass
 
     def save(self):
-        mkdir(self.options.path)
+        tools.mkdir(self.options.path)
+
+        # preparation results
+        if self.options.explore:
+            pass
+
+        # training data
+        np.save(os.path.join(self.options.path,"data_train.npy")     ,self.student.data_train)
+        np.save(os.path.join(self.options.path,"label_train.npy")    ,self.student.label_train)
+
+        # testing data
+        np.save(os.path.join(self.options.path,"data_test.npy")      ,self.student.data_test)
+        np.save(os.path.join(self.options.path,"label_test.npy")     ,self.student.label_test)
+
+        # classifier map
+        np.save(os.path.join(self.options.path,"probability_map.npy"),self.probability_map())
+
+        # ROC
+        np.save(os.path.join(self.options.path,"roc.npy")            ,self.roc())
+
+        # significance
+        
         pass
 
-    def probabilityMap(self,axes=[0,1],zoom=0.15,npoints=2000):
-        data=np.concatenate((self.data_train,self.data_test))
-        field=[]
-        rangex=[min(data[:,axes[0]]),max(data[:,axes[0]])]
-        rangey=[min(data[:,axes[1]]),max(data[:,axes[1]])]
-        lx=zoom*abs(rangex[1]-rangex[0])
-        ly=zoom*abs(rangey[1]-rangey[0])
-        rangex=[rangex[0]-lx,rangex[1]+lx]
-        rangey=[rangey[0]-ly,rangey[1]+ly]
-        for i in range(0,npoints):
-            field.append([np.random.uniform(rangex[0],rangex[1]),np.random.uniform(rangey[0],rangey[1])])
+    def probability_map(self):
+        data   = np.concatenate((self.student.data_train,self.student.data_test))
+        field  = []
+        ranges = []
+        # define a range with x% zoom for better plotting
+        for i in range(0,data.shape[1]):
+            values = [min(data[:,i]),max(data[:,i])]
+            zoom   = self.options.zoom*abs(values[1]-values[0])
+            values = [values[0]-zoom,values[1]+zoom]
+            ranges.append(values)
             pass
-        x=[]
-        y=[]
-        z=[]
-        for classification,coordinates in zip(self.classifier.predict_proba(self.scaler.transform(field))[:,1:],field):
-            x.append(coordinates[0])
-            y.append(coordinates[1])
-            z.append(classification[0])
+        # create support points randomly
+        for i in range(0,self.options.points):
+            point = []
+            for arange in ranges:
+                point.append(np.random.uniform(arange[0],arange[1]))
+                pass
+            field.append(point)
             pass
-        return x,y,z
+        # fill field with classifier responce
+        result = []
+        for classification,coordinates in zip(self.student.classifier.predict_proba(self.student.scaler.transform(field))[:,1:],field):
+            result.append(([classification[0]]+coordinates))
+            pass
+        return np.array(result)
     
-    def ROC(self,nbins=1000,labels=['s','b']):
-        delta=1./float(nbins)
-        data={labels[0]:[],labels[1]:[]}
-        for label,classification in zip( np.concatenate((self.label_train,self.label_test)) , self.classifier.predict_proba( np.concatenate((self.data_train_scaled,self.data_test_scaled)) )):
-            if label in data:
-                data[label].append(classification[0])
+    def roc(self,bins=1000):
+        data_scaled = np.concatenate((self.student.data_train_scaled, self.student.data_test_scaled))
+        labels      = np.concatenate((self.student.label_train      , self.student.label_test))
+        delta       = 1./float(bins) 
+        data        = {}
+        for label in np.unique(labels):
+            data[label] = []
+            pass
+        for label,classification in zip( labels, self.student.classifier.predict_proba( data_scaled ) ):
+            data[label].append(classification[0])
+            pass
+        # collect signal and background
+        signal     = None
+        background = None
+        for label in data:
+            if label in self.options.signal:
+                if signal == None:
+                    signal = data[label]
+                    pass
+                else:
+                    signal = np.concatenate((signal,data[label]))
+                    pass
+                pass
+            else:
+                if background == None:
+                    background = data[label]
+                    pass
+                else:
+                    background = np.concatenate((background,data[label]))
                 pass
             pass
-        counts_signal,bin_edges_signal         = np.histogram(data[labels[0]],bins=nbins,range=(0,1),normed=True)
-        counts_background,bin_edges_background = np.histogram(data[labels[1]],bins=nbins,range=(0,1),normed=True)
-        x = [ sum(counts_signal[:pos])*delta        for pos in range(0,len(counts_signal    )) ]
-        y = [ 1.-sum(counts_background[:pos])*delta for pos in range(0,len(counts_background)) ]
-        return x,y
+        # compute signal and background efficiencies
+        counts_signal,bin_edges_signal         = np.histogram(signal,    bins=bins,range=(0,1),normed=True)
+        counts_background,bin_edges_background = np.histogram(background,bins=bins,range=(0,1),normed=True)
+        points = []
+        for i in range(0,bins):
+            x = sum(counts_signal[:i])*delta
+            y = 1.0 - sum(counts_background[:i])*delta
+            points.append([x,y])
+            pass
+        return np.array(points)
     
     def significance(self,labels=['s','b'],nbins=1000):
         delta=1./float(nbins)
@@ -180,55 +246,7 @@ class analyis(object):
             y.append(sig)
             pass
         return x,y
-    
-    def plot(self,path):
 
-        colors = ['red','blue','green','pink','purple','orange']
-        
-        print "--info: plotting"
-        fig = plt.figure(1,figsize=(18.6, 6.2))
-        
-        ## plot training vs testing classifier
-        plt.subplot(131)
-        nbins=20
-        for l,c in zip(self.use_labels,colors):
-            plt.hist(self.train_results[l],bins=nbins,normed=True,range=(0,1),alpha=0.5,color=c)
-        
-            counts,bin_edges = np.histogram(self.test_results[l],bins=nbins,range=(0.,1.),normed=True)
-            bin_centres      = (bin_edges[:-1] + bin_edges[1:])/2.
-            err              = np.sqrt(self.enhance)*np.sqrt(counts)/np.sqrt(len(self.test_results[l]))
-            plt.errorbar(bin_centres, counts, yerr=err, fmt='o', color=c)
-
-            pass
-        
-        ## plot data vs learned function
-        plt.subplot(132)
-        for l,c in zip(self.use_labels,colors):
-            data = self.getData(l)
-            plt.plot(data[:,0],data[:,1],",",color=c,alpha=0.8)
-            pass
-        x,y,z = self.probabilityMap()
-        triang = tri.Triangulation(x, y)
-        plt.tricontourf(x,y,z,
-                        cmap=cm.Blues_r,
-                        V=[0.,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95],
-                        alpha=0.6,
-        )
-        
-        ## plot ROC and significance
-        plt.subplot(133)
-        ax1 = plt.gca()
-        ax2 = ax1.twinx()
-        
-        sig_effs,bkg_effs = self.ROC()
-        ax1.plot(sig_effs,bkg_effs,linestyle="-",color='black')
-        
-        sig_effs,sig_pois = self.significance()
-        ax2.plot(sig_effs,sig_pois,linestyle="-",color='green')
-        
-        mkdir(path)
-        fig.savefig(os.path.join(path,"learn.pdf"),format="pdf",dpi=300)
-        pass
     
     def maxSignificance(self,labels=['s','b']):
         sig_effs,sig_pois = self.significance(labels=labels)

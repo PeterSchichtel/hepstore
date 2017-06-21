@@ -99,6 +99,8 @@ def run():
     parser.add_argument(      "--ylabel", default=[],
                               help="y axis label as list",
                               nargs='+')
+    parser.add_argument(      "--shake", action='store_true',
+                              help="shake data")
     
     # parse args   
     args = parser.parse_args()

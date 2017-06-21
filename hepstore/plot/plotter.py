@@ -93,11 +93,21 @@ class subplot(object):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
         x=data[:,self.options.axis[0]]
         y=data[:,self.options.axis[1]]
-        plot = plt.scatter(x, y,
+        plt.scatter(x, y,
                     c=self.color, marker=self.marker,
                     alpha=self.options.alpha,
                     label=self.legend)
         pass
+
+    def line(self,data):
+        plt.subplot(self.options.rows,self.options.columns,self.subnumber)
+        x=data[:,self.options.axis[0]]
+        y=data[:,self.options.axis[1]]
+        plt.plot(x,y,
+                 linestyle=self.linestyle,linewidth=self.linewidth,
+                 label=self.legend)
+        pass
+        
 
     def finalize(self):
         subplot = plt.subplot(self.options.rows,self.options.columns,self.subnumber)
@@ -146,7 +156,10 @@ class figure(object):
     def plot(self):
         for fin in self.options.file:
             # load data from file
-            data               = shake(np.load(fin))
+            data               = np.load(fin)
+            if self.options.shake:
+                data = shake(data)
+                pass
             # determine subplot, set atributes
             subplot            = self.subplots[int(next(self.subplot))]
             subplot.color      = next(self.colors)
@@ -169,6 +182,9 @@ class figure(object):
             elif kind == "scatter":
                 subplot.scatter(data)
                 pass
+            elif kind == "line":
+                subplot.line(data)
+                pass
             else:
                 raise ValueError("unknown kind of plot '%s'" % kind)
             pass
@@ -176,7 +192,11 @@ class figure(object):
         pass
 
     def save(self):
-        self.figure.suptitle(self.options.title[0])
+        try:
+            self.figure.suptitle(self.options.title[0])
+            pass
+        except IndexError:
+            pass
         for subplot in self.subplots.values():
             subplot.finalize()
             pass

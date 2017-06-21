@@ -17,7 +17,7 @@ def run():
                         required=True, nargs='+')
     # main options
     parser.add_argument("-l", "--label", default=["1*1.0"],
-                        help="cycle to be used for data labels in classification, understands multiplication",
+                        help="cycle to be used for data labels in classification, understands multiplication, needs signal and background id for clasifier analysis",
                         nargs='+',
                         type=str)
     
@@ -28,13 +28,17 @@ def run():
     parser.add_argument(      "--crossection",  default=[0.5,0.5], type=float, help="crossection for signal and background", nargs='+')
     parser.add_argument(      "--ntotal",       default=1000,                  help="number of total expected events")
     parser.add_argument(      "--path",         default=os.getcwd(),           help="where to save results")
+    parser.add_argument(      "--explore",      action='store_true',           help="explore the classifier before training it")
+    parser.add_argument(      "--zoom",         default=0.15, type=float,      help="zoom values for probability map creation")
+    parser.add_argument(      "--points",       default=2000, type=int,        help="number of xupport points for probability map creation")
+    parser.add_argument(      "--signal",       default=["1.0"],type=str,      help="list of labels which are classified as signal", nargs='+')
 
     # parse args   
     args = parser.parse_args()
 
     # learn from data
-    analysis = analysis.analysis(args)
-    analysis.run()
+    app = analysis.analysis(args)
+    app.run()
     
     pass # run
 ############################################################################
