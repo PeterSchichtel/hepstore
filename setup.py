@@ -12,29 +12,35 @@ setup(name='hepstore',
       author='Peter Schichtel',
       author_email='peterschichtel@icloud.com',
       license='Public',
+      
       packages=['hepstore',
+                'hepstore.docker',
                 'hepstore.analysis',
                 'hepstore.multiprocess',
                 'hepstore.eas',
                 'hepstore.learn',
                 'hepstore.tools',
                 'hepstore.plot'],
+      
       install_requires=[
           'docker',
           'docker-pycreds',
           'sklearn',
       ],
+      
       entry_points = {
           'console_scripts': [
               'hepstore                = hepstore:main',
-              'hepstore-herwig         = hepstore.herwig:run',
-              'hepstroe-corsika        = hepstore.corsika:run',
-              'hepstore-hepmc2corsika  = hepstore.hepmc2corsika:run',
+              'hepstore-herwig         = hepstore.docker.herwig:run',
+              'hepstroe-corsika        = hepstore.docker.corsika:run',
+              'hepstore-hepmc2corsika  = hepstore.docker.hepmc2corsika:run',
               'hepstore-eas            = hepstore.eas:run',
               'hepstore-learn          = hepstore.learn:main',
               'hepstore-plot           = hepstore.plot:run',
           ]
       },
+      
       keywords = ['hepstore'],
       include_package_data=True,
-      zip_safe=False)
+      zip_safe=False,
+)
