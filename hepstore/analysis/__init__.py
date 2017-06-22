@@ -3,6 +3,14 @@
 import os
 import machine_learning
 
+def crossection(args):
+    try:
+        x, y = map(float, args.split(','))
+        return (x, y)
+    except:
+        raise TypeError("--crossection must be x,y")
+    pass
+
 ############################################################################
 ## run the app
 ############################################################################
@@ -35,7 +43,7 @@ def main():
     parser.add_argument(      "--background_labels",        default=["0.0"],     type=str, nargs='+',   help="specify labels used as background")
     
     parser.add_argument(      "--luminosity",               default=20000.,      type=float,            help="luminosity for analysis")
-    parser.add_argument(      "--crossection",              default=(1.0,0.5),   type=tuple,            help="crossection for signal and background")
+    parser.add_argument(      "--crossection",              default=(1.0,0.5),   type=crossection,      help="crossection for signal and background")
     parser.add_argument(      "--ntotal",                   default=1000,        type=int,              help="number of total expected events")
     parser.add_argument(      "--minimal_signal_efficieny", default=0.1,         type=float,            help="define a minimal signal efficiency for statistical analysis")
 
