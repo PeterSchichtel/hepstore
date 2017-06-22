@@ -181,7 +181,7 @@ class Teacher(object):
         # fill field with classifier responce
         result = []
         for classification,coordinates in zip(self.student.classifier.predict_proba(self.student.scaler.transform(field))[:,1:],field):
-            result.append(([classification[0]]+coordinates))
+            result.append(classification.tolist()+coordinates)
             pass
         return np.array(result)
 
