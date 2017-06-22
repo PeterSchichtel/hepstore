@@ -81,8 +81,8 @@ class Analysis(Teacher):
         return exclusion_limit
     
     def __str__(self):
-        thestr = "--analysis:                    Z = %9.2e at       epsilon_s = %9.2e  \n" % self.maximum_significance()[0:2]
-        thestr+= "--analysis:           luminosity = %9.2e pb^(-1) at        Z = 2.0   \n" % self.two_sigma_luminosity()
+        thestr = "--analysis:                    Z = %9.2e at        epsilon_s = %9.2e  \n" % self.maximum_significance()[0:2]
+        thestr+= "--analysis:           luminosity = %9.2e pb^(-1) at        Z =  2.0   \n" % self.two_sigma_luminosity()
         thestr+= "--analysis: excluded above xsec  = %9.2e pb  with luminosity = %9.2e pb^(-1) and background = %9.2e pb " % (self.excluded_crossection(),self.options.luminosity,self.options.crossection[1])
         return thestr
     

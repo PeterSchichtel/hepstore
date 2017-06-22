@@ -78,9 +78,9 @@ class subplot(object):
 
     def contour(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
-        x = data[:,self.option.axis[0]]
-        y = data[:,self.option.axis[1]]
-        z = data[:,self.option.axis[3]]
+        z = data[:,self.options.axis[0]]
+        x = data[:,self.options.axis[1]]
+        y = data[:,self.options.axis[2]]
         triang = tri.Triangulation(x, y)
         plt.tricontourf(x,y,z,
                         cmap=self.color, #cm.Blues_r,
