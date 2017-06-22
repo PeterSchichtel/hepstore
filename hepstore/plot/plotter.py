@@ -78,7 +78,6 @@ class subplot(object):
 
     def contour(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber)
-        print data
         z = data[:,self.options.axis[0]]
         x = data[:,self.options.axis[1]]
         y = data[:,self.options.axis[2]]

@@ -135,6 +135,9 @@ class Teacher(object):
         # train student
         if not self.options.only_explore:
             self.student.prepare()
+            # check that training is allowed
+            if len(np.unique(self.student.label_train))<=1:
+                raise IndexError("not enough labels for training")
             self.student.train()
             self.student.test()
             pass
