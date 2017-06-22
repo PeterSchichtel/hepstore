@@ -17,7 +17,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 
 
-class MetaClassifier(object):
+class ClassifierInterface(object):
 
     def __init__(self,options):
         if options.classifier.lower() == "svc":
@@ -42,7 +42,7 @@ class DataUnit(object):
         pass
 
     def __add__(self,other):
-        result = dataunit()
+        result = DataUnit()
         result.data            = np.concatenate((self.data,           other.data))
         result.classification  = np.concatenate((self.classification, other.classification))
         return result
@@ -56,20 +56,16 @@ class DataUnit(object):
 
     pass
 
-class Student(object):
+class Student(ClassifierInterface):
 
     def __init__(self,options,data):
+        ClassifierInterface.__init__(self,options)
         self.options      = options
         self.data         = data
-        self.classifier   = MetaClassifier(options)
         pass
 
     def add_data(self,data):
         self.data += data
-        pass
-
-    def explore(self):
-        self.classifier.explore()
         pass
 
     def prepare(self):
@@ -80,16 +76,12 @@ class Student(object):
         self.scaler.fit(self.data_train)
         self.data_train_scaled = self.scaler.transform(self.data_train)
         self.data_test_scaled  = self.scaler.transform(self.data_test)
-        # explore the classifier
-        if self.options.explore:
-            self.explore()
-            pass
         pass
 
     def train(self):
-        self.classifier.classifier.fit(self.data_train_scaled,self.label_train)
+        self.classifier.fit(self.data_train_scaled,self.label_train)
         results_train={}
-        for label,classification in zip(self.label_train,self.classifier.classifier.predict_proba(self.data_train_scaled)):
+        for label,classification in zip(self.label_train,self.classifier.predict_proba(self.data_train_scaled)):
             if label in results_train:
                 results_train[label].append(classification[0])
                 pass
@@ -102,7 +94,7 @@ class Student(object):
 
     def test(self):
         results_test={}
-        for label,classification in zip(self.label_test,self.classifier.classifier.predict_proba(self.data_test_scaled)):
+        for label,classification in zip(self.label_test,self.classifier.predict_proba(self.data_test_scaled)):
             if label in results_test:
                 results_test[label].append(classification[0])
                 pass
@@ -146,8 +138,6 @@ class Teacher(object):
             self.student.train()
             self.student.test()
             pass
-        # save results and cross checks
-        self.save()
         pass
 
     def save(self):
@@ -195,21 +185,21 @@ class Teacher(object):
             pass
         return np.array(result)
 
-    def efficiency(self,is_signal,bins=1000):
+    def efficiency(self,labels,bins=1000):
         # load data
         data_scaled = np.concatenate((self.student.data_train_scaled, self.student.data_test_scaled))
-        labels      = np.concatenate((self.student.label_train      , self.student.label_test))
+        data_labels = np.concatenate((self.student.label_train      , self.student.label_test))
         data        = {}
-        for label in np.unique(labels):
+        for label in np.unique(data_labels):
             data[label] = []
             pass
-        for label,classification in zip( labels, self.student.classifier.predict_proba( data_scaled ) ):
+        for label,classification in zip( data_labels, self.student.classifier.predict_proba( data_scaled ) ):
             data[label].append(classification[0])
             pass
         # collect signal and background
         results     = None
         for label in data:
-            if not is_signal or label in self.options.signal:
+            if label in labels:
                 if results == None:
                     results = data[label]
                     pass
@@ -222,9 +212,9 @@ class Teacher(object):
         return np.histogram(results,bins=bins,range=(0,1),normed=True)
         
     def roc(self,bins=1000):
-        delta       = 1./float(bins) 
-        counts_signal    , bin_edges_signal     = self.efficiency(True ,bins=bins)
-        counts_background, bin_edges_background = self.efficiency(False,bins=bins)
+        delta                                   = 1./float(bins)
+        counts_signal    , bin_edges_signal     = self.efficiency(self.options.signal_labels    ,bins=bins)
+        counts_background, bin_edges_background = self.efficiency(self.options.background_labels,bins=bins)
         # generate ROC
         points = []
         for i in range(0,bins):

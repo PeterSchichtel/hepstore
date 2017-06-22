@@ -27,8 +27,8 @@ def run():
     args, unknown = parser.parse_known_args()
             
     # run the app
-    from hepstore.interface import dockerIF as hepmc2corsika
-    app=hepmc2corsika(
+    from interface import DockerIF as Hepmc2Corsika
+    app=Hepmc2Corsika(
         image=os.path.join(args.repository.lower(),args.generator.lower()),
         version=args.generator_version
     )

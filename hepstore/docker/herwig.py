@@ -21,8 +21,8 @@ def run():
     args, unknown = parser.parse_known_args()
             
     # run the app
-    from hepstore.interface import dockerIF as herwig
-    app=herwig(
+    from interface import DockerIF as Herwig
+    app=Herwig(
         image=os.path.join(args.repository.lower(),args.generator.lower()),
         version=args.generator_version
     )

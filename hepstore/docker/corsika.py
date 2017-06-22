@@ -31,8 +31,8 @@ def run():
     args, unknown = parser.parse_known_args()
             
     # start app
-    from hepstore.interface import dockerIF as corsika
-    app=corsika(
+    from interface import DockerIF as Corsika
+    app=Corsika(
         image=os.path.join(args.repository.lower(),args.generator.lower()),
         version=args.generator_version,
         verbose=args.verbose

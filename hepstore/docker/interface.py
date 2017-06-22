@@ -2,7 +2,7 @@ import docker
 import os
 
 
-class dockerIF:
+class DockerIF:
     def __init__(self,image="GENERATOR",version="TAG",verbose=False):
         self.IMAGE  = image
         self.TAG    = version
