@@ -64,82 +64,8 @@ class Teacher(object):
         if self.options.explore or self.options.only_explore:
             pass
         if not self.options.only_explore:
-            # training data
-            np.save(os.path.join(self.options.path,"data_train.npy")     ,self.student.data_train)
-            np.save(os.path.join(self.options.path,"label_train.npy")    ,self.student.label_train)
-            # testing data
-            np.save(os.path.join(self.options.path,"data_test.npy")      ,self.student.data_test)
-            np.save(os.path.join(self.options.path,"label_test.npy")     ,self.student.label_test)
-            # classifier map
-            np.save(os.path.join(self.options.path,"probability_map.npy"),self.probability_map())
-            # ROC
-            np.save(os.path.join(self.options.path,"roc.npy")            ,self.roc())
+            self.student.save()
             pass
         pass
-
-    def probability_map(self):
-        data   = np.concatenate((self.student.data_train,self.student.data_test))
-        field  = []
-        ranges = []
-        # define a range with x% zoom for better plotting
-        for i in range(0,data.shape[1]):
-            values = [min(data[:,i]),max(data[:,i])]
-            zoom   = self.options.zoom*abs(values[1]-values[0])
-            values = [values[0]-zoom,values[1]+zoom]
-            ranges.append(values)
-            pass
-        # create support points randomly
-        for i in range(0,self.options.points):
-            point = []
-            for arange in ranges:
-                point.append(np.random.uniform(arange[0],arange[1]))
-                pass
-            field.append(point)
-            pass
-        # fill field with classifier responce
-        result = []
-        for classification,coordinates in zip(self.student.classifier.predict_proba(self.student.scaler.transform(field))[:,1:],field):
-            result.append(classification.tolist()+coordinates)
-            pass
-        return np.array(result)
-
-    def efficiency(self,labels,bins=1000):
-        # load data
-        data_scaled = np.concatenate((self.student.data_train_scaled, self.student.data_test_scaled))
-        data_labels = np.concatenate((self.student.label_train      , self.student.label_test))
-        data        = {}
-        for label in np.unique(data_labels):
-            data[label] = []
-            pass
-        for label,classification in zip( data_labels, self.student.classifier.predict_proba( data_scaled ) ):
-            data[label].append(classification[0])
-            pass
-        # collect signal and background
-        results     = None
-        for label in data:
-            if label in labels:
-                if results == None:
-                    results = data[label]
-                    pass
-                else:
-                    results = np.concatenate((results,data[label]))
-                    pass
-                pass
-            pass
-        # compute signal and background efficiencies
-        return np.histogram(results,bins=bins,range=(0,1),normed=True)
-        
-    def roc(self,bins=1000):
-        delta                                   = 1./float(bins)
-        counts_signal    , bin_edges_signal     = self.efficiency(self.options.signal_labels    ,bins=bins)
-        counts_background, bin_edges_background = self.efficiency(self.options.background_labels,bins=bins)
-        # generate ROC
-        points = []
-        for i in range(0,bins):
-            x = sum(counts_signal[:i])*delta
-            y = 1.0 - sum(counts_background[:i])*delta
-            points.append([x,y])
-            pass
-        return np.array(points)
 
     pass

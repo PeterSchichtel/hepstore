@@ -39,7 +39,7 @@ class DataUnit(object):
 
     def zip(self):
         return zip(self.data.tolist(),self.classification.tolist())
-
+    
     def log_transform(self):
         new_data = []
         new_label= []
