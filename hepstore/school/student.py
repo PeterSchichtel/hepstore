@@ -57,7 +57,7 @@ class Student(ClassifierInterface):
         pass
 
     def prepare(self):
-        if self.option.log_transform:
+        if self.options.log_transform:
             self.data.log_transform()
             pass
         # generate train and test data
