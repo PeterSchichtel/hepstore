@@ -47,7 +47,7 @@ class ClassifierInterface(object):
 class Student(ClassifierInterface):
 
     def __init__(self,options,data):
-        ClassifierInterface.__init__(self,options)
+        super(ClassifierInterface,self).__init__(options)
         self.options      = options
         self.data         = data
         pass

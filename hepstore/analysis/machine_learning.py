@@ -17,8 +17,8 @@ def crossection_type(args):
 
 class MachineLearningParser(SchoolParser):
 
-    def init(self,description="This app utilizes the hepstore.school to learn and analyse typical hep physics data"):
-        SchoolParser.__init(self,description=description)
+    def __init__(self,description="This app utilizes the hepstore.school to learn and analyse typical hep physics data"):
+        super(SchoolParser,self).__init__(description=description)
         ## add functionality
         self.add_argument(      "--luminosity",               default=20000.,      type=float,            help="luminosity for analysis")
         self.add_argument(      "--crossection",              default=(1.0,0.5),   type=crossection_type, help="crossection for signal and background")
@@ -30,9 +30,11 @@ class MachineLearningParser(SchoolParser):
 
 class Analysis(Teacher):
 
-    def __init__(self,options):
-        #Teacher.__init__(self,options)
-        super(Analysis, self).__init__(options)
+    def __init__(self,args=None):
+        arg_parser = MachineLearningParser()
+        # parse args
+        parsed_args, unknown = arg_parser.parse_known_args(args)
+        super(Teacher,self).__init__(parsed_args)
         pass
 
     def analyse(self):

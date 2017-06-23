@@ -4,7 +4,7 @@ import os
 import machine_learning
 from hepstore.errors import *
 import sys
-
+import argparser
 
 ############################################################################
 ## run the app
@@ -12,22 +12,16 @@ import sys
 def main(args=None):
 
     # we need to setup the arg parser
-    arg_parser = machine_learning.MachineLearningParser()
+    arg_parser = argparser.ArgumentParser(description="Meta code to analyse typical hep data in .npy format")
+    arg_parser.add_argument("mode", type=str, nargs='+', required=True, help="specify the analyses which should be performed")
 
     # parse args
     parsed_args, unknown = arg_parser.parse_known_args(args)
 
-    # don't allow unknown args
-    if unknown != []:
-        raise ParserError( "unknown arguments %s" % " ,".join(unknown) )
-
     # learn from data
-    app = machine_learning.Analysis(parsed_args)
-    try:
-        app.analyse()
-        pass
-    except LabelError as err:
-        print err
+    if "learn" in parsed_args:
+        analysis = machine_learning.Analysis(unknown)
+        analysis.analyse()
         pass
     
     pass # main
