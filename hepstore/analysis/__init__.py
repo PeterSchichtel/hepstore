@@ -13,13 +13,13 @@ def main(args=None):
 
     # we need to setup the arg parser
     arg_parser = argparse.ArgumentParser(description="Meta code to analyse typical hep data in .npy format")
-    arg_parser.add_argument("mode", type=str, nargs='+', required=True, help="specify the analyses which should be performed")
+    arg_parser.add_argument("mode", type=str, nargs='+', help="specify the analyses which should be performed")
 
     # parse args
     parsed_args, unknown = arg_parser.parse_known_args(args)
 
     # learn from data
-    if "learn" in parsed_args:
+    if "learn" in parsed_args.mode:
         analysis = machine_learning.Analysis(unknown)
         analysis.analyse()
         pass
