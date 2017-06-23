@@ -3,7 +3,7 @@
 import numpy as np
 import os
 
-from hepstore.learn.school import Teacher
+from hepstore.school.teacher import Teacher
 
 class Analysis(Teacher):
 
