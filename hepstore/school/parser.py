@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import argparse.ArgumentParser as ArgumentParser
+from argparse import ArgumentParser
 
 class SchoolParser(ArgumentParser):
 
