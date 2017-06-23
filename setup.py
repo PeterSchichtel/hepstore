@@ -14,6 +14,7 @@ setup(name='hepstore',
       license='Public',
       
       packages=['hepstore',
+                'hepstore.errors',
                 'hepstore.docker',
                 'hepstore.analysis',
                 'hepstore.multiprocess',
