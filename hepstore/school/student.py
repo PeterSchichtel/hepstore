@@ -17,7 +17,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 
-from errors import *
+from hepstore.errors import *
 from data import *
 
 class ClassifierInterface(object):

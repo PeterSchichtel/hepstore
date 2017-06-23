@@ -7,7 +7,7 @@ import sys
 
 import hepstore.tools as tools
 
-from errors import *
+from hepstore.errors import *
 from student import *
 from data import *
 

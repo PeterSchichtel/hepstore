@@ -3,7 +3,30 @@
 import numpy as np
 import os
 
+from hepstore.school.parser  import SchoolParser
 from hepstore.school.teacher import Teacher
+
+
+def crossection_type(args):
+    try:
+        x, y = map(float, args.split(','))
+        return (x, y)
+    except:
+        raise TypeError("--crossection must be x,y")
+    pass
+
+class MachineLearningParser(SchoolParser):
+
+    def init(self,description="This app utilizes the hepstore.school to learn and analyse typical hep physics data"):
+        SchoolParser.__init(self,description=description)
+        ## add functionality
+        self.add_argument(      "--luminosity",               default=20000.,      type=float,            help="luminosity for analysis")
+        self.add_argument(      "--crossection",              default=(1.0,0.5),   type=crossection_type, help="crossection for signal and background")
+        self.add_argument(      "--ntotal",                   default=1000,        type=int,              help="number of total expected events")
+        self.add_argument(      "--minimal_signal_efficieny", default=0.1,         type=float,            help="define a minimal signal efficiency for statistical analysis")
+        pass
+
+    pass
 
 class Analysis(Teacher):
 
