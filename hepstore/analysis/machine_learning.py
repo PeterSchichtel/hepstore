@@ -5,7 +5,7 @@ import os
 
 from hepstore.school.parser  import SchoolParser
 from hepstore.school.teacher import Teacher
-
+from hepstore.errors import *
 
 def crossection_type(args):
     try:
@@ -38,8 +38,13 @@ class Analysis(Teacher):
         pass
 
     def analyse(self):
-        self.teach()
-        self.save()
+        try:
+            self.teach()
+            self.save()
+            pass
+        except LabelError as err:
+            print err
+            pass
         pass
 
     def save(self):
