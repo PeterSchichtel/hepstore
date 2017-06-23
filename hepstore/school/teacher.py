@@ -7,6 +7,10 @@ import sys
 
 import hepstore.tools as tools
 
+from errors import *
+from student import *
+from data import *
+
 from itertools import cycle
 from sklearn.preprocessing import StandardScaler 
 from sklearn.neural_network import MLPClassifier
@@ -15,97 +19,8 @@ from sklearn.model_selection import validation_curve
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 
-
-class ClassifierInterface(object):
-
-    def __init__(self,options):
-        if options.classifier.lower() == "svc":
-            self.classifier =  SVC(C=1.0,kernel='rbf',probability=True,random_state=options.random_state)
-            pass
-        elif options.classifier.lower() == "mlp":
-            self.classifier =  MLPClassifier()
-        else:
-            raise NotImplemented("unknown classifier '%s' " % options.classifier )
-        pass
-
-    def explore(self):
-        pass
-
-    pass
-    
-class DataUnit(object):
-
-    def __init__(self,data=None,classification=None):
-        self.data           = data
-        self.classification = classification
-        pass
-
-    def __add__(self,other):
-        result = DataUnit()
-        result.data            = np.concatenate((self.data,           other.data))
-        result.classification  = np.concatenate((self.classification, other.classification))
-        return result
-
-    def train_test_split(self,test_size=0.25,random_state=0):
-        return train_test_split(self.data,self.classification,test_size=test_size,random_state=random_state)
-        pass
-
-    def zip(self):
-        return zip(self.data,self.classification)
-
-    pass
-
-class Student(ClassifierInterface):
-
-    def __init__(self,options,data):
-        ClassifierInterface.__init__(self,options)
-        self.options      = options
-        self.data         = data
-        pass
-
-    def add_data(self,data):
-        self.data += data
-        pass
-
-    def prepare(self):
-        # generate train and test data
-        self.data_train,self.data_test,self.label_train,self.label_test = self.data.train_test_split(test_size=self.options.test_size,random_state=self.options.random_state)
-        # scale
-        self.scaler            = StandardScaler()
-        self.scaler.fit(self.data_train)
-        self.data_train_scaled = self.scaler.transform(self.data_train)
-        self.data_test_scaled  = self.scaler.transform(self.data_test)
-        pass
-
-    def train(self):
-        self.classifier.fit(self.data_train_scaled,self.label_train)
-        results_train={}
-        for label,classification in zip(self.label_train,self.classifier.predict_proba(self.data_train_scaled)):
-            if label in results_train:
-                results_train[label].append(classification[0])
-                pass
-            else:
-                results_train[label] = [classification[0]]
-                pass
-            pass
-        self.train_results = results_train
-        pass
-
-    def test(self):
-        results_test={}
-        for label,classification in zip(self.label_test,self.classifier.predict_proba(self.data_test_scaled)):
-            if label in results_test:
-                results_test[label].append(classification[0])
-                pass
-            else:
-                results_test[label] = [classification[0]]
-                pass
-            pass
-        self.test_results = results_test
-        pass
-
-    pass
 
 class Teacher(object):
 
@@ -120,7 +35,7 @@ class Teacher(object):
         # load data
         for fin in self.options.file:
             raw_data = np.load(fin)
-            data     = DataUnit(raw_data,[next(self.label)]*len(raw_data))
+            data     = DataUnit(raw_data,np.array([next(self.label)]*len(raw_data)))
             if self.student == None:
                 self.student = Student(self.options,data)
                 pass
@@ -137,7 +52,7 @@ class Teacher(object):
             self.student.prepare()
             # check that training is allowed
             if len(np.unique(self.student.label_train))<=1:
-                raise IndexError("not enough labels for training")
+                raise LabelError("not enough labels for training")
             self.student.train()
             self.student.test()
             pass

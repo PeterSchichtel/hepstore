@@ -94,7 +94,8 @@ class subplot(object):
         x=data[:,self.options.axis[0]]
         y=data[:,self.options.axis[1]]
         plt.scatter(x, y,
-                    c=self.color, marker=self.marker,
+                    c=self.color,
+                    marker=self.marker, s=self.markersize,
                     alpha=self.options.alpha,
                     label=self.legend)
         pass
@@ -155,8 +156,12 @@ class figure(object):
     
     def plot(self):
         for fin in self.options.file:
-            # load data from file
-            data               = np.load(fin)
+            try:
+                # load data from file
+                data           = np.load(fin)
+                pass
+            except IOError:
+                continue
             if self.options.shake:
                 data = shake(data)
                 pass
@@ -165,8 +170,8 @@ class figure(object):
             subplot.color      = next(self.colors)
             subplot.linestyle  = next(self.linestyles)
             subplot.marker     = next(self.markers)
-            subplot.markersize = next(self.markersizes)
-            subplot.linewidth  = next(self.linewidths)
+            subplot.markersize = float(next(self.markersizes))
+            subplot.linewidth  = float(next(self.linewidths))
             subplot.legend     = next(self.legends)
             # determine kind of plot
             kind               = next(self.kind)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import school
+import teacher
 
 ############################################################################
 ## run the app
@@ -38,9 +38,9 @@ def main():
     args = parser.parse_args()
 
     # learn from data
-    teacher = school.Teacher(args)
-    teacher.teach()
-    teacher.save()
+    app = teacher.Teacher(args)
+    app.teach()
+    app.save()
     
     pass # run
 ############################################################################
