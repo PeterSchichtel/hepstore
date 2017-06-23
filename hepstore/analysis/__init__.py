@@ -4,7 +4,7 @@ import os
 import machine_learning
 from hepstore.errors import *
 import sys
-import argparser
+import argparse
 
 ############################################################################
 ## run the app
@@ -12,7 +12,7 @@ import argparser
 def main(args=None):
 
     # we need to setup the arg parser
-    arg_parser = argparser.ArgumentParser(description="Meta code to analyse typical hep data in .npy format")
+    arg_parser = argparse.ArgumentParser(description="Meta code to analyse typical hep data in .npy format")
     arg_parser.add_argument("mode", type=str, nargs='+', required=True, help="specify the analyses which should be performed")
 
     # parse args
