@@ -52,8 +52,8 @@ class Analysis(Teacher):
     
     def significance(self,bins=1000):
         delta       = 1./float(bins) 
-        counts_signal    , bin_edges_signal     = self.efficiency(self.options.signal_labels    ,bins=bins) 
-        counts_background, bin_edges_background = self.efficiency(self.options.background_labels,bins=bins)
+        counts_signal    , bin_edges_signal     = self.student.efficiency(self.options.signal_labels    ,bins=bins) 
+        counts_background, bin_edges_background = self.student.efficiency(self.options.background_labels,bins=bins)
         # generate significance curve
         points = []
         for i in range(0,bins):
@@ -68,7 +68,6 @@ class Analysis(Teacher):
             points.append([es,sig])
             pass
         return np.array(points)
-
     
     def maximum_significance(self,bins=1000):
         sig   = max(      self.significance(bins=bins)[:,1])
@@ -78,7 +77,7 @@ class Analysis(Teacher):
     
     def two_sigma_luminosity(self,bins=1000):
         max_s,max_es,index = self.maximum_significance(bins=bins)
-        max_eb             = self.efficiency(self.options.background_labels,bins=bins)[0][index]
+        max_eb             = self.student.efficiency(self.options.background_labels,bins=bins)[0][index]
         return 4.0 * ( max_es * self.options.crossection[0]  +  max_eb * self.options.crossection[1] ) / ( max_es**2 * self.options.crossection[0]**2 )
     
     def excluded_crossection(self,bins=1000):
