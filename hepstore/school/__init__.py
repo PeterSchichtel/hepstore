@@ -19,7 +19,7 @@ def main(args=None):
 
     # don't allow unknown args
     if unknown != []:
-        raise errors.ParserError( "unknown arguments %s" % " ,".join(unknown) )
+        raise ParserError( "unknown arguments %s" % " ,".join(unknown) )
 
     # learn from data
     app = teacher.Teacher(parsed_args)

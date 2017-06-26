@@ -43,13 +43,14 @@ class Teacher(object):
                 self.student.add_data(data)
                 pass
             pass
+        # prepare student
+        self.student.prepare()
         # explore classifier
         if self.options.explore or self.options.only_explore:
             self.student.explore()
             pass
         # train student
         if not self.options.only_explore:
-            self.student.prepare()
             # check that training is allowed
             if len(np.unique(self.student.label_train))<=1:
                 raise LabelError("not enough labels for training")

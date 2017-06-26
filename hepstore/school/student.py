@@ -1,53 +1,26 @@
 #!/usr/bin/env python
 
 import os
-
 import numpy as np
 import sys
-
-import hepstore.tools as tools
-
 from itertools import cycle
+
 from sklearn.preprocessing import StandardScaler 
-from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
 from sklearn.model_selection import validation_curve
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 
+import hepstore.tools as tools
 from hepstore.errors import *
 from data import *
+import books
 
-class ClassifierInterface(object):
 
-    def __init__(self,options):
-        if options.classifier.lower() == "svc":
-            self.classifier =  SVC(C=1.0,kernel='rbf',probability=True,random_state=options.random_state)
-            pass
-        elif options.classifier.lower() == "mlp":
-            self.classifier =  MLPClassifier()
-            pass
-        elif options.classifier.lower() == "lda":
-            self.classifier = LinearDiscriminantAnalysis(solver='eigen',shrinkage='auto')
-            pass
-        elif options.classifier.lower() == "qda":
-            self.classifier = QuadraticDiscriminantAnalysis()
-            pass
-        else:
-            raise NotImplemented("unknown classifier '%s' " % options.classifier )
-        pass
-
-    def explore(self):
-        pass
-
-    pass
-
-class Student(ClassifierInterface):
+class Student(books.Book):
 
     def __init__(self,options,data):
-        ClassifierInterface.__init__(self,options)
+        books.Book.__init__(self,options)
         self.options      = options
         self.data         = data
         pass
@@ -67,6 +40,10 @@ class Student(ClassifierInterface):
         self.scaler.fit(self.data_train)
         self.data_train_scaled = self.scaler.transform(self.data_train)
         self.data_test_scaled  = self.scaler.transform(self.data_test)
+        pass
+
+    def explore(self):
+        self.classifier.explore(self.data_train_scaled,self.label_train)
         pass
 
     def train(self):

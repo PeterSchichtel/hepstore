@@ -108,8 +108,20 @@ class subplot(object):
                  linestyle=self.linestyle,linewidth=self.linewidth,
                  label=self.legend)
         pass
-        
 
+    def errorband(self,data):
+        plt.subplot(self.options.rows,self.options.columns,self.subnumber)
+        x =data[:,self.options.axis[0]]
+        y =data[:,self.options.axis[1]]
+        dy=data[:,self.options.axis[2]]
+        plt.plot(x,y,
+                 linestyle=self.linestyle,linewidth=self.linewidth,
+                 label=self.legend)
+        plt.fill_between(x, y-dy, y+dy,
+                         linestyle=self.linestyle,linewidth=self.linewidth,
+                         alpha=0.2,)
+        pass
+        
     def finalize(self):
         subplot = plt.subplot(self.options.rows,self.options.columns,self.subnumber)
         plt.legend()
@@ -189,6 +201,9 @@ class figure(object):
                 pass
             elif kind == "line":
                 subplot.line(data)
+                pass
+            elif kind == "errorband":
+                subplot.errorband(data)
                 pass
             else:
                 raise ValueError("unknown kind of plot '%s'" % kind)
