@@ -34,6 +34,16 @@ class SchoolParser(ArgumentParser):
         self.add_argument(      "--store_covariance",  action='store_true')
         self.add_argument(      "--tol",               default=0.0001)
         self.add_argument(      "--reg_param",         default=0.0)
+        self.add_argument(      "--c_parameter",       default=1.0)
+        self.add_argument(      "--kernel",            default='rbf', type=str)
+        self.add_argument(      "--degree",            default=3)
+        self.add_argument(      "--gamma",             default='auto')
+        self.add_argument(      "--coef0",             default=0.0)
+        self.add_argument(      "--shrinking",         action='store_false')
+        self.add_argument(      "--probability",       action='store_true')
+        self.add_argument(      "--cache_size",        default=200.)
+        self.add_argument(      "--verbose",           action='store_true')
+        self.add_argument(      "--max_iter",          default=-1)
         pass
         
     pass

@@ -220,7 +220,7 @@ class figure(object):
         for subplot in self.subplots.values():
             subplot.finalize()
             pass
-        print "--info: saving figure to %s" % self.options.path
+        print "--plotter: saving figure to %s" % self.options.path
         mkdir(os.path.dirname(self.options.path))
         self.figure.savefig(self.options.path, format=self.options.format, dpi=self.options.dpi)
         plt.close(self.figure)
