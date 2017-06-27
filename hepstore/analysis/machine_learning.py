@@ -49,10 +49,12 @@ class Analysis(Teacher):
 
     def save(self):
         super(Analysis, self).save()
-        # significance
-        np.save(os.path.join(self.options.path,"significance.npy")   ,self.significance())
-        # info on screen
-        print self
+        if not self.options.only_explore:
+            # significance
+            np.save(os.path.join(self.options.path,"significance.npy")   ,self.significance())
+            # info on screen
+            print self
+            pass
         pass
     
     def significance(self,bins=1000):

@@ -176,7 +176,7 @@ class SVC(sklearn.svm.SVC):
         print "--SVC: explore"
         # specify parameters for exploariotn
         param_dist = { "C"        : scipy.stats.uniform(0.01,10.0),
-                       "kernel"   : [ 'linear', 'poly', 'rbf', 'sigmoid', 'precomputed' ],
+                       "kernel"   : [ 'linear', 'poly', 'rbf', 'sigmoid' ],
                        "degree"   : scipy.stats.randint(1,5),
                        "gamma"    : scipy.stats.uniform(0.001,1.0),
                        "coef0"    : scipy.stats.uniform(-1.,1,),
