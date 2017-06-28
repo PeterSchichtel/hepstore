@@ -1,6 +1,50 @@
 #!/usr/bin/env python
 
 import os
+import parser
+import framework
+import sys
+from hepstore.errors import *
+
+############################################################################
+## run the app
+############################################################################
+def main(args=None):
+
+    # create arg parser for school
+    arg_parser = parser.EasParser()
+
+    # parse args
+    parsed_args, unknown = arg_parser.parse_known_args(args)
+
+    # don't allow unknown args
+    if unknown != []:
+        raise ParserError( "unknown arguments %s" % " ,".join(unknown) )
+
+    # produce/analyse cosmic ray air showers
+    app = framework.Steerer(parsed_args)
+    try:
+        app.run()
+        pass
+    except Exception as exc:
+        raise exc
+    
+    pass # main
+############################################################################
+
+############################################################################
+## make executable script
+############################################################################
+if __name__ == "__main__":
+    main()
+    pass
+############################################################################
+
+
+sys.exit()
+#!/usr/bin/env python
+
+import os
 
 import steering
 import analysis
@@ -16,33 +60,6 @@ def run():
 
     # setup arg parser    
     parser = argparse.ArgumentParser(description='main steering program for corsika shower and analysis handler')
-    parser.add_argument("-d", "--directory",   default=os.getcwd()     , type=str, help="top level starting point")
-    parser.add_argument("-E", "--energy",      default=[]              , help="energies to be considered",     nargs='+')
-    parser.add_argument(      "--erange",      default=0.0             , help="specify a energy range for production")
-    parser.add_argument("-e", "--element",     default=[]              , help="elemens to be considered",      nargs='+')
-    parser.add_argument("-p", "--process",     default=[]              , help="processes to be considered",    nargs='+')
-    parser.add_argument("-g", "--generator",   default=[]              , help="genrators to be considered",    nargs='+')
-    parser.add_argument("-m", "--model",       default=[]              , help="models to be considered",       nargs='+')
-    parser.add_argument("-f", "--final",       default=[]              , help="final states to be considered", nargs='+')
-    parser.add_argument("-S", "--shower",      action="store_true"     , help="start showers in allowed folders") 
-    parser.add_argument("-L", "--list",        action="store_true"     , help="list statistics")
-    parser.add_argument("-A", "--analyse",     action="store_true"     , help="start analysis in all allowed folders")
-    parser.add_argument("-C", "--corsika",     default="7.4_stackin"   , type=str    , help="which corsika (sub)version")
-    parser.add_argument("-N", "--nevents",     default=1, type=int     , help="number of events to be considered")
-    parser.add_argument("-j", "--job",         default=1, type=int     , help="number of threads")
-    parser.add_argument("-P", "--plot",        default=[]              , help="create plots from histograms",  nargs='+')
-    parser.add_argument("-F", "--figure",      default="", type=str    , help="where to save figures")
-    parser.add_argument(      "--histogram",   action="store_true"     , help="plot a histogram")
-    parser.add_argument(      "--fit",         action="store_true"     , help="plot a fit")
-    parser.add_argument(      "--interpolate", action="store_true"     , help="interpolate histogram")
-    parser.add_argument(      "--contour",     action="store_true"     , help="draw 2d contour plot")
-    parser.add_argument(      "--heat",        action="store_true"     , help="draw 2d heat plot")
-    parser.add_argument(      "--scatter",     action="store_true"     , help="scatter unbinned data")
-    parser.add_argument("-a", "--axis",        default=[0,1], type=int , help="which axis to be considered",  nargs='+')
-    parser.add_argument("-l", "--level",       default=[1.], type=float, help="which sigma levels to plot for contour",  nargs='+')
-    parser.add_argument("-c", "--color",       default=[]  , type=str  , help="list of colors to be used instead of default",  nargs='+')
-    parser.add_argument(      "--line",        default=[]  , type=str  , help="list of line styles to be used instead of default",  nargs='+')
-    parser.add_argument(      "--normalised",  action="store_true"     , help="normalise data")
 
     # parse args   
     args = parser.parse_args()
@@ -63,21 +80,18 @@ def run():
         steerer.list()
         pass
 
-    # if we want to shower sth
+    # if we want to generate events
+
+    # if we want to shower
     if args.shower:
         steerer.begin()
         steerer.shower()
         pass
 
-    # if we want to analyse sth
+    # if we want to extract observables
     if args.analyse:
         steerer.run(analysis.analysis)
         pass #analysis
-
-    # if we want to plot sth
-    if args.plot:
-        steerer.plot()
-        pass
 
     # back to cdir
     os.chdir(cdir)
