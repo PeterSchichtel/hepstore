@@ -22,7 +22,7 @@ def main(args=None):
         raise ParserError( "unknown arguments %s" % " ,".join(unknown) )
 
     # produce/analyse cosmic ray air showers
-    app = framework.Steerer(parsed_args)
+    app = framework.Captian(parsed_args)
     try:
         app.run()
         pass
@@ -38,63 +38,4 @@ def main(args=None):
 if __name__ == "__main__":
     main()
     pass
-############################################################################
-
-
-sys.exit()
-#!/usr/bin/env python
-
-import os
-
-import steering
-import analysis
-
-############################################################################
-## run the app
-############################################################################
-def run():
-
-    # we need to setup the arg parser
-    import argparse
-    parser = argparse.ArgumentParser(description="This App allows to run the EAS analysis frame work out of the box with python 2.7.")
-
-    # setup arg parser    
-    parser = argparse.ArgumentParser(description='main steering program for corsika shower and analysis handler')
-
-    # parse args   
-    args = parser.parse_args()
-
-    # correctly normlaize figure path's
-    args.figure = os.path.realpath(args.figure)
-
-    # goto working dir
-    cdir=os.getcwd()
-    os.chdir(args.directory)
-
-    # prepare folder/steering structure
-    steerer=steering.steer(args)
-
-    # if we want to list stats
-    if args.list:
-        steerer.begin()
-        steerer.list()
-        pass
-
-    # if we want to generate events
-
-    # if we want to shower
-    if args.shower:
-        steerer.begin()
-        steerer.shower()
-        pass
-
-    # if we want to extract observables
-    if args.analyse:
-        steerer.run(analysis.analysis)
-        pass #analysis
-
-    # back to cdir
-    os.chdir(cdir)
-        
-    pass # run
 ############################################################################

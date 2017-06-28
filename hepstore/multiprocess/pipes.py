@@ -6,7 +6,7 @@ import os
 
 # contains worker classes for multiprocessing
 
-class test(object):
+class Test(object):
     def __init__(self):
         self.pid = None
         pass
@@ -23,7 +23,7 @@ class test(object):
         pass
     pass
 
-class multipipeline(object):
+class Multipipeline(object):
     def __init__(self,app=None,args=None,job=1):
         #####################################
         # local worker

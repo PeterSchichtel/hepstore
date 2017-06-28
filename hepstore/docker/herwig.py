@@ -3,7 +3,7 @@ import os
 ############################################################################
 ## run the app
 ############################################################################
-def run():
+def run(args=None):
 
     # we need to setup the arg parser
     import argparse
@@ -18,7 +18,7 @@ def run():
     parser.add_argument("--directory"        , type=str, default=os.getcwd()       ,help="mount this directoy as /UserDirectory (automatic working dir!), default is PWD!")
     
     # parse args
-    args, unknown = parser.parse_known_args()
+    args, unknown = parser.parse_known_args(args)
             
     # run the app
     from interface import DockerIF as Herwig

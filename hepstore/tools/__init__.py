@@ -32,6 +32,10 @@ class bcolors:
     UNDERLINE = '\033[4m'
     pass #bcolors
 
+# compute centre of mass for two given energies (assume mass less particles)
+def centre_of_mass(ea,eb):
+    return np.sqrt( 0.5 * ea * eb )
+
 # generic data type, with save/load function
 class data:
     def __init__(self,name):

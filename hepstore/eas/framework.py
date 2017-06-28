@@ -12,22 +12,22 @@
 ## python imports
 import os,sys
 import glob
-import multiprocessing as mp
-import scipy
-from multiprocessing import Process, Pipe
 import time
 import collections
 
-## user imports
-import interaction
+from hepstore.tools import *
+from hepstore.multiprocess.pipes import Multipipeline
+
+
+## project imports
+import generator
 import shower
 import analysis
-from ..tools import *
-from ..multiprocess.pipes import multipipeline
 
-class steer:
+class Captian:
+    
     def __init__(self,options):
-        print "--info: initialising folder structure, this may take some time"
+        print "--eas: initialising folder structure, this may take some time"
         self.options   = options
         self.path      = None
         self.files     = None
@@ -51,10 +51,12 @@ class steer:
             self.pathes[path] = glob.glob( os.path.join(os.path.abspath(os.path.join(path,"events")),"event-*") )
             pass # for path
         pass # init
+    
     def begin(self):
         ## we need an iterator on all these different file pathes
         self.iter_pathes=iter(sorted(self.pathes.keys()))
         pass
+    
     def next(self):
         ## go to the next availbale file path
         try:
@@ -69,57 +71,45 @@ class steer:
         except StopIteration:
             return False
         pass
-    def isStackin(self):
+    
+    def is_stackin(self):
         return "stackin" in self.options.corsika.lower()
-    def run(self,app):
-        # set itaretors to start
-        self.begin()
+    
+    def run(self):
+        # if we want to generate events
+        if self.options.generate:
+            self.begin()
+            self.execute(generator.Generator)
+            pass
+        # if we want to shower
+        if self.options.shower:
+            self.begin()
+            self.execute(shower.Shower)
+            pass
+        # if we want to extract observables
+        if self.options.analyse:
+            self.begin()
+            self.execute(analysis.Analysis)
+            pass 
+        # if we want to list stats
+        if self.options.list:
+            self.begin()
+            self.list()
+            pass
+        pass
+    
+    def execute(self,app):
         # create multiprocessing processes
-        processes = multipipeline( app=app, args=self.options, job=self.options.job )
+        processes = Multipipeline( app=app, args=self.options, job=self.options.job )
         # feed the data into the processes
         while self.next():
             processes.send(self.path)
             pass #while
         # finalize processes
         processes.close()
-        pass #analyse
-    def interaction(self):
         pass
-    def shower(self):
-        ## start a corsika shower in each available file path
-        self.begin()
-        processes=[]
-        # fire up the processes
-        for n in range(0,self.options.job):
-            output_p, input_p = Pipe()
-            p = Process(target=worker.shower, args=(n,(output_p, input_p),self.options))
-            p.start()
-            processes.append([p, output_p, input_p])
-            pass
-        #output_p.close()       # We no longer need this part of the Pipe()
-        # feed the data into the processes
-        count=0
-        while self.next():
-            msg  = "path=%s:element=%s:energy=%9.2e:files=" % (self.path,self.element,self.energy)
-            for f in self.files:
-                msg += "%s;" % f
-                pass
-            with open("tmp-%i.dat" % count,'w') as fout:
-                fout.write(msg)
-                fout.close()
-                pass
-            processes[count%self.options.job][2].send("tmp-%i.dat" % count) 
-            count+=1
-            pass #while
-        # wait for processes to finish
-        for i,p in enumerate(processes):
-            print "--info: send finish to %i" % i
-            p[2].send("DONE")
-            p[1].close()
-            p[2].close()
-            p[0].join()
-            pass
-        pass #shower
+
+    
     def list(self):
         ## list all folders and the progress within in nice color code
         self.begin()
@@ -148,4 +138,44 @@ class steer:
             print "--list: %-60s || %12s %12s %12s %12s" % (self.path,evstr,shstr,lstr,astr)
             pass #while
         pass #list
-    pass #steer
+    
+    pass #captian
+
+
+
+    
+ #   def shower(self):
+ #       ## start a corsika shower in each available file path
+ #       self.begin()
+ #       processes=[]
+ #       # fire up the processes
+ #       for n in range(0,self.options.job):
+ #           output_p, input_p = Pipe()
+ #           p = Process(target=worker.shower, args=(n,(output_p, input_p),self.options))
+ #           p.start()
+ #           processes.append([p, output_p, input_p])
+ #           pass
+#        #output_p.close()       # We no longer need this part of the Pipe()
+#        # feed the data into the processes
+#        count=0
+#        while self.next():
+#            msg  = "path=%s:element=%s:energy=%9.2e:files=" % (self.path,self.element,self.energy)
+#            for f in self.files:
+#                msg += "%s;" % f
+#                pass
+#            with open("tmp-%i.dat" % count,'w') as fout:
+#                fout.write(msg)
+#                fout.close()
+#                pass
+#            processes[count%self.options.job][2].send("tmp-%i.dat" % count) 
+#            count+=1
+#            pass #while
+#        # wait for processes to finish
+#        for i,p in enumerate(processes):
+#            print "--eas: send finish to %i" % i
+#            p[2].send("DONE")
+#            p[1].close()
+#            p[2].close()
+#            p[0].join()
+#            pass
+#        pass #shower
