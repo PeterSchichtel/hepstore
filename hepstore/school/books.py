@@ -239,7 +239,7 @@ class Book(object):
                 priors=None, reg_param=options.reg_param,
                 random_state=options.random_state,
                 store_covariances=options.store_covariance, tol=options.tol,
-                path=options.path, jobs=options.job)
+                path=options.path, jobs=options.jobs)
             pass
         else:
             raise NotImplemented("unknown classifier '%s' " % options.classifier )
