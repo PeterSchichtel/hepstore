@@ -29,6 +29,7 @@ class SchoolParser(ArgumentParser):
         self.add_argument(      "--signal_labels",     default=["1.0"],     type=str,    help="specify labels used as signal in ROC curve")
         self.add_argument(      "--background_labels", default=["0.0"],     type=str,    help="specify labels used as background in ROC curve")
         self.add_argument(      "--log_transform",     action='store_true',              help="use Log() on input data")
+        self.add_argument("-j", "--jobs",              default=1,           type=int,    help="number of cores to be used")
         self.add_argument(      "--solver",            default='svd')
         self.add_argument(      "--shrinkage",         default=None)
         self.add_argument(      "--store_covariance",  action='store_true')

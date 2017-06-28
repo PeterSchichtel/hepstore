@@ -36,12 +36,13 @@ def report(results, n_top=3):
     pass
 
 # Utility function to perform parameter search
-def parameter_search(classifier,parameters,n_iter_search,X,y,mode="random"):
+def parameter_search(classifier,parameters,n_iter_search,X,y,mode="random",jobs=1):
     if mode=="random":
         # run randomized search
         start = time.time()
         random_search = RandomizedSearchCV(classifier, param_distributions=parameters,
-                                           n_iter=n_iter_search)
+                                           n_iter=n_iter_search,
+                                           n_jobs=jobs)
         random_search.fit(X,y)
         print("--info: RandomizedSearchCV took %.2f seconds for %i candidates"
               " parameter settings." % ( (time.time() - start), n_iter_search )
@@ -53,11 +54,10 @@ def parameter_search(classifier,parameters,n_iter_search,X,y,mode="random"):
     pass
 
 # Utility function to create validation curve
-def validation_curve(classifier,parameter,param_range,X,y,path=os.getcwd()):
+def validation_curve(classifier,parameter,param_range,X,y,path=os.getcwd(),jobs=1):
     train_scores, test_scores = sklearn.model_selection.validation_curve(
         classifier, X, y, parameter, param_range,
-        cv=10, scoring="accuracy", n_jobs=1,
-    )
+        cv=10, scoring="accuracy", n_jobs=jobs)
     train_scores = np.vstack( (param_range,np.mean(train_scores, axis=1),np.std(train_scores , axis=1)) ).T
     test_scores  = np.vstack( (param_range,np.mean(test_scores , axis=1),np.std(test_scores  , axis=1)) ).T
     # save for plotting
@@ -72,7 +72,7 @@ class LinearDiscriminantAnalysis(sklearn.discriminant_analysis.LinearDiscriminan
     def __init__(self,
                  solver='svd', shrinkage=None, priors=None, n_components=None,
                  store_covariance=False, tol=0.0001, path=os.getcwd(),
-                 random_state=None ):
+                 random_state=None, jobs=1 ):
         if solver=='svd' and shrinkage is not None:
             print "--LDA: warning setting 'shrinkage' to 'None', for SVD"
             shrinkage=None
@@ -81,8 +81,9 @@ class LinearDiscriminantAnalysis(sklearn.discriminant_analysis.LinearDiscriminan
             self,solver=solver, shrinkage=shrinkage, priors=priors,
             n_components=n_components, store_covariance=store_covariance, tol=tol
         )
-        self.path = path
+        self.path         = path
         self.random_state = random_state
+        self.jobs         = jobs
         pass
     
     def explore(self,X,y,mode="random",n_iter_search=200):
@@ -100,14 +101,14 @@ class LinearDiscriminantAnalysis(sklearn.discriminant_analysis.LinearDiscriminan
             ]
         # perform random search
         for param_dist in param_dists:
-            parameter_search( self  ,param_dist[1], param_dist[0], X, y, mode=mode )
+            parameter_search( self  ,param_dist[1], param_dist[0], X, y, mode=mode, jobs=self.jobs )
             pass
         # check for over/under-training
         for solver in [ 'eigen', 'lsqr']:
             for parameter in [ 'shrinkage' ]:
                 param_range = np.logspace(-7, 0, n_iter_search)
                 classifier  = sklearn.discriminant_analysis.LinearDiscriminantAnalysis( solver=solver )
-                validation_curve(classifier,parameter,param_range,X,y,os.path.join(self.path,solver))
+                validation_curve( classifier, parameter, param_range, X, y, os.path.join(self.path,solver), jobs=self.jobs )
                 pass
             pass
         pass
@@ -118,13 +119,14 @@ class QuadraticDiscriminantAnalysis(sklearn.discriminant_analysis.QuadraticDiscr
 
     def __init__(self, priors=None, reg_param=0.0,
                  store_covariances=False, tol=0.0001, path=os.getcwd(),
-                 random_state=None ):
+                 random_state=None, jobs=1 ):
         sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis.__init__(
             self, priors=priors, reg_param=reg_param,
             store_covariances=store_covariances, tol=tol,
         )
-        self.path = path
+        self.path         = path
         self.random_state = random_state
+        self.jobs         = jobs
         pass
 
     def explore(self,X,y,mode="random",n_iter_search=200):
@@ -134,12 +136,12 @@ class QuadraticDiscriminantAnalysis(sklearn.discriminant_analysis.QuadraticDiscr
                        "tol"      : scipy.stats.uniform(0.00001,0.001),
                        }
         # perform random search
-        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode)
+        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs )
         # check for over/under-training
         for parameter in param_dist:
             param_range = np.logspace(-7,0,n_iter_search)
             classifier  = sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis()
-            validation_curve( classifier, parameter, param_range, X, y, self.path )
+            validation_curve( classifier, parameter, param_range, X, y, self.path, jobs=self.jobs )
             pass
         pass
     
@@ -163,16 +165,19 @@ class SVC(sklearn.svm.SVC):
     def __init__(self, C=1.0, kernel='rbf', degree=3, gamma='auto', coef0=0.0,
                  shrinking=True, probability=False, tol=0.001, cache_size=200,
                  class_weight=None, verbose=False, max_iter=-1,
-                 decision_function_shape=None, random_state=None ):
+                 decision_function_shape=None, random_state=None,
+                 path=os.getcwd(), jobs=1 ):
         sklearn.svm.SVC.__init__(
             self, C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0,
             shrinking=True, probability=False, tol=0.001, cache_size=200,
             class_weight=None, verbose=False, max_iter=-1,
             decision_function_shape=None, random_state=None
         )
+        self.path = path
+        self.jobs = jobs
         pass
 
-    def explore(self,X,y,mode="random",n_iter_search=200):
+    def explore(self,X,y,mode="random",n_iter_search=20):
         print "--SVC: explore"
         # specify parameters for exploariotn
         param_dist = { "C"        : scipy.stats.uniform(0.01,10.0),
@@ -184,7 +189,7 @@ class SVC(sklearn.svm.SVC):
                        "tol"      : scipy.stats.uniform(0.00001,0.001),
                        }
         # perform random search
-        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode)
+        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs )
         # check for over/under-training
         for kernel in param_dist["kernel"]:
             for shrinking in param_dist["shrinking"]:
@@ -196,7 +201,7 @@ class SVC(sklearn.svm.SVC):
                         param_range = np.linspace(1,10,10,dtype=int)
                         pass
                     classifier  = sklearn.svm.SVC( kernel=kernel, shrinking=shrinking, random_state=self.random_state)
-                    validation_curve( classifier, parameter, param_range, X, y, os.path.join(self.path,kernel,str(shrinking)) )
+                    validation_curve( classifier, parameter, param_range, X, y, os.path.join(self.path,kernel,str(shrinking)), jobs=self.jobs )
                     pass
                 pass
             pass
@@ -215,7 +220,8 @@ class Book(object):
                 shrinking=options.shrinking, probability=options.probability,
                 tol=options.tol, cache_size=options.cache_size,
                 class_weight=None, verbose=options.verbose, max_iter=options.max_iter,
-                decision_function_shape=None, random_state=options.random_state)
+                decision_function_shape=None, random_state=options.random_state,
+                path=options.path, jobs=options.jobs)
             pass
         elif options.classifier.lower() == "mlp":
             self.classifier = MLPClassifier()
@@ -226,14 +232,14 @@ class Book(object):
                 priors=None, n_components=None,
                 store_covariance=options.store_covariance,
                 tol=options.tol, random_state=options.random_state,
-                path=options.path)
+                path=options.path, jobs=options.jobs)
             pass
         elif options.classifier.lower() == "qda":
             self.classifier = QuadraticDiscriminantAnalysis(
                 priors=None, reg_param=options.reg_param,
                 random_state=options.random_state,
                 store_covariances=options.store_covariance, tol=options.tol,
-                path=options.path)
+                path=options.path, jobs=options.job)
             pass
         else:
             raise NotImplemented("unknown classifier '%s' " % options.classifier )
