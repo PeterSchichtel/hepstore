@@ -85,7 +85,7 @@ def listoffolders(pathes=["./"],all_constrains=[]):
         i=0
         while len(folders)>i:
             folder = folders[i]
-            if (folder.strip('/').split('/')[-1] in ['events','showers','analysis']) or (constrains!=[] and folder.strip('/').split('/')[-1] not in constrains):
+            if (folder.strip('/').split('/')[-1] in ['mc_generation','events','showers','analysis']) or (constrains!=[] and folder.strip('/').split('/')[-1] not in constrains):
                 folders.remove(folder)
                 pass
             else:

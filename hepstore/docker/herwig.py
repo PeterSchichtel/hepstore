@@ -18,16 +18,16 @@ def run(args=None):
     parser.add_argument("--directory"        , type=str, default=os.getcwd()       ,help="mount this directoy as /UserDirectory (automatic working dir!), default is PWD!")
     
     # parse args
-    args, unknown = parser.parse_known_args(args)
+    parsed_args, unknown = parser.parse_known_args(args)
             
     # run the app
     from interface import DockerIF as Herwig
     app=Herwig(
-        image=os.path.join(args.repository.lower(),args.generator.lower()),
-        version=args.generator_version
+        image=os.path.join(parsed_args.repository.lower(),parsed_args.generator.lower()),
+        version=parsed_args.generator_version
     )
     app.run(
-        directory=args.directory,
+        directory=parsed_args.directory,
         args=[ '/bin/bash',
                '-c',
                'source $ACTIVATE && %s ' % " ".join(['Herwig']+unknown)

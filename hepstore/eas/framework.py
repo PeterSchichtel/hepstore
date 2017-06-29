@@ -47,10 +47,17 @@ class Captian:
             options.model,
             options.final,
         ]
+        ## go to working directory
+        self.current = os.getcwd()
+        os.chdir(options.directory)
         for path in listoffolders(["./"],all_constrains):
             self.pathes[path] = glob.glob( os.path.join(os.path.abspath(os.path.join(path,"events")),"event-*") )
             pass # for path
         pass # init
+
+    def __del__(self):
+        os.chdir(self.current)
+        pass
     
     def begin(self):
         ## we need an iterator on all these different file pathes
@@ -96,6 +103,7 @@ class Captian:
             self.begin()
             self.list()
             pass
+        # go back
         pass
     
     def execute(self,app):
