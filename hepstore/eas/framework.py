@@ -50,7 +50,7 @@ class Captian:
         ## go to working directory
         self.current = os.getcwd()
         os.chdir(options.directory)
-        for path in listoffolders(["./"],all_constrains):
+        for path in list_of_folders(["./"],all_constrains,exclude=['mc_generation','events','showers','observables','analysis']):
             self.pathes[path] = glob.glob( os.path.join(os.path.abspath(os.path.join(path,"events")),"event-*") )
             pass # for path
         pass # init
@@ -122,14 +122,14 @@ class Captian:
         ## list all folders and the progress within in nice color code
         self.begin()
         print bcolors.UNDERLINE + " %67s ||%54s" % ("  "," ") + bcolors.END
-        print bcolors.UNDERLINE + "--list: %-60s || %12s %12s %12s %12s" % ( "process-path %s" % os.path.join( *os.getcwd().split('/')[-2:] ),
-                                                                             "hard events","showered","attempted","analysed") + bcolors.END
+        print bcolors.UNDERLINE + "--list: %-60s || %12s %12s %12s %12s  " % ( "process-path %s" % os.path.join( *os.getcwd().split('/')[-2:] ),
+                                                                             "hard events","showered","attempted","observables") + bcolors.END
         while self.next():
             nums = []
             nums.append(len(glob.glob(os.path.join(self.path,"events","event-*"   ))))
             nums.append(len(glob.glob(os.path.join(self.path,"showers","particle*"))))
             nums.append(len(glob.glob(os.path.join(self.path,"showers","*long"    ))))
-            nums.append(len(glob.glob(os.path.join(self.path,"analysis","*npy"    ))))
+            nums.append(len(glob.glob(os.path.join(self.path,"observables","*npy"    ))))
             print_strings =[]
             for num in nums:
                 if num==0:

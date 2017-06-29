@@ -99,18 +99,21 @@ class Generator(object):
         if self.generator == 'h7':
             from  hepstore.docker import herwig as herwig
             #build
+            print "--generator: herwig build"
             herwig.run([ '--directory', os.path.join(self.path,'mc_generation'),
                          'build'    , '%s.in'  % self.run_card.name, ])
             #integrate
+            print "--generator: herwig integrate"
             herwig.run([ '--directory', os.path.join(self.path,'mc_generation'),
                          'integrate', '%s.run' % self.run_card.name, ])
             #run
-            os.symlink( os.path.join('..','Herwig-scratch'),
-                        os.path.abspath(os.path.join(self.path,'mc_generation',self.run_folder,'Herwig-scratch'))
+            copy( os.path.abspath( os.path.join(self.path,'mc_generation','Herwig-scratch') ),
+                  os.path.abspath( os.path.join(self.path,'mc_generation',self.run_folder,'Herwig-scratch') )
             )
-            os.symlink( os.path.join('..','%s.run' % self.run_card.name),
-                        os.path.abspath(os.path.join(self.path,'mc_generation',self.run_folder,'%s.run' % self.run_card.name))
+            copy( os.path.abspath( os.path.join(self.path,'mc_generation','%s.run' % self.run_card.name) ),
+                  os.path.abspath( os.path.join(self.path,'mc_generation',self.run_folder,'%s.run' % self.run_card.name) )
             )
+            print "--generator: herwig run"
             herwig.run([ '--directory', os.path.join(self.path,'mc_generation',self.run_folder),
                          'run'      , '%s.run' % self.run_card.name, '-N', '%i' % self.options.nevents, '-s', '%i' % self.next_seed() ])
             pass
@@ -134,10 +137,12 @@ class Generator(object):
             while count in list_of_nums:
                 count+=1
                 pass
-            return os.path.join( self.path, 'events', os.path.basename("%s-%i" % (fname.split("-")[:-1],count)) )
+            ##print  os.path.join( self.path, 'events', "%s-%i" % ( "-".join(os.path.basename(fname).split("-")[:-1]),count) )
+            return os.path.join( self.path, 'events', "%s-%i" % ( "-".join(os.path.basename(fname).split("-")[:-1]),count) )
         pass
 
     def enrich(self):
+        print "--generator: apply nucleon interaction model"
         for fname in glob.glob(os.path.join(self.path,'mc_generation',self.run_folder,'event-*')):
             model.enrich( fname, self.next_name(fname),
                            energy=self.energy, element=self.element, model=self.model)

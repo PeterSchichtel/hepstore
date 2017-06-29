@@ -6,6 +6,7 @@ import os
 import errno
 import numpy as np
 import glob
+import shutil, errno
 
 # create new dir mkdir -p
 def mkdir(path): 
@@ -19,6 +20,20 @@ def mkdir(path):
             raise
         pass
     pass #mkdir
+
+# copy like cp -r 
+def copy(src, dst):
+    try:
+        shutil.copytree(src, dst, symlinks=True)
+        pass
+    except OSError as exc: # python >2.5
+        if exc.errno == errno.ENOTDIR:
+            shutil.copy(src, dst)
+            pass
+        else:
+            raise
+        pass
+    pass
 
 # colorful output
 class bcolors:
@@ -64,8 +79,8 @@ class data:
 # create folder tree including constraints
 # unresolved constraints will result in entries without
 # corrresponding path
-def listoffolders(pathes=["./"],all_constrains=[]):
-    fullList = []
+def list_of_folders(pathes=["./"],all_constrains=[],exclude=[]):
+    full_list = []
     try:
         constrains = all_constrains[0]
         pass
@@ -85,7 +100,7 @@ def listoffolders(pathes=["./"],all_constrains=[]):
         i=0
         while len(folders)>i:
             folder = folders[i]
-            if (folder.strip('/').split('/')[-1] in ['mc_generation','events','showers','analysis']) or (constrains!=[] and folder.strip('/').split('/')[-1] not in constrains):
+            if (folder.strip('/').split('/')[-1] in exclude) or (constrains!=[] and folder.strip('/').split('/')[-1] not in constrains):
                 folders.remove(folder)
                 pass
             else:
@@ -100,13 +115,13 @@ def listoffolders(pathes=["./"],all_constrains=[]):
             pass
         # check for end of recursion
         if folders==[]:
-            fullList.append(path)
+            full_list.append(path)
             pass
         else:
-            fullList=(fullList+listoffolders(folders,remained_constrains))
+            full_list=(full_list+list_of_folders(folders,all_constrains=remained_constrains,exclude=exclude))
             pass
         pass
-    return fullList
+    return full_list
 
 
 def options_to_list(options):
