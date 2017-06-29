@@ -49,12 +49,18 @@ class Generator(object):
         pass
 
     def next_runfolder(self):
-        count=0
-        while count in [ int(item.split("_")[1]) for item in glob.glob(os.path.join(self.path,'mc_generation','run_*'))]:
-            count+=1
-            pass
-        self.run_folder = "run_%i" % count
-        return self.run_folder
+        try:
+            count=0
+            while count in [ int(item.split("_")[-1]) for item in glob.glob(os.path.join(self.path,'mc_generation','run_*'))]:
+                count+=1
+                pass
+            self.run_folder = "run_%i" % count
+            return self.run_folder
+        except ValueError as err:
+            print [ item.split("_")[-1] for item in glob.glob(os.path.join(self.path,'mc_generation','run_*'))]
+            print err
+            raise err
+        pass
 
     def target_energy(self):
         return self.energy.value/self.element.nucleons
@@ -99,8 +105,12 @@ class Generator(object):
             herwig.run([ '--directory', os.path.join(self.path,'mc_generation'),
                          'integrate', '%s.run' % self.run_card.name, ])
             #run
-            os.symlink( os.path.join(self.path,'mc_generation','Herwig-scratch'),              os.path.join(self.path,'mc_generation',self.run_folder,'Herwig-scratch') )
-            os.symlink( os.path.join(self.path,'mc_generation','%s.run' % self.run_card.name), os.path.join(self.path,'mc_generation',self.run_folder,'%s.run' % self.run_card.name) )
+            os.symlink( os.path.join('..','Herwig-scratch'),
+                        os.path.abspath(os.path.join(self.path,'mc_generation',self.run_folder,'Herwig-scratch'))
+            )
+            os.symlink( os.path.join('..','%s.run' % self.run_card.name),
+                        os.path.abspath(os.path.join(self.path,'mc_generation',self.run_folder,'%s.run' % self.run_card.name))
+            )
             herwig.run([ '--directory', os.path.join(self.path,'mc_generation',self.run_folder),
                          'run'      , '%s.run' % self.run_card.name, '-N', '%i' % self.options.nevents, '-s', '%i' % self.next_seed() ])
             pass

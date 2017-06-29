@@ -122,7 +122,8 @@ class Captian:
         ## list all folders and the progress within in nice color code
         self.begin()
         print bcolors.UNDERLINE + " %67s ||%54s" % ("  "," ") + bcolors.END
-        print bcolors.UNDERLINE + "--list: %-60s || %12s %12s %12s %12s" % ("process-path","hard events","showered","attempted","analysed") + bcolors.END
+        print bcolors.UNDERLINE + "--list: %-60s || %12s %12s %12s %12s" % ( "process-path %s" % os.path.join( *os.getcwd().split('/')[-2:] ),
+                                                                             "hard events","showered","attempted","analysed") + bcolors.END
         while self.next():
             nums = []
             nums.append(len(glob.glob(os.path.join(self.path,"events","event-*"   ))))
