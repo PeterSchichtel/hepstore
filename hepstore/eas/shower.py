@@ -8,47 +8,53 @@ import shutil
 from hepstore.tools import *
 import subprocess
 import shutil
+import random
 
 pid_dict={"photon":1,"proton":14,"neutron":15,"helium":402,"lithium":703,"carbon":1206,"neon":2010,"iron":5626}
 
-class runcard:
+class Runcard(object):
+
     def __init__(self,path):
         self.name     = "runcard-0.dat"
         self.out      = "std-0.out"
         self.err      = "std-0.err"
-        self.path     = os.path.join(path,"showers")
+        self.path     = path
         self.corsika  = "7.4_stackin"
         self.pid      = 1
         self.filename = None
         self.estart   = 1.0e+06
         self.estop    = 1.0e+06
         pass
+
     def set_element(self,element):
         self.pid=pid_dict[element]
         pass
+
     def set_seed(self,n):
         self.name = "runcard-%i.dat" % n
         self.out  = "std-%i.out"     % n
         self.err  = "std-%i.err"     % n
         self.seed = n
         pass
-    def isStackin(self):
+
+    def is_stackin(self):
         return "stackin" in self.corsika
+
     def create(self):
         mkdir(self.path)
         with open(os.path.join(self.path,self.name),'w') as fout:
             fout.write("RUNNR     %i                           run number                         \n" % self.seed)
-            fout.write("EVTNR     1                            number of first shower event       \n")
+            fout.write("EVTNR     %i                            number of first shower event      \n" % 1 )
             fout.write("NSHOW     %i                           number of showers to generate      \n" % 1 )
             fout.write("THETAP    0.  0.                       range of zenith angle (degree)     \n")
             fout.write("PHIP      -360.  360.                  range of azimuth angle (degree)    \n")
-            fout.write("PRMPAR    %i                           particle type of prim. particle     \n" % self.pid)
-            if not self.isStackin():
+            if not self.is_stackin():
+                fout.write("PRMPAR    %i                           particle type of prim. particle     \n" % self.pid)
                 fout.write("* ESLOPE  -2.7                         slope of primary energy spectrum  \n")
                 fout.write("ERANGE  %9.2e  %9.2e                   energy range of primary particle    \n" % (self.estart,self.estop) )
                 pass
             else:
-                fout.write("INFILE    %s                                                              \n" % os.path.relpath(self.filename,self.path) )
+                fout.write("INFILE    %s                                                              \n" % self.filename )
                 pass
             fout.write("FIXHEI   18300.E2      0                                                  \n")
             fout.write("* FIXCHI  0.                           starting altitude (g/cm**2) (* shouldnt be active with FIXHEI *) \n")
@@ -83,76 +89,77 @@ class runcard:
             fout.close()
             pass
         pass # create
+    
     pass #runcards
 
-class shower:
-    def __init__(self,num,options):
-        self.num     = num
+class Shower(object):
+    
+    def __init__(self,options):
         self.options = options
         pass
-    def begin(self,card,nevents,files):
-        self.card    = card
-        self.nevents = nevents
-        self.files   = files
+    
+    def shower(self):
+        from hepstore.docker import corsika 
+        args=[ '-d', '%s' % self.card.path, '--generator-version', self.options.corsika, '-f', self.card.name ]
+        corsika.run(args)
         pass
-    def filename(self,n):
-        try:
-            return self.files[n]
-        except IndexError:
-            return None
-        pass
-    def one_shower(self):
-        ## corsika only works from within the folder
-        cdir=os.getcwd()
-        os.chdir(self.card.path)
-        command=['corsika','--generator-version',self.options.corsika,'-f',self.card.name,'-v']
-        with open(self.card.out,'w') as fout:
-            with open(self.card.err,'w') as ferr:
-                subprocess.call(command, stdout=fout, stderr=ferr)
-                ferr.close()
-                pass
-            fout.close()
+
+    def next_seed(self):
+        count=0
+        while os.path.exists( os.path.join(self.card.path,"DAT%06i" % count) ):
+            count+=1
             pass
-        os.chdir(cdir)
-        pass
-    def run(self):
-        print "--shower[%i]: working on %s" % (self.num,self.card.path)
-        ## create folder and runcard
-        oldnevents=len(glob.glob(os.path.join(self.card.path,"DAT00*")))/2
-        print "--shower[%i]: already generated %i events" % (self.num,oldnevents)
-        for n in range(oldnevents,self.nevents):
-            if n%50==0:
-                print "--shower[%i]: at event %i " % (self.num,n)
-                pass
-            ## setup runcard
-            self.card.filename = self.filename(n)
-            self.card.set_seed(n)
-            self.card.create()
-            ## run shower
-            self.one_shower()
-            pass #for
-        pass
-    def convert(self):
-        ## corsika only works from within the folder
-        cdir=os.getcwd()
-        if not os.path.isdir(self.card.path):
-            return
-        os.chdir(self.card.path)
-        command = ['corsika','-v','--generator-version',self.options.corsika,'-c']
-        for item in glob.glob("DAT*"):
-            if not "long" in item.lower():
-                if not os.path.exists("particle_file_%i" % int(item[3:])):
-                    command.append(item)
+        return count
+
+    def next_file(self):
+        return os.path.basename( self.files.pop( random.randrange(len(self.files)) ) )
+    
+    def run(self,path):
+        print "--shower[%i]: working on %s" % ( os.getpid(), path )
+        # split input 
+        energy,element,process,generator,final,model = os.path.normpath(path).split('/')
+        # setup the runcard
+        self.card         = Runcard(os.path.join(path,'showers'))
+        self.card.corsika = self.options.corsika
+        self.card.set_element(element)
+        self.card.estart  = float(energy)
+        self.card.estop   = float(energy)+float(self.options.erange)
+        # if stackin -> collect files 
+        if self.card.is_stackin():
+            for f in glob.glob(os.path.join(path,'events','event-*')):
+                try:
+                    os.link( f, os.path.join(path,'showers',os.path.basename(f)) )
+                    pass
+                except OSError:
                     pass
                 pass
+            self.files = glob.glob( os.path.join(path,'showers','event-*') )
             pass
-        with open(self.card.out,'w') as fout:
-            with open(self.card.err,'w') as ferr:
-                subprocess.call(command, stdout=fout, stderr=ferr)
-                ferr.close()
+        # run nevents showers
+        for n in range(0,self.options.nevents):
+            if n%50 == 0:
+                print "--shower[%i]: showered %i out of %i events" % (os.getpid(),n,self.options.nevents)
                 pass
-            fout.close()
+            if self.card.is_stackin():
+                self.card.filename = self.next_file()
+                pass
+            self.card.set_seed(self.next_seed())
+            self.card.create()
+            self.shower()
             pass
-        os.chdir(cdir)
+        # convert output
+        self.convert()
         pass
+    
+    def convert(self):
+        print "--shower[%i]: converting data formats" % os.getpid()
+        from hepstore.docker import corsika 
+        args = [
+            '-d', '%s' % self.card.path, '--generator-version', self.options.corsika, '-c'
+        ] + [
+            os.path.basename(d) for d in glob.glob(os.path.join(self.card.path,'DAT*')) if not 'long' in d.lower()
+        ]
+        corsika.run(args)
+        pass
+    
     pass #shower

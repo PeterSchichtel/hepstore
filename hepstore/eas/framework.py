@@ -123,12 +123,12 @@ class Captian:
         self.begin()
         print bcolors.UNDERLINE + " %67s ||%54s" % ("  "," ") + bcolors.END
         print bcolors.UNDERLINE + "--list: %-60s || %12s %12s %12s %12s  " % ( "process-path %s" % os.path.join( *os.getcwd().split('/')[-2:] ),
-                                                                             "hard events","showered","attempted","observables") + bcolors.END
+                                                                               "hard events","attempted","showered","observables") + bcolors.END
         while self.next():
             nums = []
             nums.append(len(glob.glob(os.path.join(self.path,"events","event-*"   ))))
-            nums.append(len(glob.glob(os.path.join(self.path,"showers","particle*"))))
             nums.append(len(glob.glob(os.path.join(self.path,"showers","*long"    ))))
+            nums.append(len(glob.glob(os.path.join(self.path,"showers","particle*"))))
             nums.append(len(glob.glob(os.path.join(self.path,"observables","*npy"    ))))
             print_strings =[]
             for num in nums:
@@ -151,40 +151,3 @@ class Captian:
     pass #captian
 
 
-
-    
- #   def shower(self):
- #       ## start a corsika shower in each available file path
- #       self.begin()
- #       processes=[]
- #       # fire up the processes
- #       for n in range(0,self.options.job):
- #           output_p, input_p = Pipe()
- #           p = Process(target=worker.shower, args=(n,(output_p, input_p),self.options))
- #           p.start()
- #           processes.append([p, output_p, input_p])
- #           pass
-#        #output_p.close()       # We no longer need this part of the Pipe()
-#        # feed the data into the processes
-#        count=0
-#        while self.next():
-#            msg  = "path=%s:element=%s:energy=%9.2e:files=" % (self.path,self.element,self.energy)
-#            for f in self.files:
-#                msg += "%s;" % f
-#                pass
-#            with open("tmp-%i.dat" % count,'w') as fout:
-#                fout.write(msg)
-#                fout.close()
-#                pass
-#            processes[count%self.options.job][2].send("tmp-%i.dat" % count) 
-#            count+=1
-#            pass #while
-#        # wait for processes to finish
-#        for i,p in enumerate(processes):
-#            print "--eas: send finish to %i" % i
-#            p[2].send("DONE")
-#            p[1].close()
-#            p[2].close()
-#            p[0].join()
-#            pass
-#        pass #shower

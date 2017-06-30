@@ -107,10 +107,10 @@ class Generator(object):
             herwig.run([ '--directory', os.path.join(self.path,'mc_generation'),
                          'integrate', '%s.run' % self.run_card.name, ])
             #run
-            copy( os.path.abspath( os.path.join(self.path,'mc_generation','Herwig-scratch') ),
+            os.link( os.path.abspath( os.path.join(self.path,'mc_generation','Herwig-scratch') ),
                   os.path.abspath( os.path.join(self.path,'mc_generation',self.run_folder,'Herwig-scratch') )
             )
-            copy( os.path.abspath( os.path.join(self.path,'mc_generation','%s.run' % self.run_card.name) ),
+            os.link( os.path.abspath( os.path.join(self.path,'mc_generation','%s.run' % self.run_card.name) ),
                   os.path.abspath( os.path.join(self.path,'mc_generation',self.run_folder,'%s.run' % self.run_card.name) )
             )
             print "--generator: herwig run"

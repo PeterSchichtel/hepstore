@@ -5,9 +5,10 @@ import glob
 import os
 
 from hepstore.tools import *
-from hepstore.eas.event import *
+from event import *
 
-class useranalysis:
+class UserAnalysis(object):
+    
     def __init__(self):
         self.levels = 10
         self.data   = {}
@@ -20,11 +21,13 @@ class useranalysis:
             self.data["radius_unweighted_%i" % i] = data("radius_unweighted_%i" % i ) 
             pass
         pass
+    
     def begin(self):
         for d in self.data.values():
             d.clear()
             pass
         pass
+    
     def analyse(self,ev):
         ## create analysis objects
         muons     = [ev.find("muon",i) for i in range(0,self.levels)]
@@ -54,31 +57,37 @@ class useranalysis:
         self.data["x_max"].append(x_max)
         self.data["x_rho"].append([x_max,rho_0])
         pass
+    
     def finalize(self):
         #self.statistic()
         pass
+
     def save(self,path):
         for d in self.data.values():
             d.save( os.path.join(path,d.name) )
             pass
         pass
+
     def statistic(self):
         size = 0
         for d in self.data.values():
             size += d.data().nbytes
             pass
         print "--size: %fMB" % (float(size)/1000000.)
-    pass
+        pass
 
+    pass #UserAnalysis
 
-class analysis:
+class Analysis(object):
+    
     def __init__(self,options=None,analyses=[]):
         self.options  = options
-        self.analysis = [useranalysis()]
+        self.analysis = [UserAnalysis()]
         for anlysis in analyses:
             #self.analysis = [useranalysis()]
             pass
         pass
+    
     def validate(self,path):
         if os.path.isdir(os.path.join(path,"showers")):
             self.path=os.path.join(path,"showers")
@@ -89,10 +98,11 @@ class analysis:
             analysis.begin()
             pass
         return True
+
     def run(self,path):
         if not self.validate(path):
             return False
-        print "--info: analysing %s " % self.path
+        print "--analysis[%i]: working on '%s' " % (os.getpid(),self.path)
         # loop through events
         eventcounter=1
         for pfile,xfile in zip(glob.glob(os.path.join(self.path,"particle_file*")),glob.glob(os.path.join(self.path,"DAT*.long"))):
@@ -115,12 +125,14 @@ class analysis:
         print "--analysis[%i]: analysed %i events" % (os.getpid(),eventcounter)
         self.finalize()
         return True
+
     def finalize(self):
-        path = os.path.join(os.path.dirname(self.path),"analysis")
+        path = os.path.join(os.path.dirname(self.path),"observables")
         mkdir(path)
         for analysis in self.analysis:
             analysis.finalize()
             analysis.save(path)
             pass
         pass
+    
     pass

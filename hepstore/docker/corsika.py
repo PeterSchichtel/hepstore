@@ -4,7 +4,7 @@ import sys
 ############################################################################
 ## run the app
 ############################################################################
-def run():
+def run(argv=None):
 
     # we need to setup the arg parser
     import argparse
@@ -28,7 +28,7 @@ def run():
     parser.add_argument("-v", "--verbose", action="store_true", help="print container stdout" )
     
     # parse args
-    args, unknown = parser.parse_known_args()
+    args, unknown = parser.parse_known_args(argv)
             
     # start app
     from interface import DockerIF as Corsika
@@ -50,9 +50,9 @@ def run():
         pass #for runcard
 
     # convert files
-    for datfile in args.convert:
+    for n,datfile in enumerate(args.convert):
         # prepare input       
-        with open("convert.in",'w') as fout:
+        with open(os.path.join(args.directory,"convert.in"),'w') as fout:
             # spaces are MANDATORY!
             fout.write("%s                                                                                                                                     " % datfile )
             fout.close()
@@ -66,11 +66,7 @@ def run():
             ],
         )
         # save file
-        i=0
-        while os.path.exists("particle_file_%i" % i):
-            i+=1
-            pass
-        shutil.move( "fort.8", "particle_file_%i" % i )
+        shutil.move( os.path.join(args.directory,"fort.8"), os.path.join(args.directory,"particle_file_%i" % n) )
         pass #for datfile
     
     pass # run

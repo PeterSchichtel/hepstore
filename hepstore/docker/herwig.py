@@ -16,6 +16,9 @@ def run(args=None):
     
     # mount a directory
     parser.add_argument("--directory"        , type=str, default=os.getcwd()       ,help="mount this directoy as /UserDirectory (automatic working dir!), default is PWD!")
+
+    # verbose stdout
+    parser.add_argument("-v", "--verbose", action="store_true", help="print container stdout" )
     
     # parse args
     parsed_args, unknown = parser.parse_known_args(args)
@@ -24,7 +27,8 @@ def run(args=None):
     from interface import DockerIF as Herwig
     app=Herwig(
         image=os.path.join(parsed_args.repository.lower(),parsed_args.generator.lower()),
-        version=parsed_args.generator_version
+        version=parsed_args.generator_version,
+        verbose=parsed_args.verbose
     )
     app.run(
         directory=parsed_args.directory,
