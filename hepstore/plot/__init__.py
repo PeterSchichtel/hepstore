@@ -58,8 +58,9 @@ def run():
     parser.add_argument("-n", "--normed", action="store_true",
                         help="normalize data before plotting")
     parser.add_argument("-a", "--axis", default=[0,1,2],
-                        help="select axis of data to be plotted (x,y,z)",
-                        nargs='+')
+                        type  = int,
+                        help  = "select axis of data to be plotted (x,y,z)",
+                        nargs = '+')
     parser.add_argument(      "--xmin", default=0.0,
                               help="x axes min")
     parser.add_argument(      "--ymin", default=0.0,

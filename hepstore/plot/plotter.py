@@ -65,7 +65,13 @@ class subplot(object):
     
     def histogram(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
-        plt.hist(data,bins=self.options.bins,normed=self.options.normed,range=self.range()[0],alpha=self.options.alpha,color=self.color)
+        plt.hist( data[:,self.options.axis[0]],
+                  bins   = self.options.bins,
+                  normed = self.options.normed,
+                  range  = self.range()[0],
+                  alpha  = self.options.alpha,
+                  color  = self.color,
+                  label  = self.legend)
         pass
 
     def errorbar(self,data):
