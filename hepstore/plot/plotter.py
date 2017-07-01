@@ -111,15 +111,22 @@ class subplot(object):
 
     def errorband(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber)
-        x =data[:,self.options.axis[0]]
-        y =data[:,self.options.axis[1]]
-        dy=data[:,self.options.axis[2]]
+        x = data[:,self.options.axis[0]]
+        y = data[:,self.options.axis[1]]
+        try:
+            dyp = data[:,self.options.axis[2]]
+            dym = data[:,self.options.axis[3]]
+            pass
+        except IndexError:
+            dyp = data[:,self.options.axis[2]]
+            dym = dyp
+            pass
         plt.plot(x,y,
                  linestyle=self.linestyle,linewidth=self.linewidth,
                  label=self.legend)
-        plt.fill_between(x, y-dy, y+dy,
+        plt.fill_between(x, y-dym, y+dyp,
                          linestyle=self.linestyle,linewidth=self.linewidth,
-                         alpha=0.2,)
+                         alpha=0.3*self.options.alpha,)
         pass
         
     def finalize(self):

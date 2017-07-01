@@ -6,6 +6,12 @@ __pycache__/
 # emacs
 *~
 
+# latex
+*.aux
+*.log
+*.out
+*.toc  
+
 # C extensions
 *.so
 

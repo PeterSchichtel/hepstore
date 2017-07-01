@@ -32,7 +32,7 @@ setup(name='hepstore',
       entry_points = {
           'console_scripts': [
               'hepstore                = hepstore:main',
-              'hepstore-herwig         = hepstore.docker.herwig:run',
+              'hepstore-herwig         = hepstore.docker.herwig:main',
               'hepstore-corsika        = hepstore.docker.corsika:run',
               'hepstore-hepmc2corsika  = hepstore.docker.hepmc2corsika:run',
               'hepstore-analysis       = hepstore.analysis:main',
