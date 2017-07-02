@@ -36,13 +36,13 @@ def report(results, n_top=3):
     pass
 
 # Utility function to perform parameter search
-def parameter_search(classifier,parameters,n_iter_search,X,y,mode="random",jobs=1):
+def parameter_search(classifier,parameters,n_iter_search,X,y,mode="random",jobs=1,random_state=None):
     if mode=="random":
         # run randomized search
         start = time.time()
         random_search = RandomizedSearchCV(classifier, param_distributions=parameters,
                                            n_iter=n_iter_search,
-                                           n_jobs=jobs)
+                                           n_jobs=jobs, random_state=random_state)
         random_search.fit(X,y)
         print("--info: RandomizedSearchCV took %.2f seconds for %i candidates"
               " parameter settings." % ( (time.time() - start), n_iter_search )
@@ -101,7 +101,7 @@ class LinearDiscriminantAnalysis(sklearn.discriminant_analysis.LinearDiscriminan
             ]
         # perform random search
         for param_dist in param_dists:
-            parameter_search( self  ,param_dist[1], param_dist[0], X, y, mode=mode, jobs=self.jobs )
+            parameter_search( self  ,param_dist[1], param_dist[0], X, y, mode=mode, jobs=self.jobs, random_state=self.random_state )
             pass
         # check for over/under-training
         for solver in [ 'eigen', 'lsqr']:
@@ -136,7 +136,7 @@ class QuadraticDiscriminantAnalysis(sklearn.discriminant_analysis.QuadraticDiscr
                        "tol"      : scipy.stats.uniform(0.00001,0.001),
                        }
         # perform random search
-        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs )
+        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs, random_state=self.random_state )
         # check for over/under-training
         for parameter in param_dist:
             param_range = np.logspace(-7,0,n_iter_search)

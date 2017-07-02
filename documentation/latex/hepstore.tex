@@ -351,23 +351,94 @@ In the case where you are not able to use the rivet or madanalysis plotting capa
 produce some data
 %
 \begin{lstlisting}
-  #!/usr/bin/env bash
-  pip install git+https://github.com/PeterSchichtel/hepstore.git
-  hepstore-herwig --repository yourname --generator-version 7.1.0 read yourRunCard.in
-  hepstore-herwig --repository yourname --generator-version 7.1.0 run  yourRunCard.run
-  hepstore-rivet-mkhtml --repository yourname --generator-version 7.1.0 yourListOfRivetCommandsAndFilePathes
+#!/usr/bin/env python
+
+# module examples/hepstore_plot produce_data
+
+# import for this module
+import numpy as np
+
+# number of events
+nevents = 20000
+
+# generate data set I
+mean = np.array([0.0,0.0])
+cov  = np.array([[1.0,0.0],[0.0,1.0]])
+data = np.random.multivariate_normal(mean, cov, 2*nevents)
+np.save('data_1.npy',data)
+
+# generate data set II
+mean = np.array([2.5,-2.5])
+cov  = np.array([[1.0,0.0],[0.0,1.0]])
+data = np.random.multivariate_normal(mean, cov, nevents)
+mean = np.array([-1.4,0.8])
+cov  = np.array([[0.02,1.2],[-1.7,0.01]])
+data = np.concatenate((data,np.random.multivariate_normal(mean, cov, nevents)))
+np.save('data_2.npy',data)
+
 \end{lstlisting}
 %
 plot with hepstore-plot
 %
 \begin{lstlisting}[language=Bash]
-  #!/usr/bin/env bash
-  pip install git+https://github.com/PeterSchichtel/hepstore.git
-  hepstore-herwig --repository yourname --generator-version 7.1.0 read yourRunCard.in
-  hepstore-herwig --repository yourname --generator-version 7.1.0 run  yourRunCard.run
-  hepstore-rivet-mkhtml --repository yourname --generator-version 7.1.0 yourListOfRivetCommandsAndFilePathes
+#!/usr/bin/env bash
+
+## produce data for this example
+./produce_data.py
+
+## plot scatter
+hepstore-plot -f data_1.npy data_2.npy -k scatter \
+	      -c blue red \
+	      --xmin -5 --xmax 5 \
+	      --ymin -5 --ymax 5 \
+	      --legend 'single gaussian' 'double gaussian' \
+	      --alpha 0.6 \
+              --title 'example plot a.)' 'scatter'\
+	      --path $(pwd)/example_a.pdf
+
+## plot histogram of x axis
+hepstore-plot -f data_1.npy data_2.npy -k histogram \
+	      -a 0 \
+	      -c blue red \
+	      --normed \
+	      --bins 20 \
+	      --xmin -5 --xmax 5 \
+	      --ymax 0.6 \
+	      --ylabel '$\rho(x)$' \
+	      --legend 'single gaussian' 'double gaussian' \
+	      --alpha 0.6 \
+	      --title 'example plot b.)' 'histogram'\
+	      --path $(pwd)/example_b.pdf
+
+## plot histogram of x axis
+hepstore-plot -f data_1.npy data_2.npy -k histogram \
+	      -a 1 \
+	      -c blue red \
+	      --normed \
+	      --bins 20 \
+	      --xmin -5 --xmax 5 \
+	      --ymax 0.6 \
+	      --xlabel 'y' \
+	      --ylabel '$\rho(y)$' \
+	      --legend 'single gaussian' 'double gaussian' \
+	      --alpha 0.6 \
+	      --title 'example plot c.)' 'histogram'\
+	      --path $(pwd)/example_c.pdf
 \end{lstlisting}
 %
+show plots
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.3\textwidth]{../examples/hepstore_plot/example_a.pdf}
+  \includegraphics[width=0.3\textwidth]{../examples/hepstore_plot/example_b.pdf}
+  \includegraphics[width=0.3\textwidth]{../examples/hepstore_plot/example_c.pdf}
+  \caption{}
+  \label{fig:example_plotting}
+\end{figure}
+%
+
+
 \subsection{hepstore.school}
 
 One of the themes very interesting to particle physiscts and also recieving more and more attention in the phenomenolgical community is machine learning. 'hepstore.school' is an attempt to provide a genric interface to python's sklearn package. our school consists of a teacher, a student and, of course, a book. the teacher advices the student which algorithm to use, where upon the student takes the algorithm from the book and is able to explore and train itself to learn from the data provided.
@@ -389,6 +460,89 @@ Training is performed automattically on a $75\%$ subset of the data provided.
 Training is performed automattically on a $25\%$ subset of the data provided.
 
 \subsubsection{Example}
+
+same data as above
+
+%
+\begin{lstlisting}[language=Bash]
+  #!/usr/bin/env bash
+
+## produce data for this example
+./produce_data.py
+
+## tune quadratic linear discriminant
+hepstore-school -c qda -f $(pwd)/data_1.npy $(pwd)/data_2.npy \
+		-l 0.0 1.0 --only_explore \
+		--random_state 7 \
+		--path $(pwd)/tuning
+
+## which yields:--QDA: explore
+#--info: RandomizedSearchCV took 24.36 seconds for 200 candidates parameter settings.
+#--info: Model with rank: 1
+#--info: Mean validation score:  8.06e-01 (std:  3.28e-03)
+#--info: Parameters: {'reg_param': 0.0027454802945078294, 'tol': 0.00072971227653656045}
+#--info: Model with rank: 2
+#--info: Mean validation score:  8.05e-01 (std:  3.19e-03)
+#--info: Parameters: {'reg_param': 0.00862957001583331, 'tol': 0.00068120836729054681}
+#--info: Model with rank: 3
+#--info: Mean validation score:  8.05e-01 (std:  3.19e-03)
+#--info: Parameters: {'reg_param': 0.014999438477383165, 'tol': 0.00091459513377715248}
+
+## plot cross validation
+vars=('reg_param' 'tol')
+for var in ${vars[@]} ; do
+    hepstore-plot -f $(pwd)/tuning/train_scores_${var}.npy \
+		  $(pwd)/tuning/test_scores_${var}.npy \
+		  -k errorband --logx \
+		  --legend 'train' 'test' \
+		  -c yellow blue \
+		  --title "Cross validation QDA" \
+		  --xlabel "$var" \
+		  --ylabel 'score' \
+		  --path $(pwd)/$var.pdf
+done
+
+## perform the actuall machine learning
+hepstore-school -c qda -f $(pwd)/data_1.npy $(pwd)?data_2.npy \
+		-l 0.0 1.0 \
+		--reg_param 0.002745 --tol 0.0007291 \
+		--random_state 7 \
+		--path $(pwd)/learning
+
+## ROC curve
+hepstore-plot -f $(pwd)/learning/roc.npy -k line \
+	      --legend 'ROC' \
+	      -c black \
+	      --title "ROC curve QCD" \
+	      --xlabel '$\epsilon_{S}$' \
+	      --ylabel '$1-\epsilon_{B}$' \
+	      --path $(pwd)/roc.pdf
+
+## probability map
+hepstore-plot -f $(pwd)/data_1.npy $(pwd)/data_2.npy \
+	      $(pwd)/learning/probability_map.npy \
+	      -k "2*scatter" contour \
+	      -c blue red Blues \
+	      --xmin -5 --ymin -5 --xmax 5 --ymax 5 \
+	      --alpha 0.3 \
+	      --legend 'background' 'signal' \
+	      --title "probability map QDA" \
+	      --path $(pwd)/probbility_map.pdf
+\end{lstlisting}
+%
+show plots
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/tol.pdf}
+  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/reg_param.pdf}
+  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/roc.pdf}
+  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/probability_map.pdf}
+  \caption{}
+  \label{fig:example_plotting}
+\end{figure}
+%
+
 
 \subsection{hepstore.analysis}
 

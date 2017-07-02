@@ -102,6 +102,8 @@ def run():
                               nargs='+')
     parser.add_argument(      "--shake", action='store_true',
                               help="shake data")
+    parser.add_argument(      "--logx", action="store_true")
+    parser.add_argument(      "--logy", action="store_true")
     
     # parse args   
     args = parser.parse_args()

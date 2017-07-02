@@ -5,9 +5,6 @@
 # import for this module
 import numpy as np
 
-# fix a random seed
-np.random.seed(7)
-
 # number of events
 nevents = 20000
 

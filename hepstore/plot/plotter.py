@@ -110,9 +110,26 @@ class subplot(object):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber)
         x=data[:,self.options.axis[0]]
         y=data[:,self.options.axis[1]]
-        plt.plot(x,y,
-                 linestyle=self.linestyle,linewidth=self.linewidth,
-                 label=self.legend)
+        if self.options.logx and self.options.logy:
+            plt.loglog(x, y, 
+                       linestyle=self.linestyle,linewidth=self.linewidth,
+                       label=self.legend)
+            pass
+        elif self.options.logx:
+            plt.semilogx(x, y, 
+                       linestyle=self.linestyle,linewidth=self.linewidth,
+                       label=self.legend)
+            pass
+        elif self.options.logy:
+            plt.semilogy(x, y, 
+                       linestyle=self.linestyle,linewidth=self.linewidth,
+                       label=self.legend)
+            pass
+        else:
+            plt.plot(x,y,
+                     linestyle=self.linestyle,linewidth=self.linewidth,
+                     label=self.legend)
+            pass
         pass
 
     def errorband(self,data):
@@ -127,9 +144,26 @@ class subplot(object):
             dyp = data[:,self.options.axis[2]]
             dym = dyp
             pass
-        plt.plot(x,y,
-                 linestyle=self.linestyle,linewidth=self.linewidth,
-                 label=self.legend)
+        if self.options.logx and self.options.logy:
+            plt.loglog(x, y, 
+                       linestyle=self.linestyle,linewidth=self.linewidth,
+                       label=self.legend)
+            pass
+        elif self.options.logx:
+            plt.semilogx(x, y, 
+                       linestyle=self.linestyle,linewidth=self.linewidth,
+                       label=self.legend)
+            pass
+        elif self.options.logy:
+            plt.semilogy(x, y, 
+                       linestyle=self.linestyle,linewidth=self.linewidth,
+                       label=self.legend)
+            pass
+        else:
+            plt.plot(x,y,
+                     linestyle=self.linestyle,linewidth=self.linewidth,
+                     label=self.legend)
+            pass
         plt.fill_between(x, y-dym, y+dyp,
                          linestyle=self.linestyle,linewidth=self.linewidth,
                          alpha=0.3*self.options.alpha,)
