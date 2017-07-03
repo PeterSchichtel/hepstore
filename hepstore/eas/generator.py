@@ -25,7 +25,7 @@ class Generator(object):
         self.path           = path
         lib                 = importlib.import_module(os.path.normpath(path).split('/')[3])
         app                 = lib.Generator(self.options)
-        self.hepmc_filepath = app.run(os.path.join(path,'mc_generation')
+        self.hepmc_filepath = app.run(os.path.join(path,'mc_generation'))
         # convert events
         self.convert()
         # enrich with nucleons

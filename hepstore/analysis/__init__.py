@@ -12,8 +12,13 @@ import argparse
 def main(args=None):
 
     # we need to setup the arg parser
-    arg_parser = argparse.ArgumentParser(description="Meta code to analyse typical hep data in .npy format")
-    arg_parser.add_argument("mode", type=str, nargs='+', help="specify the analyses which should be performed")
+    arg_parser      = argparse.ArgumentParser(
+        description = 'Meta code to analyse typical hep data in .npy format',
+        add_help    = False,
+        usage       = '''hepstore-analysis mode [mode ...]
+        allowed mode(s) are: learn,
+        ''')
+    arg_parser.add_argument('mode', type=str, nargs='+')
 
     # parse args
     parsed_args, unknown = arg_parser.parse_known_args(args)
@@ -30,7 +35,7 @@ def main(args=None):
 ############################################################################
 ## executable as script
 ############################################################################
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
     pass
 ############################################################################

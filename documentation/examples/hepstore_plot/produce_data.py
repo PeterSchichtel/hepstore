@@ -9,7 +9,7 @@ import numpy as np
 np.random.seed(7)
 
 # number of events
-nevents = 20000
+nevents = 5000
 
 # generate data set I
 mean = np.array([0.0,0.0])

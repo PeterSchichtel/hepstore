@@ -33,6 +33,7 @@ setup(name='hepstore',
           'console_scripts': [
               'hepstore                = hepstore:main',
               'hepstore-herwig         = hepstore.docker.herwig:main',
+              'hepstore-sherpa         = hepstore.docker.sherpa:main',
               'hepstore-corsika        = hepstore.docker.corsika:run',
               'hepstore-hepmc2corsika  = hepstore.docker.hepmc2corsika:run',
               'hepstore-analysis       = hepstore.analysis:main',

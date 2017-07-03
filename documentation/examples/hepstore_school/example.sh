@@ -46,7 +46,8 @@ hepstore-school -c qda -f $(pwd)/data_1.npy $(pwd)/data_2.npy \
 hepstore-plot -f $(pwd)/learning/roc.npy -k line \
 	      --legend 'ROC' \
 	      -c black \
-	      --title "ROC curve QCD" \
+	      --ymax 1.1 \
+	      --title "ROC curve QDA" \
 	      --xlabel '$\epsilon_{S}$' \
 	      --ylabel '$1-\epsilon_{B}$' \
 	      --path $(pwd)/roc.pdf
@@ -60,5 +61,5 @@ hepstore-plot -f $(pwd)/data_1.npy $(pwd)/data_2.npy \
 	      --alpha 0.3 \
 	      --legend 'background' 'signal' \
 	      --title "probability map QDA" \
-	      --path $(pwd)/probbility_map.pdf
+	      --path $(pwd)/probability_map.pdf
 

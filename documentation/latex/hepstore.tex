@@ -1,10 +1,18 @@
 \documentclass[aps,prd,11pt,tightenlines,superscriptaddress,nofootinbib,preprintnumbers,notitlepage]{revtex4-1}
- 
+
+% disable subsections and subsubsections in the TOC
+\makeatletter
+%\def\l@subsection#1#2{}
+\def\l@subsubsection#1#2{}
+\makeatother
+
 \pdfoutput=1
 \usepackage{amsmath,multirow,graphicx,tabularx,epsfig}
 \usepackage{color}
 \usepackage{hyperref}
- 
+
+
+\usepackage{enumerate}
 %\newcommand{\ps}[1]{{\color{blue} [Peter] #1}}
 %\newcommand{\tp}[1]{{\color{cyan} [Tilman] #1}}
 %\newcommand{\fk}[1]{{\color{red} [Felix] #1}}
@@ -187,6 +195,8 @@
 
 \newcommand{\hepstore}{\texttt{HepStore}}
 \newcommand{\python}{\texttt{Python~2.7}}
+\newcommand{\docker}{\texttt{Docker}}
+
 
 \usepackage{framed}
 \usepackage{listings}
@@ -196,8 +206,20 @@
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
+\usepackage{inconsolata}
+
+\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
+\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
+
+
+\lstdefinelanguage{Python2}{%
+  language     = Python,
+  morekeywords = {self},
+}
+
+
 \lstset{frame=tb,
-  language=Python,
+  language=Python2,
   aboveskip=3mm,
   belowskip=3mm,
   showstringspaces=false,
@@ -210,12 +232,17 @@
   stringstyle=\color{mauve},
   breaklines=true,
   breakatwhitespace=true,
-  tabsize=3
+  keepspaces=true
+  tabsize=3,
+  emph={ True, False, None},
+  emphstyle={ \color{babyblue}}
 }
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
- 
 \title{{\bf\Huge\hepstore: The Awakening}}
 
 \preprint{IPPP/16/72}
@@ -243,7 +270,8 @@
 \section{Installation}
 \label{sec:installation}
 
-The \hepstore~--~Framework is written solely in \python. To install the package you need 'pip'~\cite{}.
+The \hepstore~--~Framework is written solely in \python. To install
+the package you need 'pip'~\cite{}.
 %
 \begin{framed}
   \begin{center}
@@ -251,97 +279,143 @@ The \hepstore~--~Framework is written solely in \python. To install the package 
   \end{center}
 \end{framed}
 %
-The arguments in parenthesis are optional. Furthermore, if you want to make use of the {\bf Monte~Carlo reproducability features} in \hepstore~you need a working Docker~\cite{} installation.
+The arguments in parenthesis are optional. Furthermore, if you want to
+make use of the {\bf Monte~Carlo reproducability features} in
+\hepstore~you need a working Docker~\cite{} installation.
 
 \section{The \hepstore~--~Framework}
 \label{sec:framework}
 
-In the following we will outly the modules hepstore is composed of. We will introduce their usage and motivation.
+In the following we will outly the core modules hepstore is composed
+of. We will introduce their usage and motivation and give examples of
+their simple usability.
 
-\subsection{hepstore.docker}
+\subsection{hepstore.docker:~~~Monte Carlo Reproducibility}
 
-There has been tremondous effort in the experimantal community to achieve high scientific standards of reproducibility. Namely the ReCast and Reana frame works. However, one should not think that no such efforts have been undertaken in the phenomelogical community. There is MadAnalysis5 which has the ability to recast LHC analyses. There is, of course, Rivet, which comes along with verified phenomenolgical and experimental analyses. These tools provide building blocks to perform, save and redo an analysis. In addition the MC community develops ever simpler installation routines for their code packages, including interfaces to third party software. So, why bother with recasting respectively reproducing phenomenoligical results? Anybody who has ever tried to redo what they did five years ago might already know the answer: library missing, code missing, data missing, does not compile anymore, does not run anymore, 32-bit what?, not supported, what was the random seed again, which version of package X was used, etc. pp. So part of this work will be to show a recipe to solve this problem (once and for all, hopefully).
+\subsubsection{Reproducibility}
 
-The short answer is Docker. For those who know Docker and are ready to critisize this solution and those who do not know Docker a more lengthy argument follows. Docker is a program which allows to containerize applications. This means once a Docker container is produced, the whole state of the system is fixed. This imidiately clears all of the points raised above. One cannot loose code or a library anymore. It's all in the docker image. The docker image itself can be stored locally, of course, as well as on the docker webpage. There it can be made accessible. This means anybody can reproduce your analysis in the exact state it was developed and used. However, this work wants to be more than just an advertisement for Docker. There is an other issue with MC production and analysis, which has to be considered for proper reproducibility. That is the steering and interaction of the analysis steps. This is what hepstore.docker provides. First there is an easy to use interface to any docker image, which can be used from within \python.
+Reproducing any result from previous scientific work is at the heart
+of the scientific method. It occures often that ground breaking
+scientific results are doubted for many years until reproduced
+correctly. Contrary, if not reproduced at all, the result is simply
+not believed to be true~\cite{}. It is therefore obvious and vital to
+any scientific effort to be easily reproduced. Of course, for some
+experimental setup this just might not be easily done. It might be
+that the experience needed to craft a certain item just has been
+developed during the actual research itself. However, in the high
+energy physics community, more and more scientific results completely
+depend on work performed by computers. And indeed, there has been
+tremondous effort in the experimantal LHC community to achive high
+scientific standards of reproducibility. Namely the
+\texttt{REANA}~\cite{} frame work.
+
+However, one should not think that no such efforts have been
+undertaken in the phenomelogical community. There is
+\texttt{MadAnalysis5}~\cite{} which has the ability to recast LHC
+analyses and provides a convienent frame work for high energy physics
+analyses. There is, of course, \texttt{Rivet}~\cite{}, which comes
+along with \emph{actual, verified} phenomenolgical and experimental
+analyses. There is the \texttt{ROOT}~\cite{} framework which provides
+a multitude of analysis tools. These tools provide building blocks to
+perform, save and eventually redo any analysis. In addition, the Monte
+Carlo (MC) code developers~\cite{} provide ever simpler installation
+routines for their code packages, including interfaces to third party
+software.
+
+So, why bother with the reproducibility of phenomenoligical results?
+It is true that a fair amount of the analysis itself is either
+automated or can be easily build from freely availbale
+software. However, that does not mean that it is actually
+reproducible. Anybody who has ever tried to redo what they or someone
+else did five years ago might already know some of the problems:
+library missing, code missing, data missing, does not compile anymore,
+does not run anymore, 32-bit what?, not supported, what was the random
+seed again, which version of package XY was used, etc. pp.
+
 %
-\begin{lstlisting}
-# module: hepstore.docker.interface
-
-# imports for this module
-import docker
-import os
-
-# the actual interface class
-class DockerIF(object):
-
-    # cosntructor
-    def __init__( self,
-                  image="GENERATOR",
-                  version="TAG",
-                  verbose=False ):
-        # save arguments
-        self.IMAGE   = image
-        self.TAG     = version
-        self.name    = "%s:%s" % (self.IMAGE,self.TAG)
-        self.verbose = verbose
-        # connect to docker
-        self.client  = docker.from_env()
-        # check if docker image exist otherwise try to pull
-        if not len(self.client.images.list(name=self.IMAGE))>0:
-            print "--%s: pull image" % self.name
-            self.client.images.pull(self.IMAGE,tag=self.TAG)
-            pass
-        pass
-
-    # actual command run interface
-    def run(self,args,directory=None,verbose=False):
-        # construct docker container name
-        containername = "%s:%s" % (self.IMAGE,self.TAG)
-        # see if there is a directory to be mounted from host machine
-        try:
-            folder    = os.path.realpath(directory)
-            volume    = {folder: {'bind': '/UserVolume', 'mode': 'rw'}}
-            pass
-        except Exception:
-            volume    = {}
-            pass
-        # run the command on the container
-        container = self.client.containers.run( containername,
-                                                command=args,
-                                                volumes=volume,
-                                                working_dir='/UserVolume',
-                                                detach=True )
-        # print the container output on screen
-        for i,line in enumerate(container.logs( stdout=True, stderr=True, stream=True)):
-            if self.verbose:
-                print "%i: %s" % (i,line.strip())
-                pass
-            pass
-        # remove container
-        container.remove()
-        pass
-
-    pass # DockerIF
-\end{lstlisting}
+\begin{minipage}{\textwidth}
+  Let us start with defining the neccessary conditions for a
+  phenomenolgical analysis to be \emph{fully reproducible}.
+  %
+  \begin{enumerate}[(a)]
+  \item The state of the machine can be {\bf frozen} and published.
+  \item Except for the state of the machine, the work only depends on
+    simple (i.e text), publishable {\bf input files}.
+  \item The full analysis chain can be invoked by means of a
+    {\bf platform independent} command.
+  \end{enumerate}
+  %
+\end{minipage}
+\medskip
 %
 
-\subsubsection{Example}
+Requirement (a) is most easily solved by invoking
+\docker~\cite{}. \docker~is a framework which allows to ship
+containerized applications. This means it is able to produce a frozen
+state of a machine. The \docker~image contains all the libraries and
+packages installed during its creation. Furthermore, \docker~hosts a
+webpage where one can upload and therefore publish \docker~images.
 
-As an example, we construct our own Herwig 7 interface the code can be found in App.~... This code can be called with 'hepstore-herwig' and will behave identical to the 'Herwig' command once Herwig7 would be installed on your machine. Let's say that for any reason you need another version of Herwig. As you can see from the code fragment the docker image and the docker file can be found on the docker webpage under user 'peterschichtel/herwig:7.0.4'. you can use the dockerfile found there and generate your own version of Herwig, say 'yourname/herwig:7.1.0', by altering it correspondingly .Now you can produce MC events with the interface given here: 'hepstore-herwig --repository yourname --generator-version 7.1.0 build yourRunCard.in'. So far so good. Now you'd like to use the 'rivet-mkhtml' command to plot these things you computed. However, there is no special hepstore-rivet-mkhtml you could use. Note that rivet here is a pseudonyme for any command that is not included in the hepstore.docker family which you might need. In this sepcific case the solution is very simple. Copy the above code into a new file rivet-mkhtml.py. In the last command change 'Herwig' to 'rivet-mkhtml' (this is possible because the herwig installation comes along with a rivet installation). use chmod to make the python file executable and just run './rivet-mkhtml.py --repository yourname --generator-version 7.1.0 yourListOfRivetCommandsAndFilePathes' as usual, done. If you think that this is just a more complicated way of running your analysis, don't be mistaken. Something happend on the way: you produced a dockerfile as well as a docker image. This preserves your whole internal state of your code and analysis! Your full analysis has become reproducible for the future by providing two files as supplimential material in your publication: your self written 'rivet-mkhtml' interface and the dockerfile. Even better, if you are up to it you can contribute to hepstore by adding your rivet interface to the hepstore.docker family and upload your docker image to the docker webpage. Your complete production and analysis state is now preserved and interfaced for future use, by publishing the your herwig run card and the following bash snippet:
+Requirement (b) is most of the time already satisfied by todays
+publications, where run and parameter cards are added as supplimental
+material.
+
+Requirement (c) is more tricky, though. Furthermore, it needs
+motivation as its neccassity is not as straight forward as (a) and
+(b). Note, that the aim of the above description is the full
+reproduction of a phenomenoligical analysis. This includes not only
+the state of the machine and any input parameters, but also what
+commands to run in which order to perform the full analysis. This also
+includes any code written specifically for this analysis. Furthermore,
+we require platform independence. Who ever replicates the analysis
+should not fail due to any special platform requirements. This is
+where hepstore.docker enters the stage. It provides a simple
+\python~interface to run any command on a given docker image. We show
+the source code in the following:
 %
-\begin{lstlisting}[language=Bash]
-  #!/usr/bin/env bash
-  pip install git+https://github.com/PeterSchichtel/hepstore.git
-  hepstore-herwig --repository yourname --generator-version 7.1.0 read yourRunCard.in
-  hepstore-herwig --repository yourname --generator-version 7.1.0 run  yourRunCard.run
-  hepstore-rivet-mkhtml --repository yourname --generator-version 7.1.0 yourListOfRivetCommandsAndFilePathes
-\end{lstlisting}
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=8,firstline=8]{../../hepstore/docker/interface.py}
+\end{changemargin}
 %
-This example is where \hepstore~ takes its name from. You can add and publish your own product for other's to be used when they want to build on or reproduce your research. Furthermore, it i sthe authors hope that the community might provide official docker images to be used as well.
+As a starting point using this interface we provide simple command
+line tools for
+%
+\begin{itemize}
+\item Herwig 7.0 ~$~~\rightarrow$ 'hepstore-herwig',
+\item Sherpa 2.2 ~$~~\rightarrow$ 'hepstore-sherpa',
+\item Corsika 7.4 $~~\rightarrow$ 'hepstore-corsika',
+\end{itemize}
+%
+in accordance with the points raised above: frozen state and platform
+independent. The actual code and the docker files can be found in
+App.~\ref{app:docker}. Note, however, that Sherpa actually has an
+official docker account, where we pull their image from. It is also
+the aim of this work to motivate further official docker images from
+code developers.
 
-\subsection{hepstore.plot}
+Furthermore, let us provide an example showing the simplicity and
+elegance of hepstore.docker. Provided the runcard 'ExampleRunCard.in'
+also found in App.~\ref{app:docker}, the following lines og code will
+always produce the very same result on any machine:
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \begin{lstlisting}[language=Bash]
+    #!/usr/bin/env bash
+    hepstore-herwig read ExampleRunCard.in
+    hepstore-herwig run  ExampleRunCard.run -N 1000 -s 687\end{lstlisting}
+\end{changemargin}
+%
+Not only have we provided a completely reproducible MC run, there is
+also no installation of additional code then \hepstore~neccessary.
 
-In the case where you are not able to use the rivet or madanalysis plotting capabilities, \hepstore provides a simple user interface 'hepstore-plot' which can plot any one or two dimensional representation of your data\footnote{provided in .npy format}. Currently the following kinds of plots are suported: scatter, histogram, errorbar, line, errorband, and contour.
+\subsection{hepstore.plot:~~~~~~\,Simple Plotting}
+
+In the case where you are not able to use the rivet or madanalysis
+plotting capabilities, \hepstore provides a simple user interface
+'hepstore-plot' which can plot any one or two dimensional
+representation of your data\footnote{provided in .npy
+  format}. Currently the following kinds of plots are suported:
+scatter, histogram, errorbar, line, errorband, and contour.
 
 \subsubsection{Data Format}
 
@@ -350,81 +424,16 @@ In the case where you are not able to use the rivet or madanalysis plotting capa
 \subsubsection{Example}
 produce some data
 %
-\begin{lstlisting}
-#!/usr/bin/env python
-
-# module examples/hepstore_plot produce_data
-
-# import for this module
-import numpy as np
-
-# number of events
-nevents = 20000
-
-# generate data set I
-mean = np.array([0.0,0.0])
-cov  = np.array([[1.0,0.0],[0.0,1.0]])
-data = np.random.multivariate_normal(mean, cov, 2*nevents)
-np.save('data_1.npy',data)
-
-# generate data set II
-mean = np.array([2.5,-2.5])
-cov  = np.array([[1.0,0.0],[0.0,1.0]])
-data = np.random.multivariate_normal(mean, cov, nevents)
-mean = np.array([-1.4,0.8])
-cov  = np.array([[0.02,1.2],[-1.7,0.01]])
-data = np.concatenate((data,np.random.multivariate_normal(mean, cov, nevents)))
-np.save('data_2.npy',data)
-
-\end{lstlisting}
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/hepstore_plot/produce_data.py}
+\end{changemargin}
 %
 plot with hepstore-plot
 %
-\begin{lstlisting}[language=Bash]
-#!/usr/bin/env bash
-
-## produce data for this example
-./produce_data.py
-
-## plot scatter
-hepstore-plot -f data_1.npy data_2.npy -k scatter \
-	      -c blue red \
-	      --xmin -5 --xmax 5 \
-	      --ymin -5 --ymax 5 \
-	      --legend 'single gaussian' 'double gaussian' \
-	      --alpha 0.6 \
-              --title 'example plot a.)' 'scatter'\
-	      --path $(pwd)/example_a.pdf
-
-## plot histogram of x axis
-hepstore-plot -f data_1.npy data_2.npy -k histogram \
-	      -a 0 \
-	      -c blue red \
-	      --normed \
-	      --bins 20 \
-	      --xmin -5 --xmax 5 \
-	      --ymax 0.6 \
-	      --ylabel '$\rho(x)$' \
-	      --legend 'single gaussian' 'double gaussian' \
-	      --alpha 0.6 \
-	      --title 'example plot b.)' 'histogram'\
-	      --path $(pwd)/example_b.pdf
-
-## plot histogram of x axis
-hepstore-plot -f data_1.npy data_2.npy -k histogram \
-	      -a 1 \
-	      -c blue red \
-	      --normed \
-	      --bins 20 \
-	      --xmin -5 --xmax 5 \
-	      --ymax 0.6 \
-	      --xlabel 'y' \
-	      --ylabel '$\rho(y)$' \
-	      --legend 'single gaussian' 'double gaussian' \
-	      --alpha 0.6 \
-	      --title 'example plot c.)' 'histogram'\
-	      --path $(pwd)/example_c.pdf
-\end{lstlisting}
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1,language=Bash]{../examples/hepstore_plot/example.sh}
+\end{changemargin}
+%
 %
 show plots
 %
@@ -439,9 +448,16 @@ show plots
 %
 
 
-\subsection{hepstore.school}
+\subsection{hepstore.school:~~~\,Machine Learning}
 
-One of the themes very interesting to particle physiscts and also recieving more and more attention in the phenomenolgical community is machine learning. 'hepstore.school' is an attempt to provide a genric interface to python's sklearn package. our school consists of a teacher, a student and, of course, a book. the teacher advices the student which algorithm to use, where upon the student takes the algorithm from the book and is able to explore and train itself to learn from the data provided.
+One of the themes very interesting to particle physiscts and also
+recieving more and more attention in the phenomenolgical community is
+machine learning. 'hepstore.school' is an attempt to provide a genric
+interface to python's sklearn package. our school consists of a
+teacher, a student and, of course, a book. the teacher advices the
+student which algorithm to use, where upon the student takes the
+algorithm from the book and is able to explore and train itself to
+learn from the data provided.
 
 \subsubsection{Classifiers}
 
@@ -449,7 +465,13 @@ lda,qcd,svc,mlp
 
 \subsubsection{Tuning}
 
-As it is not a prior clear which parameters to chose for an algorithm, 'hepstore-school' provides the switch '-{}-only\_explore' which will try to automatically find the best parameters for the given training set. In addition for all numerical parameters it provides cross validation plots to check for over respectively under performance. Note that some classifiers might have a large parameter space and hence can not be tunde in a fully automated way, yet.
+As it is not a prior clear which parameters to chose for an algorithm,
+'hepstore-school' provides the switch '-{}-only\_explore' which will
+try to automatically find the best parameters for the given training
+set. In addition for all numerical parameters it provides cross
+validation plots to check for over respectively under
+performance. Note that some classifiers might have a large parameter
+space and hence can not be tunde in a fully automated way, yet.
 
 \subsubsection{Training}
 
@@ -464,71 +486,11 @@ Training is performed automattically on a $25\%$ subset of the data provided.
 same data as above
 
 %
-\begin{lstlisting}[language=Bash]
-  #!/usr/bin/env bash
-
-## produce data for this example
-./produce_data.py
-
-## tune quadratic linear discriminant
-hepstore-school -c qda -f $(pwd)/data_1.npy $(pwd)/data_2.npy \
-		-l 0.0 1.0 --only_explore \
-		--random_state 7 \
-		--path $(pwd)/tuning
-
-## which yields:--QDA: explore
-#--info: RandomizedSearchCV took 24.36 seconds for 200 candidates parameter settings.
-#--info: Model with rank: 1
-#--info: Mean validation score:  8.06e-01 (std:  3.28e-03)
-#--info: Parameters: {'reg_param': 0.0027454802945078294, 'tol': 0.00072971227653656045}
-#--info: Model with rank: 2
-#--info: Mean validation score:  8.05e-01 (std:  3.19e-03)
-#--info: Parameters: {'reg_param': 0.00862957001583331, 'tol': 0.00068120836729054681}
-#--info: Model with rank: 3
-#--info: Mean validation score:  8.05e-01 (std:  3.19e-03)
-#--info: Parameters: {'reg_param': 0.014999438477383165, 'tol': 0.00091459513377715248}
-
-## plot cross validation
-vars=('reg_param' 'tol')
-for var in ${vars[@]} ; do
-    hepstore-plot -f $(pwd)/tuning/train_scores_${var}.npy \
-		  $(pwd)/tuning/test_scores_${var}.npy \
-		  -k errorband --logx \
-		  --legend 'train' 'test' \
-		  -c yellow blue \
-		  --title "Cross validation QDA" \
-		  --xlabel "$var" \
-		  --ylabel 'score' \
-		  --path $(pwd)/$var.pdf
-done
-
-## perform the actuall machine learning
-hepstore-school -c qda -f $(pwd)/data_1.npy $(pwd)?data_2.npy \
-		-l 0.0 1.0 \
-		--reg_param 0.002745 --tol 0.0007291 \
-		--random_state 7 \
-		--path $(pwd)/learning
-
-## ROC curve
-hepstore-plot -f $(pwd)/learning/roc.npy -k line \
-	      --legend 'ROC' \
-	      -c black \
-	      --title "ROC curve QCD" \
-	      --xlabel '$\epsilon_{S}$' \
-	      --ylabel '$1-\epsilon_{B}$' \
-	      --path $(pwd)/roc.pdf
-
-## probability map
-hepstore-plot -f $(pwd)/data_1.npy $(pwd)/data_2.npy \
-	      $(pwd)/learning/probability_map.npy \
-	      -k "2*scatter" contour \
-	      -c blue red Blues \
-	      --xmin -5 --ymin -5 --xmax 5 --ymax 5 \
-	      --alpha 0.3 \
-	      --legend 'background' 'signal' \
-	      --title "probability map QDA" \
-	      --path $(pwd)/probbility_map.pdf
-\end{lstlisting}
+%
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1,language=Bash]{../examples/hepstore_school/example.sh}
+\end{changemargin}
 %
 show plots
 %
@@ -544,28 +506,38 @@ show plots
 %
 
 
-\subsection{hepstore.analysis}
+\subsection{hepstore.analysis: Automated Hep Analysis}
 
-the hepstore-analysis module is a high level package to perform the usual statistical computations needed in high energy physics. it utilizes hepstore.school to provide signal and background classification and extract statistical quantities such as the maximal poissonian significance, the upper exclusion bound on the signal cross section etc.
+the hepstore-analysis module is a high level package to perform the
+usual statistical computations needed in high energy physics. it
+utilizes hepstore.school to provide signal and background
+classification and extract statistical quantities such as the maximal
+poissonian significance, the upper exclusion bound on the signal cross
+section etc.
 
 still missing: traditional cut analysis
 
 \subsubsection{Example}
 
-\section{hepstore-eas: produce and anlyse Extended Air Showers the \hepstore~way}
+\section{Produce and Anlyse Extended Air Showers the \hepstore~way: hepstore-eas}
 
 \subsection{List}
 'hepstore-eas -L'
 
-As this is a specific air shower framework we organise everything with respect to the following scheme: energy -> primary particle -> physical process -> MC generator -> nucleon model -> final state
-the -{}-list argument searches for this structure and lists the following possible contents
-hard events -> attempted showers -> showeres -> observables
+As this is a specific air shower framework we organise everything with
+respect to the following scheme: energy -> primary particle ->
+physical process -> MC generator -> nucleon model -> final state the
+-{}-list argument searches for this structure and lists the following
+possible contents hard events -> attempted showers -> showeres ->
+observables
 
 \subsection{Generation}
 
 'hepstore-eas -G'
 
-we interface from the hepstore.docker family (more details in appendix) and provide automated runcards for herwig to produce events which may be showerd by corsika
+we interface from the hepstore.docker family (more details in
+appendix) and provide automated runcards for herwig to produce events
+which may be showerd by corsika
 
 \subsubsection{Nucleon Modle}
 
@@ -575,13 +547,21 @@ we provide two nucleon models 'full' and 'fragmented'
 
 'hepstore-eas -S'
 
-we interface from the hepstore.docker family and provide automated runcards for corsika to either shower events generted with '-G' or produce corsika stand alone showers (internal corsika di-jet production) when using '-C 7.4' (here 7.4 is the version vor the docker image)
+we interface from the hepstore.docker family and provide automated
+runcards for corsika to either shower events generted with '-G' or
+produce corsika stand alone showers (internal corsika di-jet
+production) when using '-C 7.4' (here 7.4 is the version vor the
+docker image)
 
 \subsection{Observables}
 
 'hepstore-eas -A'
 
-we provide our own event class to read corsika produced extended air showers. inspired by rivet we allow for dynamic load of user analysis modules and provide one example for such, constructing $\rho_\mu$ and $X_\text{max}$. hepstore-eas automatically provides its output in .npy format
+we provide our own event class to read corsika produced extended air
+showers. inspired by rivet we allow for dynamic load of user analysis
+modules and provide one example for such, constructing $\rho_\mu$ and
+$X_\text{max}$. hepstore-eas automatically provides its output in .npy
+format
 
 \subsection{Example}
 
@@ -596,86 +576,30 @@ we provide our own event class to read corsika produced extended air showers. in
 \begin{appendix}
 
   \section{The hepstore.docker family}
+  \label{app:docker}
 
   \subsection{hepstore-herwig}
 
   \subsubsection{Code}
-
   %
-  \begin{lstlisting}
-# module: hepstore.docker.herwig
-
-# imports for this module
-import os
-
-############################################################################
-## run the app
-############################################################################
-def main(args=None):
-
-    # we need to setup the arg parser
-    import argparse
-    parser = argparse.ArgumentParser(
-        description =
-        "This App allows to run the Herwig code out of the box with python 2.7." )
-    
-    # specify arguments for versioning
-    parser.add_argument( "--repository"       ,
-                         type    = str,
-                         default = "peterschichtel",
-                         help    = "docker repo of the genrator" )
-    parser.add_argument( "--generator"        ,
-                         type    = str,
-                         default = "Herwig",
-                         help    = "which generator to run, default Herwig " )
-    parser.add_argument( "--generator-version",
-                         type    = str,
-                         default = "7.0.4",
-                         help    = "which version to run, default 7.0.4" )
-    
-    # mount a directory
-    parser.add_argument( "--directory",
-                         type    = str,
-                         default = os.getcwd(),
-                         help    =
-                         "mount this directoy as /UserDirectory (automatic working dir!), default is PWD!" )
-
-    # verbose stdout
-    parser.add_argument( "-v", "--verbose",
-                         action  = "store_true",
-                         help    = "print container stdout" )
-    
-    # parse args
-    parsed_args, unknown = parser.parse_known_args(args)
-            
-    # run the app
-    from interface import DockerIF as Herwig
-    app=Herwig(
-        image     = os.path.join( parsed_args.repository.lower(),
-                                parsed_args.generator.lower() ),
-        version   = parsed_args.generator_version,
-        verbose   = parsed_args.verbose
-    )
-    app.run(
-        directory = parsed_args.directory,
-        args       = [ '/bin/bash',
-                       '-c',
-                       'source $ACTIVATE && %s ' % " ".join(['Herwig'] + unknown )
-        ]
-    )
-        
-    pass # main
-############################################################################
-
-############################################################################
-if __name__ == "__main__":
-    main()
-    pass
-############################################################################
-  \end{lstlisting}
+  \begin{changemargin}{1.5cm}{1.5cm} 
+    \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../../hepstore/docker/herwig.py}
+  \end{changemargin}
   %
 
   \subsubsection{Dockerfile}
+  %
+  \begin{changemargin}{1.5cm}{1.5cm} 
+    \lstinputlisting[numbers=left,firstnumber=1,firstline=1,language=Bash]{../../../../Herwig/HerwigDocker/7.0.4/Dockerfile}
+  \end{changemargin}
+  %
+
+  \subsubsection{Example Runcard}
+  %
+  \begin{changemargin}{1.5cm}{1.5cm} 
+    \lstinputlisting[numbers=left,firstnumber=1,firstline=1,language=Bash]{../examples/hepstore_docker/ExampleRunCard.in}
+  \end{changemargin}
+  %
   
   \subsection{hepstore-corsika}
 
