@@ -253,6 +253,8 @@ class SVC(sklearn.svm.SVC):
             for parameter in param_dist:
                 if parameter is 'shrinking':
                     continue
+                print param_dist[parameter]
+                print param_dist[parameter].args
                 param_range = np.logspace( param_dist[parameter].args[0],
                                            param_dist[parameter].args[1],
                                            n_iter_search)
@@ -289,8 +291,14 @@ class Book(object):
                 path=options.path, jobs=options.jobs)
             pass
         elif options.classifier.lower() == 'mlp':
+            if options.solver in [ 'sgd', 'adam', 'lbfgs' ]:
+                solver = options.solver
+                pass
+            else:
+                solver = 'adam'
+                pass
             self.classifier = MLPClassifier(
-                hidden_layer_sizes=(100, ), activation='relu', solver=options.solver,
+                hidden_layer_sizes=(100, ), activation='relu', solver=solver,
                 alpha=0.0001, batch_size='auto', learning_rate='constant',
                 learning_rate_init=0.001, power_t=0.5, max_iter=200,
                 shuffle=True, random_state=None, tol=0.0001, verbose=False,
