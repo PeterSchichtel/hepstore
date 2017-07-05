@@ -76,10 +76,21 @@ class subplot(object):
 
     def errorbar(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
-        counts,bin_edges = np.histogram(data,bins=self.options.bins,range=self.range()[0],normed=self.options.normed)
+        counts,bin_edges = np.histogram(data[:,self.options.axis[0]],
+                                        bins   = self.options.bins,
+                                        range  = self.range()[0],
+                                        normed = self.options.normed)
         bin_centres      = (bin_edges[:-1] + bin_edges[1:])/2.
         err              = np.sqrt(counts)
-        plt.errorbar(bin_centres, counts, yerr=err, fmt='o', color=self.color())
+        if self.options.normed:
+            err /= np.sqrt( float(len( data[:,self.options.axis[0]] )) )
+            pass
+        plt.errorbar( bin_centres, counts,
+                      yerr  = err,
+                      fmt   = 'o',
+                      alpha = self.options.alpha,
+                      color = self.color,
+                      label = self.legend)
         pass
 
     def contour(self,data):

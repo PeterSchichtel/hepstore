@@ -92,7 +92,32 @@ class Student(books.Book):
         np.save(os.path.join(self.options.path,"probability_map.npy"),self.probability_map())
         # ROC
         np.save(os.path.join(self.options.path,"roc.npy")            ,self.roc())
+        # classifier distributions
+        for label in np.unique(np.concatenate((ltrain,ltest))):
+            np.save( os.path.join(self.options.path,'classifier_distribution_train_%s.npy' % str(label) ),
+                     self.classifier_distribution(label,True) )
+            np.save( os.path.join(self.options.path,'classifier_distribution_test_%s.npy' % str(label) ),
+                     self.classifier_distribution(label,False) )
+            pass
         pass
+
+    def classifier_distribution(self,label,train=True):
+        # load data
+        data_scaled = self.data_train_scaled 
+        data_labels = self.label_train  
+        if not train:
+            data_scaled = self.data_test_scaled
+            data_labels = self.label_test
+            pass
+        # generate distribution
+        distr = []
+        for classification,true_label in zip( self.classifier.predict_proba(data_scaled), data_labels):
+            if label == true_label:
+                distr.append(classification)
+                pass
+            pass
+        # return as np array
+        return np.array(distr)
 
     def probability_map(self):
         data   = np.concatenate((self.data_train,self.data_test))
