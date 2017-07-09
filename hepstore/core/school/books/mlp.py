@@ -50,7 +50,7 @@ def parameter_search(classifier,parameters,n_iter_search,X,y,mode="random",jobs=
         report(random_search.cv_results_)
         pass
     else:
-        raise NotImplemented("cannot explore method %s" % method)
+        raise KeyError("cannot explore method %s" % method)
     pass
 
 # Utility function to create validation curve
@@ -74,14 +74,52 @@ def learning_curve(classifier,X,y,cv=None,train_sizes=np.linspace(.1, 1.0, 5),pa
     train_scores_std  = np.std( train_scores, axis=1)
     test_scores_mean  = np.mean(test_scores,  axis=1)
     test_scores_std   = np.std( test_scores,  axis=1)
-    train_scores      = np.concatenate( (train_sizes,train_scores_mean,train_scores_std) )
-    test_scores       = np.concatenate( (train_sizes,test_scores_mean, test_scores_std ) )
+    train_scores = []
+    for x,y,dy in zip(train_sizes.tolist(),train_scores_mean .tolist(),train_scores_std.tolist()):
+        train_scores.append([x,y,dy])
+        pass
+    train_scores      = np.array(train_scores)
+    test_scores = []
+    for x,y,dy in zip(train_sizes.tolist(),test_scores_mean .tolist(),test_scores_std.tolist()):
+        test_scores.append([x,y,dy])
+        pass
+    test_scores      = np.array(test_scores)
     mkdir(path)
     np.save(os.path.join(path,'learning_curve_train.npy'),train_scores)
-    np.save(os.path.join(path,'learning_curve_text.npy' ),test_scores )
+    np.save(os.path.join(path,'learning_curve_test.npy' ),test_scores )
     pass
 
-        
+# Utility function to perfomr tuning/validation of classifier
+def tune(classifier, X, y, param_dist, path=os.getcwd(), n_iter_search=100, jobs=1, random_state=None ):
+    # perform random search
+    parameter_search( classifier  , param_dist, n_iter_search, X, y, mode='random', jobs=jobs, random_state=random_state )
+    # check for over/under-training
+    for parameter in param_dist:
+        param_range = np.logspace(-10, -0.001 , n_iter_search)
+        validation_curve( classifier, parameter, param_range, X, y, path=path, jobs=jobs )
+        pass
+    # generate learning curve
+    cv = ShuffleSplit(n_splits=20, test_size=0.2, random_state=random_state)
+    learning_curve( classifier , X, y, cv=cv, path=path, n_jobs=jobs)
+    pass
+
+# Utility class for flat log_10 random
+class Log10Flat(object):
+
+    def __init__(self,start=0,stop=1):
+        self.start = start
+        self.stop  = stop
+        pass
+
+    def rvs(self, loc=0, scale=1, size=1, random_state=None):
+        if size==1:
+            return 10**(np.random.uniform(low=self.start,high=self.stop))
+        else:
+            return 10**(np.random.uniform(low=self.start,high=self.stop,size=size))
+        pass
+    
+    pass
+
 class LinearDiscriminantAnalysis(sklearn.discriminant_analysis.LinearDiscriminantAnalysis):
 
     def __init__(self,
@@ -101,34 +139,26 @@ class LinearDiscriminantAnalysis(sklearn.discriminant_analysis.LinearDiscriminan
         self.jobs         = jobs
         pass
     
-    def explore(self,X,y,mode="random",n_iter_search=200,n_splits=20):
+    def explore( self, X, y ):
+        path = os.path.join(self.path,self.solver)
         print "--LDA: explore"
         # specify parameters for exploration
-        param_dists = [
-            (n_iter_search,{"solver"   : [ 'eigen', 'lsqr' ],
-             "shrinkage": scipy.stats.uniform(0,1),
-             "tol"      : scipy.stats.uniform(0.00001,0.001),}),
-            (n_iter_search,{"solver"   : [ 'eigen', 'lsqr' ],
-             "shrinkage": [ None, 'auto' ],
-             "tol"      : scipy.stats.uniform(0.00001,0.001),}),
-            (1,{"solver"   : [ 'svd' ],
-             "shrinkage": [ None ],}),
-            ]
-        # perform random search
-        for param_dist in param_dists:
-            parameter_search( self  ,param_dist[1], param_dist[0], X, y, mode=mode, jobs=self.jobs, random_state=self.random_state )
+        if self.solver == 'svd':
+            param_dist = {
+                'tol'      : Log10Flat(-10,-0.001)
+            }
             pass
-        # check for over/under-training
-        for solver in [ 'eigen', 'lsqr']:
-            for parameter in [ 'shrinkage' ]:
-                param_range = np.logspace(-7, 0, n_iter_search)
-                classifier  = sklearn.discriminant_analysis.LinearDiscriminantAnalysis( solver=solver )
-                validation_curve( classifier, parameter, param_range, X, y, os.path.join(self.path,solver), jobs=self.jobs )
-                pass
+        else:
+            param_dist = {
+                'shrinkage': Log10Flat(-10,-0.001),
+            }
             pass
-        # generate learning curve
-        cv = ShuffleSplit(n_splits=n_splits, test_size=0.2, random_state=self.random_state)
-        learning_curve( self , X, y, cv=cv, path=self.path, n_jobs=self.jobs)
+        # tune classifier
+        tune( self, X, y, param_dist,
+              path         = path,
+              jobs         = self.jobs,
+              random_state = self.random_state
+        )
         pass
     
     pass
@@ -147,23 +177,19 @@ class QuadraticDiscriminantAnalysis(sklearn.discriminant_analysis.QuadraticDiscr
         self.jobs         = jobs
         pass
 
-    def explore(self,X,y,mode='random',n_iter_search=200,n_splits=20):
-        print "--QDA: explore"
+    def explore( self, X, y ):
+        path = self.path
         # specify parameters for exploration
-        param_dist = { 'reg_param': scipy.stats.uniform(0,1),
-                       'tol'      : scipy.stats.uniform(0.00001,0.001),
-                       }
-        # perform random search
-        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs, random_state=self.random_state )
-        # check for over/under-training
-        for parameter in param_dist:
-            param_range = np.logspace(-7,0,n_iter_search)
-            classifier  = sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis()
-            validation_curve( classifier, parameter, param_range, X, y, self.path, jobs=self.jobs )
-            pass
-        # generate learning curve
-        cv = ShuffleSplit(n_splits=n_splits, test_size=0.2, random_state=self.random_state)
-        learning_curve( self , X, y, cv=cv, path=self.path, n_jobs=self.jobs)
+        param_dist = {
+            'reg_param': Log10Flat(-10,-0.001),
+            'tol'      : Log10Flat(-10,-0.001),
+        }
+        # tune classifier
+        tune( self, X, y, param_dist,
+              path         = path,
+              jobs         = self.jobs,
+              random_state = self.random_state
+        )
         pass
     
     pass
@@ -194,25 +220,32 @@ class MLPClassifier(sklearn.neural_network.MLPClassifier):
         self.jobs = jobs
         pass
 
-    def explore(self,X,y,mode='random',n_iter_search=20,n_splits=20):
+    def explore( self, X, y ):
+        path = os.path.join(self.path,self.solver,self.activation)
         print '--MLP: explore'
         # specify parameters for exploration
-        param_dist = {
-            'alpha'    : scipy.stats.uniform(0,1),
-            'tol'      : scipy.stats.uniform(0,1),
-            'momentum' : scipy.stats.uniform(0,1),
-        }
-        # perform random search
-        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs, random_state=self.random_state )
-        # check for over/under-training
-        for parameter in param_dist:
-            param_range = np.logspace(-7,0,n_iter_search)
-            classifier  = sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis()
-            validation_curve( classifier, parameter, param_range, X, y, os.path.join(self.path,self.solver,self.activation), jobs=self.jobs )
+        if self.solver == 'lbfgs':
+            param_dist = {
+                'alpha'    : Log10Flat(-10,-0.001),
+                'tol'      : Log10Flat(-10,-0.001),
+            }
             pass
-        # generate learning curve
-        cv = ShuffleSplit(n_splits=n_splits, test_size=0.2, random_state=self.random_state)
-        learning_curve( self , X, y, cv=cv, path=os.path.join(self.path,self.solver,self.activation), n_jobs=self.jobs)
+        elif self.solver == 'adam':
+            param_dist = {
+                'alpha'    : Log10Flat(-10,-0.001),
+                'tol'      : Log10Flat(-10,-0.001),
+                'beta_1'   : Log10Flat(-10,-0.001),
+                'beta_2'   : Log10Flat(-10,-0.001),
+            }
+            pass
+        else:
+            raise KeyError("explore solver '%s' not implementd" % self.solver)
+        # tune classifier
+        tune( self, X, y, param_dist,
+              path          = path,
+              jobs          = 1,  ## bug in MLPClassifier!!
+              random_state  = self.random_state
+        )
         pass
     
     pass
@@ -234,44 +267,24 @@ class SVC(sklearn.svm.SVC):
         self.jobs = jobs
         pass
 
-    def explore(self,X,y,mode='random',n_iter_search=20,n_splits=20):
+    def explore( self, X, y ):
+        path = os.path.join(self.path,self.kernel,'shrinking_%s' % str(self.shrinking))
         print '--SVC: explore'
         # specify parameters for exploration
-        param_dist = {
-            'C'        : scipy.stats.uniform(0.001,1.0),
-            'gamma'    : scipy.stats.uniform(0.001,1.0),
-            'tol'      : scipy.stats.uniform(0.00001,0.01),
-            'shrinking':  [ True , False ],
-        }
-        if self.kernel == 'poly':
-            param_dist['degree']  = [ 1, 2, 3]
+        if self.kernel == 'rbf':
+            param_dist = {
+                'C'        : Log10Flat(-10,-0.001),
+                'gamma'    : Log10Flat(-10,-0.001),
+            }
             pass
-        # perform random search
-        parameter_search( self, param_dist, n_iter_search, X, y, mode=mode, jobs=self.jobs )
-        # check for over/under-training
-        for shrinking in param_dist['shrinking']:
-            for parameter in param_dist:
-                if parameter is 'shrinking':
-                    continue
-                print param_dist[parameter]
-                print param_dist[parameter].args
-                param_range = np.logspace( param_dist[parameter].args[0],
-                                           param_dist[parameter].args[1],
-                                           n_iter_search)
-                if parameter == 'degree':
-                    param_range = np.linspace(1,3,3,dtype=int)
-                    pass
-                print param_range
-                classifier  = sklearn.svm.SVC(
-                    kernel=self.kernel, shrinking=shrinking, random_state=self.random_state)
-                validation_curve( classifier, parameter, param_range, X, y, os.path.join(
-                    self.path,self.kernel,'shrinking_%s' % str(shrinking)
-                ), jobs=self.jobs )
-                pass
-            pass
-        # generate learning curve
-        cv = ShuffleSplit(n_splits=n_splits, test_size=0.2, random_state=self.random_state)
-        learning_curve( self , X, y, cv=cv, path=self.path, n_jobs=self.jobs)
+        else:
+            raise KeyError("explore unknown kernel '%s' " % self.kernel)
+        # tune classifier
+        tune( self, X, y, param_dist,
+              path         = path,
+              jobs         = self.jobs,
+              random_state = self.random_state
+        )
         pass
     
     pass
@@ -291,21 +304,15 @@ class Book(object):
                 path=options.path, jobs=options.jobs)
             pass
         elif options.classifier.lower() == 'mlp':
-            if options.solver in [ 'sgd', 'adam', 'lbfgs' ]:
-                solver = options.solver
-                pass
-            else:
-                solver = 'adam'
-                pass
             self.classifier = MLPClassifier(
-                hidden_layer_sizes=(100, ), activation='relu', solver=solver,
-                alpha=0.0001, batch_size='auto', learning_rate='constant',
-                learning_rate_init=0.001, power_t=0.5, max_iter=200,
-                shuffle=True, random_state=None, tol=0.0001, verbose=False,
+                hidden_layer_sizes=options.hidden_layers, activation=options.activation, solver=options.solver,
+                alpha=options.alpha, batch_size='auto', learning_rate='constant',
+                learning_rate_init=0.001, power_t=0.5, max_iter=options.max_iter,
+                shuffle=True, random_state=options.random_state, tol=options.tol, verbose=options.verbose,
                 warm_start=False, momentum=0.9, nesterovs_momentum=True,
                 early_stopping=False, validation_fraction=0.1, beta_1=0.9,
                 beta_2=0.999, epsilon=1e-08,
-                path=os.getcwd(), jobs=1 )
+                path=options.path, jobs=options.jobs )
             pass
         elif options.classifier.lower() == 'lda':
             self.classifier = LinearDiscriminantAnalysis(
@@ -323,7 +330,7 @@ class Book(object):
                 path=options.path, jobs=options.jobs)
             pass
         else:
-            raise NotImplemented("unknown classifier '%s' " % options.classifier )
+            raise KeyError("unknown classifier '%s' " % options.classifier )
         pass
 
     pass

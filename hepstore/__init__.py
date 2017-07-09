@@ -1,26 +1,31 @@
 #!/usr/bin/env python
 
 import sys
+import subprocess
 
 ############################################################################
 ## main
 ############################################################################
-def main():
+def main(args=None):
     
     # we need to setup the arg parser
     import argparse
-    parser = argparse.ArgumentParser(description="This App allows to run all Hep MC Generators out of the box with python 2.7. and docker")
+    parser = argparse.ArgumentParser(
+        description = "This App allows to run all the hepstore tools with python 2.7. and docker"
+    )
 
-    parser.add_argument("generator", type=str, default=None, help="must be one of the following (herwig|corsika|sherpa|...)")
+    # this is just a meta wrapper for all the different tools
+    parser.add_argument( "tool",
+                         type    = str,
+                         default = None,
+                         help    = "must be one of the following (herwig|corsika|sherpa|plotter|school|eas|...)"
+    )
 
     # parse args
-    args, unknown = parser.parse_known_args()
+    parsed_args, unknown = parser.parse_known_args(args)
     
     # run
-    import importlib
-    sys.argv.remove(args.generator)
-    generator = importlib.import_module("hepstore.%s" % args.generator)
-    generator.run()
+    subprocess.check_call(['hepstore-%s' % parsed_args.tool]+unknown)
         
     pass # main
 ############################################################################

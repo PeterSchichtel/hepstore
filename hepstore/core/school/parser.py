@@ -3,6 +3,14 @@
 import os
 from argparse import ArgumentParser
 
+def hidden_layer_type(args):
+    try:
+        x, y = map(int, args.split(','))
+        return (x, y)
+    except:
+        raise TypeError("--hidden_layers must be x,y")
+    pass
+
 class SchoolParser(ArgumentParser):
 
     def __init__(self,description="This school allows to learn from data in .npy format."):
@@ -45,6 +53,9 @@ class SchoolParser(ArgumentParser):
         self.add_argument(      "--cache_size",        default=200., type=float)
         self.add_argument(      "--verbose",           action='store_true')
         self.add_argument(      "--max_iter",          default=-1, type=int)
+        self.add_argument(      "--activation",        default='relu', type=str)
+        self.add_argument(      "--alpha",             default=0.001, type=float)
+        self.add_argument(      "--hidden_layers",     default=(100,), type=hidden_layer_type)
         pass
         
     pass

@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
-import os
-
-import numpy as np
-import sys
+# python imports
 import argparse
 
+# our own label error
 class LabelError(IndexError):
     pass
 
+# our own argument parsing error
 class ParserError(argparse.ArgumentTypeError):
     pass
 

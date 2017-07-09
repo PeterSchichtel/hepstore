@@ -21,6 +21,12 @@ class subplot(object):
         self.linewidth   = None
         self.legend      = None
         self.title       = None
+        self.xmin        = 0.
+        self.xmax        = 1.
+        self.ymin        = 0.
+        self.ymax        = 1.
+        self.zmin        = 0.
+        self.zmax        = 1.
         try:
             self.title = options.title[subnumber]
             pass
@@ -47,28 +53,12 @@ class subplot(object):
             pass
         pass
     
-    def plot(self,x,y):
-        plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
-        plt.plot(x,y,
-                 label      = self.label,
-                 color      = self.color,
-                 #linestyel  = self.linestyle,
-                 marker     = self.marker,
-                 #markersize = self.markersize,
-        )
-        pass
-
-    def range(self):
-        return [(float(self.options.xmin),float(self.options.xmax)),
-                (float(self.options.ymin),float(self.options.ymax)),
-                (float(self.options.zmin),float(self.options.zmax))]
-    
     def histogram(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
         plt.hist( data[:,self.options.axis[0]],
                   bins   = self.options.bins,
                   normed = self.options.normed,
-                  range  = self.range()[0],
+                  range  = (float(self.xmin),float(self.xmax)),
                   alpha  = self.options.alpha,
                   color  = self.color,
                   label  = self.legend)
@@ -78,7 +68,7 @@ class subplot(object):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
         counts,bin_edges = np.histogram(data[:,self.options.axis[0]],
                                         bins   = self.options.bins,
-                                        range  = self.range()[0],
+                                        range  = (float(self.xmin),float(self.xmax)),
                                         normed = self.options.normed)
         bin_centres      = (bin_edges[:-1] + bin_edges[1:])/2.
         err              = np.sqrt(counts)
@@ -186,8 +176,8 @@ class subplot(object):
         if self.title!=None:
             plt.title(self.title)
             pass
-        subplot.set_xlim([float(self.options.xmin),float(self.options.xmax)])
-        subplot.set_ylim([float(self.options.ymin),float(self.options.ymax)])
+        subplot.set_xlim([float(self.xmin),float(self.xmax)])
+        subplot.set_ylim([float(self.ymin),float(self.ymax)])
         subplot.set_xlabel(self.xlabel)
         subplot.set_ylabel(self.ylabel)
         try:
@@ -214,6 +204,12 @@ class figure(object):
         self.markersizes     = cycle(options_to_list(options.markersize))
         self.linewidths      = cycle(options_to_list(options.linewidth))
         self.legends         = cycle(options_to_list(options.legend))
+        self.xmins           = cycle(options_to_list(options.xmin))
+        self.xmaxs           = cycle(options_to_list(options.xmax))
+        self.ymins           = cycle(options_to_list(options.ymin))
+        self.ymaxs           = cycle(options_to_list(options.ymax))
+        self.zmins           = cycle(options_to_list(options.zmin))
+        self.zmaxs           = cycle(options_to_list(options.zmax))
         # create grid of subplots
         plt.subplots(options.rows,options.columns)
         # create corresponding subplots
@@ -243,6 +239,12 @@ class figure(object):
             subplot.markersize = float(next(self.markersizes))
             subplot.linewidth  = float(next(self.linewidths))
             subplot.legend     = next(self.legends)
+            subplot.xmin       = next(self.xmins)
+            subplot.xmax       = next(self.xmaxs)
+            subplot.ymin       = next(self.ymins)
+            subplot.ymax       = next(self.ymaxs)
+            subplot.zmin       = next(self.zmins)
+            subplot.zmax       = next(self.zmaxs)
             # determine kind of plot
             kind               = next(self.kind)
             if   kind == "histogram":
@@ -284,4 +286,130 @@ class figure(object):
         plt.close(self.figure)
         pass
 
+    pass
+
+
+def main(args=None):
+    
+    # we need to setup the arg parser
+    import argparse
+    parser = argparse.ArgumentParser(description="This App allows to plot data saved from numpy arrays")
+
+    # setup arg parser
+    parser.add_argument( "-f", "--file", default=[],
+                        help     = "list of data files to be plotted (.npy format)",
+                        required = True,
+                        nargs    = '+')
+    # main option
+    parser.add_argument( "-k", "--kind", default=["1*histogram"],
+                         help  = "cycle of kind of plot to be used, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "-p", "--plot", default=["1*1"],
+                        help  = "cycle of subplots to be used, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "-c", "--color", default=['1*black'],
+                         help  = "cycle of colors to be used for plotting, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "-m", "--marker", default=['1*,'],
+                         help  = "cycle of markers to be used for plotting, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "-l", "--linestyle", default=['1*-'],
+                         help  = "cycle of linestyles to be used for plotting, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "-s", "--markersize", default=['1*1.0'],
+                         help  = "cycle of markersizes to be used for plotting, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "-w", "--linewidth", default=['1*1.0'],
+                         help  = "cycle of linewidths to be used for contour, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--legend", default=['1*data'],
+                         help  = "cycle of legends to be used for contour, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--xmin", default=['1*0.0'],
+                         help  = "cycle of xmins, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--xmax", default=['1*1.0'],
+                         help  = "cycle of xmaxs, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--ymin", default=['1*0.0'],
+                         help  = "cycle of ymins, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--ymax", default=['1*1.0'],
+                         help  = "cycle of ymaxs, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--zmin", default=['1*0.0'],
+                         help  = "cycle of zmins, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+    parser.add_argument( "--zmax", default=['1*1.0'],
+                         help  = "cycle of zmaxs, understands multiplication",
+                         nargs = '+',
+                         type  = str)
+
+    # further options
+    parser.add_argument( "-b", "--bins", default=100,
+                        help="how many bins for histograms",
+                        type=int)
+    parser.add_argument( "-n", "--normed", action="store_true",
+                        help="normalize data before plotting")
+    parser.add_argument( "-a", "--axis", default=[0,1,2],
+                        type  = int,
+                        help  = "select axis of data to be plotted (x,y,z)",
+                        nargs = '+')
+    parser.add_argument(      "--alpha", default=1.0,
+                              help="alpha parameter for plt.plot",
+                              type=float)
+    parser.add_argument(      "--contour_levels", default=[],
+                              help="levelsfor contour plot",
+                              nargs='+')
+    parser.add_argument(      "--figure_size", default=(6.2,6.2),
+                              help="figure size",
+                              type=tuple)
+    parser.add_argument(      "--dpi", default=300,
+                              help="dpi for plot")
+    parser.add_argument(      "--format", default="pdf")
+    parser.add_argument(      "--path", default=os.path.join(os.getcwd(),'figure.pdf'),
+                              help="path and name of the file to save figure")
+    parser.add_argument(      "--rows", default=1,
+                              help="how many rows of plots")
+    parser.add_argument(      "--columns", default=1,
+                              help="how many columns of plots")
+    parser.add_argument(      "--title", default=[],
+                              help="figure title and subfigure titles as list",
+                              nargs='+')
+    parser.add_argument(      "--xlabel", default=[],
+                              help="x axis label as list",
+                              nargs='+')
+    parser.add_argument(      "--ylabel", default=[],
+                              help="y axis label as list",
+                              nargs='+')
+    parser.add_argument(      "--shake", action='store_true',
+                              help="shake data")
+    parser.add_argument(      "--logx", action="store_true")
+    parser.add_argument(      "--logy", action="store_true")
+    
+    # parse args   
+    parsed_args = parser.parse_args(args)
+
+    # plot figures
+    figure = plotter.figure(parsed_args)
+    figure.plot()
+    
+    pass #main
+
+
+if __name__ == "__main__":
+    main()
     pass

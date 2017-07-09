@@ -1,0 +1,85 @@
+
+
+
+In the following we will outly the core modules hepstore is composed
+of. We will introduce their usage and motivation and give examples of
+their simple usability.
+ We show
+the source code in the following:
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=8,firstline=8]{../../hepstore/core/docker_interface.py}
+\end{changemargin}
+%
+As a starting point using this interface we provide simple command
+line tools for
+%
+\begin{itemize}
+\item Herwig 7.0 ~$~~\rightarrow$ 'hepstore-herwig',
+\item Sherpa 2.2 ~$~~\rightarrow$ 'hepstore-sherpa',
+\item Corsika 7.4 $~~\rightarrow$ 'hepstore-corsika',
+\end{itemize}
+%
+in accordance with the points raised above: frozen state and platform
+independent. The actual code and the docker files can be found in
+App.~\ref{app:docker}. Note, however, that Sherpa actually has an
+official docker account, where we pull their image from. It is also
+the aim of this work to motivate further official docker images from
+code developers.
+
+
+\section{hepstore.core.docker\_interface}
+\index{hepstore.core.docker\_interface}
+
+\section{hepstore.core.plotter}
+
+In the case where you are not able to use the rivet or madanalysis
+plotting capabilities, \hepstore provides a simple user interface
+'hepstore-plot' which can plot any one or two dimensional
+representation of your data\footnote{provided in .npy
+  format}. Currently the following kinds of plots are suported:
+scatter, histogram, errorbar, line, errorband, and contour.
+
+\subsubsection{Data Format}
+
+\hepstore~uses the '.npy' format
+
+\section{hepstore.core.school}
+One of the themes very interesting to particle physiscts and also
+recieving more and more attention in the phenomenolgical community is
+machine learning. 'hepstore.school' is an attempt to provide a genric
+interface to python's sklearn package. our school consists of a
+teacher, a student and, of course, a book. the teacher advices the
+student which algorithm to use, where upon the student takes the
+algorithm from the book and is able to explore and train itself to
+learn from the data provided.
+
+\subsubsection{Classifiers}
+
+lda,qcd,svc,mlp
+
+\subsubsection{Tuning}
+
+As it is not a prior clear which parameters to chose for an algorithm,
+'hepstore-school' provides the switch '-{}-only\_explore' which will
+try to automatically find the best parameters for the given training
+set. In addition for all numerical parameters it provides cross
+validation plots to check for over respectively under
+performance. Note that some classifiers might have a large parameter
+space and hence can not be tunde in a fully automated way, yet.
+
+\subsubsection{Training}
+
+Training is performed automattically on a $75\%$ subset of the data provided.
+
+\subsubsection{Testing}
+
+Training is performed automattically on a $25\%$ subset of the data provided.
+
+\section{hepstore.core.statistics}
+
+\section{hepstore.core.tools}
+
+\section{hepstore.core.errors}
+
+\section{hepstore.core.multiprocess}
