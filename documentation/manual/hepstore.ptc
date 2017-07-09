@@ -13,19 +13,19 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {2}Introduction}{11}{chapter.2}
 \defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{Data Format}{12}{section*.2}
+\defcounter {refsection}{0}\relax 
 \contentsline {part}{\@mypartnumtocformat {II}{The Code}}{13}{part.2}
 \ttl@stoptoc {default@1}
 \ttl@starttoc {default@2}
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {3}Core}{15}{chapter.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.1}hepstore.core.docker\_interface}{16}{section.3.1}
+\contentsline {section}{\numberline {3.1}hepstore.core.docker\_interface}{15}{section.3.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.2}hepstore.core.plotter}{16}{section.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Data Format}{16}{section*.2}
-\defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.3}hepstore.core.school}{17}{section.3.3}
+\contentsline {section}{\numberline {3.3}hepstore.core.school}{16}{section.3.3}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{Classifiers}{17}{section*.3}
 \defcounter {refsection}{0}\relax 

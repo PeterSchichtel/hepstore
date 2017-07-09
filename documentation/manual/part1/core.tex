@@ -1,48 +1,104 @@
 
-
-
-In the following we will outly the core modules hepstore is composed
-of. We will introduce their usage and motivation and give examples of
-their simple usability.
- We show
-the source code in the following:
-%
-\begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=8,firstline=8]{../../hepstore/core/docker_interface.py}
-\end{changemargin}
-%
-As a starting point using this interface we provide simple command
-line tools for
-%
-\begin{itemize}
-\item Herwig 7.0 ~$~~\rightarrow$ 'hepstore-herwig',
-\item Sherpa 2.2 ~$~~\rightarrow$ 'hepstore-sherpa',
-\item Corsika 7.4 $~~\rightarrow$ 'hepstore-corsika',
-\end{itemize}
-%
-in accordance with the points raised above: frozen state and platform
-independent. The actual code and the docker files can be found in
-App.~\ref{app:docker}. Note, however, that Sherpa actually has an
-official docker account, where we pull their image from. It is also
-the aim of this work to motivate further official docker images from
-code developers.
-
-
 \section{hepstore.core.docker\_interface}
 \index{hepstore.core.docker\_interface}
 
+The docker\_interface module is at the heart of \hepstore s
+reproducibility program. It is a simple yet elegant piece of
+\python~code. The interface allowes to run any command in any
+\docker~container without any need to know about the native
+\docker~commands themselves. It can be used in \python~via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}
+    
+    # import module
+    import hepstore.core.docker_interface
+
+    # user vars
+    docker_repository    = 'repository_for_pull'
+    docker_image         = 'name_of_image'
+    docker_image_version = 'version_of_subimage'
+    directory_path       = 'mount_local_dir'
+    list_of_arguments    = [
+      'commands',
+      'piped',
+      'to',
+      'container',
+      ]
+    
+    # generate the app
+    app = hepstore.core.docker_interafce.DockerIF(    
+        image     = os.path.join( docker_repository,
+                                  docker_image,
+        ),
+        version   = docker_image_version,
+        verbose   = True,
+    )
+
+    # run the app
+    app.run(
+        directory = directory_path,
+        args      = list_of_arguments,
+    )
+  \end{lstlisting}
+\end{changemargin}
+%
+Additionally, we provide a command line tool which can be invoked via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-docker list_of_arguments
+  \end{lstlisting}
+\end{changemargin}
+%
+For a list of valid arguments use the '-h' flag.
+
 \section{hepstore.core.plotter}
+\index{hepstore.core.plotter}
 
-In the case where you are not able to use the rivet or madanalysis
-plotting capabilities, \hepstore provides a simple user interface
-'hepstore-plot' which can plot any one or two dimensional
-representation of your data\footnote{provided in .npy
-  format}. Currently the following kinds of plots are suported:
-scatter, histogram, errorbar, line, errorband, and contour.
+Another important building block of \hepstore~is its own plotting
+module. Via the command line
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-plot list_of_arguments
+  \end{lstlisting}
+\end{changemargin}
+%
+produces any kind of collection of 1D or 2D figures. The plotting
+module allows not only for efficient plublishable figure production,
+but comes along as \python~class for usability in user modules
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}
+    
+    # import module
+    import hepstore.core.plotter
 
-\subsubsection{Data Format}
+    # create a figure
+    figure = hepstore.core.plotter.Figure()
+    
+  \end{lstlisting}
+\end{changemargin}
+%
+At the time being \hepstore~suppoert the following displays
+%
+\begin{enumerate}
+\item scatter
+\item histogram
+\item errorbar
+\item line
+\item errorband
+\item contour
+\end{enumerate}
+%
 
-\hepstore~uses the '.npy' format
 
 \section{hepstore.core.school}
 One of the themes very interesting to particle physiscts and also
