@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 
+# global imports
 import os
-import parser
-import framework
 import sys
+
+# hepstore imports
 from hepstore.errors import *
+
+# local imports
+import parser
+import ship
 
 ############################################################################
 ## run the app
@@ -22,12 +27,8 @@ def main(args=None):
         raise ParserError( "unknown arguments %s" % " ,".join(unknown) )
 
     # produce/analyse cosmic ray air showers
-    app = framework.Captian(parsed_args)
-    try:
-        app.run()
-        pass
-    except Exception as exc:
-        raise exc
+    app = ship.Captian(parsed_args)
+    app.run()
     
     pass # main
 ############################################################################

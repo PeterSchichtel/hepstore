@@ -1,11 +1,24 @@
 
+The framework is the part of the code collecting the steering of
+reproducible analyses. It consists of special interfaces to MC or
+special user classes as well as some meta analysis packages. In the
+example part of the book you will find how these interact to produce
+completely reproducible analyses with just a view lines of code.
 
 \section{hepstore.framework.monte\_carlo}
+This section describes particular interfaces to Monte Carlo (MC)
+tools. They are derived from hepstore.core.docker\_interface. To
+provide simple and efficient access to reproducible analyses we
+provide these specialized interfaces. All of them are connected to a
+corresponding command line tool.
+
 \subsection{hepstore.framework.monte\_carlo.herwig}
 \subsection{hepstore.framework.monte\_carlo.sherpa}
 \subsection{hepstore.framework.monte\_carlo.corsika}
 
 \section{hepstore.framework.analysis}
+This section collects meta analysis modules needed for certain kind of analyses.
+
 \subsection{hepstore.framework.analysis.eas}
 
 the hepstore-analysis module is a high level package to perform the
