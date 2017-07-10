@@ -1,0 +1,75 @@
+
+Reproducing any result from previous scientific work is at the heart
+of the scientific method. It occures often that ground breaking
+scientific results are doubted for many years until reproduced
+correctly. Contrary, if not reproduced at all, the result is simply
+not believed to be true~\cite{}. It is therefore obvious and vital to
+any scientific effort to be easily reproduced. Of course, for some
+experimental setup this just might not be easily done. It might be
+that the experience needed to craft a certain item just has been
+developed during the actual research itself. However, in the high
+energy physics community, more and more scientific results completely
+depend on work performed by computers. And indeed, there has been
+tremondous effort in the experimantal LHC community to achive high
+scientific standards of reproducibility. Namely the
+\texttt{REANA}~\cite{} frame work.
+
+However, one should not think that no such efforts have been
+undertaken in the phenomelogical community. There is
+\texttt{MadAnalysis5}~\cite{} which has the ability to recast LHC
+analyses and provides a convienent frame work for high energy physics
+analyses. There is, of course, \texttt{Rivet}~\cite{}, which comes
+along with \emph{actual, verified} phenomenolgical and experimental
+analyses. There is the \texttt{ROOT}~\cite{} framework which provides
+a multitude of analysis tools. These tools provide building blocks to
+perform, save and eventually redo any analysis. In addition, the Monte
+Carlo (MC) code developers~\cite{} provide ever simpler installation
+routines for their code packages, including interfaces to third party
+software.
+
+So, why bother with the reproducibility of phenomenoligical results?
+It is true that a fair amount of the analysis itself is either
+automated or can be easily build from freely availbale
+software. However, that does not mean that it is actually
+reproducible. Anybody who has ever tried to redo what they or someone
+else did five years ago might already know some of the problems:
+library missing, code missing, data missing, does not compile anymore,
+does not run anymore, 32-bit what?, not supported, what was the random
+seed again, which version of package XY was used, etc. pp. Let us
+start with defining the neccessary conditions for a phenomenolgical
+analysis to be \emph{fully reproducible}.
+%
+\begin{enumerate}
+\item The state of the machine can be {\bf frozen} and published.
+\item Except for the state of the machine, the work only depends on
+  simple (i.e text), publishable {\bf input files}.
+\item The full analysis chain can be invoked by means of a
+  {\bf platform independent} command.
+\end{enumerate}
+%
+
+Requirement (a) is most easily solved by invoking
+\docker~\cite{}. \docker~is a framework which allows to ship
+containerized applications. This means it is able to produce a frozen
+state of a machine. The \docker~image contains all the libraries and
+packages installed during its creation. Furthermore, \docker~hosts a
+webpage where one can upload and therefore publish \docker~images.
+
+Requirement (b) is most of the time already satisfied by todays
+publications, where run and parameter cards are added as supplimental
+material.
+
+Requirement (c) is more tricky, though. Furthermore, it needs
+motivation as its neccassity is not as straight forward as (a) and
+(b). Note, that the aim of the above description is the full
+reproduction of a phenomenoligical analysis. This includes not only
+the state of the machine and any input parameters, but also what
+commands to run in which order to perform the full analysis. This also
+includes any code written specifically for this analysis. Furthermore,
+we require platform independence. Who ever replicates the analysis
+should not fail due to any special platform requirements.
+
+
+\subsubsection{Data Format}
+
+\hepstore~uses the '.npy' format

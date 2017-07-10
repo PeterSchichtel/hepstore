@@ -93,7 +93,16 @@
 }
 
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
-\let\endchangemargin=\endlist 
+\let\endchangemargin=\endlist
+
+\usepackage{dirtree}
+\usepackage{nccmath}
+
+\usepackage{titlesec}
+\titleformat*{\section}{\LARGE\bfseries}
+\titleformat*{\subsection}{\Large\bfseries}
+\titleformat*{\subsubsection}{\large\bfseries}
+\titleformat*{\paragraph}{\small\bfseries}
 
 %----------------------------------------------------------------------------------------
 %	USER DEFINITIONS
@@ -118,8 +127,9 @@
 \draw (current page.center) node [fill=ocre!30!white,fill opacity=0.6,text opacity=1,inner sep=1cm]{\Huge\centering\bfseries\sffamily\parbox[c][][t]{\paperwidth}{
     \centering
     HepStore\\[15pt] % Book title
-    {\Large The Awakening}\\[20pt] % Subtitle
-    {\huge Dr. Peter Schichtel}
+    {\Large -- The Awakening -- }\\[20pt] % Subtitle
+    {\huge Dr. Peter Schichtel \\}
+    {\large Contributions: }
 }}; % Author name
 \end{tikzpicture}
 \vfill

@@ -11,185 +11,223 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {1.2}Prerequisites}{9}{section.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {2}Introduction}{11}{chapter.2}
+\contentsline {chapter}{\numberline {2}Motivation}{11}{chapter.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Data Format}{12}{section*.2}
+\contentsline {subsubsection}{Data Format}{12}{Item.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {part}{\@mypartnumtocformat {II}{The Code}}{13}{part.2}
+\contentsline {chapter}{\numberline {3}Programming Paradigm}{13}{chapter.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.1}Atomic}{13}{section.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.2}Efficiency and Elegance}{13}{section.3.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.3}Future Save}{13}{section.3.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.4}Community Driven}{13}{section.3.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.5}Places}{14}{section.3.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {part}{\@mypartnumtocformat {II}{The Code}}{15}{part.2}
 \ttl@stoptoc {default@1}
 \ttl@starttoc {default@2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {3}Core}{15}{chapter.3}
+\contentsline {chapter}{\numberline {4}Core}{17}{chapter.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.1}hepstore.core.docker\_interface}{15}{section.3.1}
+\contentsline {section}{\numberline {4.1}hepstore.core.docker\_interface}{17}{section.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.2}hepstore.core.plotter}{16}{section.3.2}
+\contentsline {section}{\numberline {4.2}hepstore.core.plotter}{18}{section.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.3}hepstore.core.school}{16}{section.3.3}
+\contentsline {section}{\numberline {4.3}hepstore.core.school}{19}{section.4.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Classifiers}{17}{section*.3}
+\contentsline {subsection}{\numberline {4.3.1}Algorithms}{19}{subsection.4.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Tuning}{17}{section*.4}
+\contentsline {subsubsection}{Discriminant Analysis}{19}{subsection.4.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Training}{17}{section*.5}
+\contentsline {paragraph}{LDA with svd sover}{19}{equation.4.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Testing}{17}{section*.6}
+\contentsline {paragraph}{LDA with lsqr solver}{19}{table.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.4}hepstore.core.statistics}{17}{section.3.4}
+\contentsline {paragraph}{LDA with eigen solver}{20}{table.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.5}hepstore.core.tools}{17}{section.3.5}
+\contentsline {paragraph}{QDA}{20}{table.4.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.6}hepstore.core.errors}{17}{section.3.6}
+\contentsline {subsubsection}{Support Vector Machine}{20}{table.4.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.7}hepstore.core.multiprocess}{17}{section.3.7}
+\contentsline {paragraph}{Linear}{20}{equation.4.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {4}Framework}{19}{chapter.4}
+\contentsline {paragraph}{Polynomial}{20}{table.4.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.1}hepstore.framework.monte\_carlo}{19}{section.4.1}
+\contentsline {paragraph}{Sigmoid}{21}{table.4.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.1.1}hepstore.framework.monte\_carlo.herwig}{19}{subsection.4.1.1}
+\contentsline {paragraph}{RBF}{21}{table.4.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.1.2}hepstore.framework.monte\_carlo.sherpa}{19}{subsection.4.1.2}
+\contentsline {subsubsection}{Multi Layer Perceptron}{21}{table.4.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.1.3}hepstore.framework.monte\_carlo.corsika}{19}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.3.2}Data Preparation}{22}{subsection.4.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.2}hepstore.framework.analysis}{19}{section.4.2}
+\contentsline {subsection}{\numberline {4.3.3}Tuning}{22}{subsection.4.3.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2.1}hepstore.framework.analysis.eas}{19}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.3.4}Cross Validation}{22}{subsection.4.3.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {part}{\@mypartnumtocformat {III}{Examples}}{21}{part.3}
+\contentsline {subsection}{\numberline {4.3.5}Training}{22}{subsection.4.3.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {4.3.6}Testing}{22}{subsection.4.3.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4.4}hepstore.core.statistics}{23}{section.4.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4.5}hepstore.core.tools}{23}{section.4.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4.6}hepstore.core.errors}{23}{section.4.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4.7}hepstore.core.multiprocess}{23}{section.4.7}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {5}Framework}{25}{chapter.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.1}hepstore.framework.monte\_carlo}{25}{section.5.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {5.1.1}hepstore.framework.monte\_carlo.herwig}{25}{subsection.5.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {5.1.2}hepstore.framework.monte\_carlo.sherpa}{25}{subsection.5.1.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {5.1.3}hepstore.framework.monte\_carlo.corsika}{25}{subsection.5.1.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.2}hepstore.framework.analysis}{25}{section.5.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {5.2.1}hepstore.framework.analysis.eas}{25}{subsection.5.2.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {part}{\@mypartnumtocformat {III}{Examples}}{27}{part.3}
 \ttl@stoptoc {default@2}
 \ttl@starttoc {default@3}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Docker Interface}{23}{chapter.5}
+\contentsline {chapter}{\numberline {6}Docker Interface}{29}{chapter.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.1}The hepstore.docker family}{23}{section.5.1}
+\contentsline {section}{\numberline {6.1}The hepstore.docker family}{29}{section.6.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.1.1}hepstore-herwig}{23}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {6.1.1}hepstore-herwig}{29}{subsection.6.1.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Code}{23}{section*.7}
+\contentsline {subsubsection}{Code}{29}{subsection.6.1.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Dockerfile}{24}{section*.8}
+\contentsline {subsubsection}{Dockerfile}{30}{lstnumber.-6.72}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Example Runcard}{25}{section*.9}
+\contentsline {subsubsection}{Example Runcard}{31}{lstnumber.-7.28}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.1.2}hepstore-corsika}{27}{subsection.5.1.2}
+\contentsline {subsection}{\numberline {6.1.2}hepstore-corsika}{33}{subsection.6.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Code}{27}{section*.10}
+\contentsline {subsubsection}{Code}{33}{subsection.6.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Dockerfile}{27}{section*.11}
+\contentsline {subsubsection}{Dockerfile}{33}{subsection.6.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.1.3}hepstore-hepmc2corsika}{27}{subsection.5.1.3}
+\contentsline {subsection}{\numberline {6.1.3}hepstore-hepmc2corsika}{33}{subsection.6.1.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Code}{27}{section*.12}
+\contentsline {subsubsection}{Code}{33}{subsection.6.1.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Dockerfile}{27}{section*.13}
+\contentsline {subsubsection}{Dockerfile}{33}{subsection.6.1.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {6}Plotter}{29}{chapter.6}
+\contentsline {chapter}{\numberline {7}Plotter}{35}{chapter.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6.1}Plotter}{29}{section.6.1}
+\contentsline {section}{\numberline {7.1}Plotter}{35}{section.7.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {7}School}{33}{chapter.7}
+\contentsline {chapter}{\numberline {8}School}{39}{chapter.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {7.1}School}{33}{section.7.1}
+\contentsline {section}{\numberline {8.1}School}{39}{section.8.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {8}Statistics}{35}{chapter.8}
+\contentsline {chapter}{\numberline {9}Statistics}{41}{chapter.9}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {8.1}Statistics}{35}{section.8.1}
+\contentsline {section}{\numberline {9.1}Statistics}{41}{section.9.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {9}LHC}{37}{chapter.9}
+\contentsline {chapter}{\numberline {10}LHC}{43}{chapter.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {9.1}LHC Z Production}{37}{section.9.1}
+\contentsline {section}{\numberline {10.1}LHC Z Production}{43}{section.10.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {9.2}Monte Carlos}{37}{section.9.2}
+\contentsline {section}{\numberline {10.2}Monte Carlos}{43}{section.10.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {9.3}Comparison}{37}{section.9.3}
+\contentsline {section}{\numberline {10.3}Comparison}{43}{section.10.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {9.4}Reproducibility Script}{37}{section.9.4}
+\contentsline {section}{\numberline {10.4}Reproducibility Script}{43}{section.10.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {10}Cosmic Ray Air Showers}{39}{chapter.10}
+\contentsline {chapter}{\numberline {11}Cosmic Ray Air Showers}{45}{chapter.11}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10.1}Corsika}{39}{section.10.1}
+\contentsline {section}{\numberline {11.1}Corsika}{45}{section.11.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10.2}Herwig}{39}{section.10.2}
+\contentsline {section}{\numberline {11.2}Herwig}{45}{section.11.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10.3}Comparison}{39}{section.10.3}
+\contentsline {section}{\numberline {11.3}Comparison}{45}{section.11.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10.4}Reproducibility Script}{39}{section.10.4}
+\contentsline {section}{\numberline {11.4}Reproducibility Script}{45}{section.11.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.4.1}List}{39}{subsection.10.4.1}
+\contentsline {subsection}{\numberline {11.4.1}List}{45}{subsection.11.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.4.2}Generation}{39}{subsection.10.4.2}
+\contentsline {subsection}{\numberline {11.4.2}Generation}{45}{subsection.11.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{Nucleon Modle}{39}{section*.14}
+\contentsline {subsubsection}{Nucleon Modle}{45}{subsection.11.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.4.3}Shower}{39}{subsection.10.4.3}
+\contentsline {subsection}{\numberline {11.4.3}Shower}{45}{subsection.11.4.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.4.4}Observables}{39}{subsection.10.4.4}
+\contentsline {subsection}{\numberline {11.4.4}Observables}{46}{subsection.11.4.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {part}{\@mypartnumtocformat {IV}{template}}{41}{part.4}
+\contentsline {part}{\@mypartnumtocformat {IV}{template}}{47}{part.4}
 \ttl@stoptoc {default@3}
 \ttl@starttoc {default@4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10.5}Citation}{44}{section.10.5}
+\contentsline {section}{\numberline {11.5}Citation}{50}{section.11.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10.6}Lists}{44}{section.10.6}
+\contentsline {section}{\numberline {11.6}Lists}{50}{section.11.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.6.1}Numbered List}{44}{subsection.10.6.1}
+\contentsline {subsection}{\numberline {11.6.1}Numbered List}{50}{subsection.11.6.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.6.2}Bullet Points}{44}{subsection.10.6.2}
+\contentsline {subsection}{\numberline {11.6.2}Bullet Points}{50}{subsection.11.6.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {10.6.3}Descriptions and Definitions}{44}{subsection.10.6.3}
+\contentsline {subsection}{\numberline {11.6.3}Descriptions and Definitions}{50}{subsection.11.6.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {11}In-text Elements}{45}{chapter.11}
+\contentsline {chapter}{\numberline {12}In-text Elements}{51}{chapter.12}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.1}Theorems}{45}{section.11.1}
+\contentsline {section}{\numberline {12.1}Theorems}{51}{section.12.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.1.1}Several equations}{45}{subsection.11.1.1}
+\contentsline {subsection}{\numberline {12.1.1}Several equations}{51}{subsection.12.1.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.1.2}Single Line}{45}{subsection.11.1.2}
+\contentsline {subsection}{\numberline {12.1.2}Single Line}{51}{subsection.12.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.2}Definitions}{45}{section.11.2}
+\contentsline {section}{\numberline {12.2}Definitions}{51}{section.12.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.3}Notations}{46}{section.11.3}
+\contentsline {section}{\numberline {12.3}Notations}{52}{section.12.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.4}Remarks}{46}{section.11.4}
+\contentsline {section}{\numberline {12.4}Remarks}{52}{section.12.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.5}Corollaries}{46}{section.11.5}
+\contentsline {section}{\numberline {12.5}Corollaries}{52}{section.12.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.6}Propositions}{46}{section.11.6}
+\contentsline {section}{\numberline {12.6}Propositions}{52}{section.12.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.6.1}Several equations}{46}{subsection.11.6.1}
+\contentsline {subsection}{\numberline {12.6.1}Several equations}{52}{subsection.12.6.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.6.2}Single Line}{46}{subsection.11.6.2}
+\contentsline {subsection}{\numberline {12.6.2}Single Line}{52}{subsection.12.6.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.7}Examples}{46}{section.11.7}
+\contentsline {section}{\numberline {12.7}Examples}{52}{section.12.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.7.1}Equation and Text}{46}{subsection.11.7.1}
+\contentsline {subsection}{\numberline {12.7.1}Equation and Text}{53}{subsection.12.7.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.7.2}Paragraph of Text}{47}{subsection.11.7.2}
+\contentsline {subsection}{\numberline {12.7.2}Paragraph of Text}{53}{subsection.12.7.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.8}Exercises}{47}{section.11.8}
+\contentsline {section}{\numberline {12.8}Exercises}{53}{section.12.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.9}Problems}{47}{section.11.9}
+\contentsline {section}{\numberline {12.9}Problems}{53}{section.12.9}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11.10}Vocabulary}{47}{section.11.10}
+\contentsline {section}{\numberline {12.10}Vocabulary}{53}{section.12.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {part}{\@mypartnumtocformat {V}{Part Two}}{49}{part.5}
+\contentsline {part}{\@mypartnumtocformat {V}{Part Two}}{55}{part.5}
 \ttl@stoptoc {default@4}
 \ttl@starttoc {default@5}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {12}Presenting Information}{51}{chapter.12}
+\contentsline {chapter}{\numberline {13}Presenting Information}{57}{chapter.13}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {12.1}Table}{51}{section.12.1}
+\contentsline {section}{\numberline {13.1}Table}{57}{section.13.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {12.2}Figure}{51}{section.12.2}
+\contentsline {section}{\numberline {13.2}Figure}{57}{section.13.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\leavevmode {\color {ocre}Bibliography}}{53}{chapter*.15}
+\contentsline {chapter}{\leavevmode {\color {ocre}Bibliography}}{59}{chapter*.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{Books}{53}{section*.16}
+\contentsline {section}{Books}{59}{chapter*.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{Articles}{53}{section*.17}
+\contentsline {section}{Articles}{59}{chapter*.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\leavevmode {\color {ocre}Index}}{55}{section*.18}
+\contentsline {chapter}{\leavevmode {\color {ocre}Index}}{61}{section*.3}
 \contentsfinish 

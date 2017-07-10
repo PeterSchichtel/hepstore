@@ -1,5 +1,5 @@
 
-In this chapter we shortly introduce each of \heptore s core
+In this chapter we shortly introduce each of \hepstore s core
 modules. The next part of the manual actually contains real life
 examples ready for use out of the box. The code snippets presented in
 the subsequent sections merely presents the anticipated complexity of
@@ -88,8 +88,12 @@ but comes along as \python~class for usability in user modules
     # import module
     import hepstore.core.plotter
 
+    # user variables
+    options = namespace_of_plotter_option_objects
+
     # create a figure
-    figure = hepstore.core.plotter.Figure()
+    figure = hepstore.core.plotter.Figure(options)
+    figure.plot()
     
   \end{lstlisting}
 \end{changemargin}
@@ -108,41 +112,382 @@ At the time being \hepstore~suppoert the following displays
 
 
 \section{hepstore.core.school}
-One of the themes very interesting to particle physiscts and also
-recieving more and more attention in the phenomenolgical community is
-machine learning. 'hepstore.school' is an attempt to provide a genric
-interface to python's sklearn package. our school consists of a
-teacher, a student and, of course, a book. the teacher advices the
-student which algorithm to use, where upon the student takes the
-algorithm from the book and is able to explore and train itself to
-learn from the data provided.
+\index{hepstore.core.school}
 
-\subsubsection{Classifiers}
+This module inherites its indicative name from the fact that it is
+master code for machine learning algorithms. Thus, where can you
+better learn something than at school? The hepstore school consists of
+a teacher module teaching a student module by providing it with data
+and which algorithm to use. The student module itself has the ability
+to chose from the hepstore library books, how to interface to agiven
+algorithm and how to tune it. The structure of the module is as
+follows
+%
+\hspace*{0.5cm}
+\dirtree{%
+.1 school.
+.2 teacher.
+.2 student.
+.2 books.
+.3 lda.
+.3 qda.
+.3 svc.
+.3 mlp.
+.2 data.
+}
+\hspace*{0.5cm}
+%
+It ensures correct and simple usage of classification tools in
+general. It may be invoked via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-school list_of_arguments
+  \end{lstlisting}
+\end{changemargin}
+%
+For all options use the '-h' flag. In the following we first present
+the algorithms so far implemented (via sklearn) in hepstore. Then we
+collect the typical tasks which have to be performed when training an
+algorithm from some data. In the next part you will find a simple
+example for classification of different data classes.
 
-lda,qcd,svc,mlp
+\subsection{Algorithms}
 
-\subsubsection{Tuning}
+\subsubsection{Discriminant Analysis}
+Discriminant Anlaysis is based on Bayes theorem. The probability
+distributions my be asumed and thus the problem turns into a simple
+estimation of parameters problem.
+%
+\begin{ceqn}
+  \begin{align}
+    P()
+    \label{eq:}
+  \end{align}
+\end{ceqn}
+%
+Linear Discriminant Analysis (LDA) a single covariance matrix
+estimated from data. This leads to a single decision surface hence the
+term linear. On the other hand Quadratic Discriminant Anlaysis (QDA)
+is free of such an assumtption providing two decission surfaces and
+hence the term quadratic. In the following we introduce the distinct
+solution algorithms implemented and list their parameters
 
-As it is not a prior clear which parameters to chose for an algorithm,
-'hepstore-school' provides the switch '-{}-only\_explore' which will
-try to automatically find the best parameters for the given training
-set. In addition for all numerical parameters it provides cross
-validation plots to check for over respectively under
-performance. Note that some classifiers might have a large parameter
-space and hence can not be tunde in a fully automated way, yet.
+\paragraph{LDA with svd sover}
+Singular value decomposition. Does not compute the
+covariance matrix, therefore this solver is recommended for data with
+a large number of features.
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    tol       & Threshold used for rank estimation \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:svd_parameters}
+\end{table}
+%
 
-\subsubsection{Training}
+\paragraph{LDA with lsqr solver}
+The ‘lsqr’ solver is an efficient algorithm that only works for classification
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    shrinkage & ? \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:svd_parameters}
+\end{table}
+%
 
-Training is performed automattically on a $75\%$ subset of the data provided.
+\paragraph{LDA with eigen solver}
+The ‘eigen’ solver is based on the optimization of the between class
+scatter to within class scatter ratio. It can be used for both
+classification and transform, and it supports shrinkage. However, the
+‘eigen’ solver needs to compute the covariance matrix, so it might not
+be suitable for situations with a high number of features.
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    shrinkage & ? \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:svd_parameters}
+\end{table}
+%
 
-\subsubsection{Testing}
+\paragraph{QDA}
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    tol       & Threshold used for rank estimation \\
+    reg\_param& Regularizes the covariance estimate \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:svd_parameters}
+\end{table}
+%
 
-Training is performed automattically on a $25\%$ subset of the data provided.
+\subsubsection{Support Vector Machine}
+Support Vector Machine (SVM) is a well established tool for
+classificational purposes. Historically only able to solve binary
+problems, it can be also used for multi label problems once one
+vs. one respectively one vs. all strategies are applied. At its heart
+this algorithm constructs a hyper plane maximizing the margin between
+classes. To do so it only relies on the data points on the boundary of
+the margin, hence the name support vector. Originally, this leads to
+the fact that SVMs are only applicible for linearly seperable
+problems. However, one can include a fuzzyness parameter 'C' into the
+training of the algorithm to allow data points in the margin
+zone. Mathematically, the algorithm includes a scalar product within
+its loss function computation. This, so called kernel, however can be
+exchanged for any function of the form
+%
+\begin{ceqn}
+  \begin{align}
+    \phi: \mathcal{R}^n \otimes \mathcal{R}^n \rightarrow \mathcal{R}.
+  \end{align}
+\end{ceqn}
+%
+The used mapping $\phi$ introduces new parametrs into the agorithm.
+
+\paragraph{Linear}
+The kernel 'linear' uses the regular scalar product $\langle
+x,x'\rangle$ on $\mathcal{R}^n$.
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    C         & Margin fuzzynes \\
+    tol       & Tolerance for iterative stopping criterion \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:linear_parametrs}
+\end{table}
+%
+
+\paragraph{Polynomial}
+Using the kernel 'poly', however, results in a scalar product of the form
+%
+\begin{ceqn}
+  \begin{align}
+     \phi_\text{poly}:~\langle x,x'\rangle_\text{poly} &= \left( \gamma \langle x,x'\rangle + \text{coef0}  \right)^d\,.
+  \end{align}
+\end{ceqn}
+%
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    C         & Margin fuzzynes \\
+    $d$       & Exponent of the modified scalar product\\
+    $\gamma$  & Multiplicative kernel coefficient \\
+    coef0     & Additive kernel coefficient \\
+    tol       & Tolerance for iterative stopping criterion \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:poly_parametrs}
+\end{table}
+%
+
+\paragraph{Sigmoid}
+%
+\begin{ceqn}
+  \begin{align}
+     \phi_\text{sigmoid}:~\langle,\rangle_\text{sigmoid} &= \text{tanh}\, \left( \gamma \langle x,x'\rangle + \text{coef0}  \right)\,.
+  \end{align}
+\end{ceqn}
+%
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    C         & Margin fuzzynes \\
+    $d$       & Exponent of the modified scalar product\\
+    $\gamma$  & Multiplicative kernel coefficient \\
+    coef0     & Additive kernel coefficient \\
+    tol       & Tolerance for iterative stopping criterion \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:poly_parametrs}
+\end{table}
+%
+
+
+\paragraph{RBF}
+%
+\begin{ceqn}
+  \begin{align}
+    \phi_\text{rbf}:~\langle,\rangle_\text{rbf} &=\text{exp}\left[ -\gamma \left| x-x' \right|^2\right]\,,
+  \end{align}
+\end{ceqn}
+%
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & task \\
+    \hline\hline
+    C         & Margin fuzzynes \\
+    $\gamma$  & Inverse kernel variance \\
+    tol       & Tolerance for iterative stopping criterion \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:rbf_parametrs}
+\end{table}
+%
+
+\subsubsection{Multi Layer Perceptron}
+A Multi Layer Perceptron (MLP) is an artificial neural net (ANN) where
+so called hidden layers interconnect the input and the output
+layer. Each neuron within a given layer is connected (vie weighted
+summation) to all the neurons in the previous layer. It is the list of
+input weights per neuron which is ultimately trained. This structure
+allows to mimic an arbitray list of additions and
+multiplications. Therefore, MLPs are powerful tools to estimate
+non-trivial, non-linaer functions of the form
+%
+\begin{ceqn}
+  \begin{align}
+    f: \mathcal{R}^n \rightarrow \mathcal{R}^m\,.
+  \end{align}
+\end{ceqn}
+%
+
+simple diagram of MLP
+
+hidden layer size
+
+solution strategies
+
+activation functions
+
+loss functions
+
+parameters including constraints
+
+
+
+\subsection{Data Preparation}
+Of course, the learning algorithms do not know anything about
+dimensionful quantities. Therefore, one should scale the data in
+ameaningful way. For example, we can chose to have zero mean and
+uniform standard deviation for our training data. This is done with
+'sklearn' StandardScaler class and must be performed only with the
+training data. As a result this procedure normalizes the input
+observables and gets rid of so called feature scaling. Especially
+neural nets are known to be sensitive to this.
+
+\subsection{Tuning}
+Every machine learning algorithm is still parameter dependent as can
+be seen from the Tab.~\ref{tab:}. The reader might think of the
+parameter $R$ in jet algorithms, which are nearest neighbour machine
+learning algorithms. Usually, there is no straight forward physical
+motivation for parameter choice. Therefore, the algorithm should be
+tuned to (parts of) the training data. The tuning in hepstore is
+performed using a random search algorithm yielding a ranked result
+based on the best score and the smallest error. The tuning is
+performed simultanously on the parameters mentioned above using the
+'-{}-explore' respectively the'-{}-only\_explore' switch of
+hepstore-school.
+
+\subsection{Cross Validation}
+To cross validate the tuning one needs to check that indeed the given
+parameter choice is optimal. However, one should also study the
+stability of the algorithm. Therefore, hepstore-school provides plots
+for each parameter displaying the score of the training sample over
+the range used for tuning. Here the other parameters are
+fixed. Furthermore, a small subsample of the training data is exculded
+and used for independent validation. This way optimality, stability,
+over and under training can be studied. To validate the algorithms
+convergence a learning curve, again with independent validation data,
+is provided, too.
+
+\subsection{Training}
+
+The full set of training data is used to perform the actual
+training. In general, this corresponds to a $75\%$ subset of the data
+provided.
+
+\subsection{Testing}
+
+Testing is performed on the remainder set of the data, usually a
+$25\%$ subset of the data provided. This provides an independet test
+to the cross validation mentioned above. hepstore provides three data
+sets for testing.
+%
+\begin{enumerate}
+\item Responce Of Classifier (ROC) curve: displays the background
+  rejection rate versus the signal efficiency for the full data set.
+\item Classifier Distribution: displays the distribution of the
+  identification probability for signal and background. The training
+  and testing set are seperated. Therefore, yielding a powerful test
+  for over/under training.
+\item Probability Map: Projection of the classification probability on
+  to the feature, e.g. phase, space.
+\end{enumerate}
+%
 
 \section{hepstore.core.statistics}
 
+The statistics module provides the usual methods of high energy
+physics used, for example, for limit setting or significance
+computation.
+
 \section{hepstore.core.tools}
+
+This module provides some useful utility methods used throughout the
+code.
+%
+\hspace*{0.5cm}
+\dirtree{%
+.1 mkdir.
+}
+\hspace*{0.5cm}
+%
 
 \section{hepstore.core.errors}
 
+Dispite the large and useful collection of Pythons own error classes,
+we allow for hepstore interanl errors to be raised by the code.
+%
+\hspace*{0.5cm}
+\dirtree{%
+.1 LabelError. 
+}
+\hspace*{0.5cm}
+%
+
 \section{hepstore.core.multiprocess}
+
+To support simple ciclical multiprocessing, hepstore provides its own
+multiprocessing module. The class 'MultiPipe' can run any code in form
+of a class on a give number of processors. The only requirement to
+that the class owns a 'run' method accepting input data.
