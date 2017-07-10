@@ -1,31 +1,75 @@
 
-\section{Atomic}
+\section{Building Blockes}
+
+\subsection{Atomic}
 The first corner stone for the hepstore code is the idea of atomic
 programming. Simply, try to find the smallest pieces possible to do
 something and compose more complex structures from these building
 blocks.
 
-\section{Efficiency and Elegance}
+\subsection{Completeness}
+The code should be completely self contained, in the sense that there
+is either native hepstore implementation or an interface fitting into
+the hepstore workflow.
+
+\subsection{Efficiency and Elegance}
 Besides the fact that the code should be modular, i.e. atomic, another
 aim is efficience and elegance. What is the shortes way to make
 something work in a certain way? How can something be composed using
 the least building block or commands neccessary?
 
-\section{Future Save}
+\subsection{Future Save}
 As reproducibility is one of the key motivations of the project. At
 the time being everything is written in Python 2.7. Python being a
 platform independent tool should provide the possibility to use
 hepstore on any machine in the future.
 
+\subsection{Data Structure}
+There are many custom data formats, especially in hep
+phenomenology. However, to comply with the points raised above,
+hepstore internally and externally uses numpy arrays, which may be
+stored in the '.npy' format.
+
 \section{Community Driven}
 Ultimately the aims defined in Chapter~\ref{chap:motivation} only can
 be reached by a community effort. The code structure needs to be
 versioned in a public repository, where evrybody can in principle
-contribute. Furthermore, the code should be structured in a way
-helping to easily identify where to place a certain contribution.
+contribute. The hepstore repository should contain the full
+information.
+%
+\begin{framed}
+  \begin{center}
+    https://github.com/PeterSchichtel/hepstore.git
+  \end{center}
+\end{framed}
+%
+Scattering to different places is not wished for. Therefore, not only
+the source code, but also the manual and the example files are
+contained in the git repository. Furthermore, the code should be
+structured in a way helping to easily identify where to place a
+certain contribution.
 
-\section{Places}
-The hepstore repository should contain the full
-information. Scattering to different places is not wished
-for. Therefore, not only the source code, but also the manual and the
-esample files are contained in the git repository.
+\subsection{Code}
+%
+\begin{description}
+\item[Core] The core is defined by all genuine hepstore modules and
+  classes.\\
+\item[Framework] On the other hand the framework is defined to contain
+  the actual user interfaces, e.g the framework of objects to work
+  with. Furthermore, the meta steering for the reproduction of
+  analyses lives here.
+\end{description}
+%
+
+\subsection{Documentation}
+%
+\begin{description}
+\item[Examples] To ease the usage of hepstore extensive examples are
+  given. Contributors should add examples demonstrating the usage of
+  their additions.\\
+\item[Manual] The last pillar is the written documentation. Any change
+  in code should reflect in a change in the manual. Naturally, the
+  manual consists of two distinct parts. One concerned with the code
+  itself, the other with the examples.
+\end{description}
+%

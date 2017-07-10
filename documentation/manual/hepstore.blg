@@ -1,15 +1,15 @@
 [0] Config.pm:343> INFO - This is Biber 2.5
 [1] Config.pm:346> INFO - Logfile is 'hepstore.blg'
-[60] biber-darwin:290> INFO - === Mon Jul 10, 2017, 12:10:48
-[171] Biber.pm:351> INFO - Reading 'hepstore.bcf'
-[579] Biber.pm:776> INFO - Found 2 citekeys in bib section 0
-[635] Biber.pm:3493> INFO - Processing section 0
-[675] Biber.pm:3657> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
-[678] bibtex.pm:1187> INFO - Decoding LaTeX character macros into UTF-8
-[680] bibtex.pm:1048> INFO - Found BibTeX data source 'bibliography.bib'
-[719] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[719] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[719] Biber.pm:3306> INFO - Sorting list 'nyt/global/' of type 'entry' with scheme 'nyt' and locale 'en-US'
-[719] Biber.pm:3310> INFO - No sort tailoring available for locale 'en-US'
-[724] bbl.pm:526> INFO - Writing 'hepstore.bbl' with encoding 'UTF-8'
-[726] bbl.pm:619> INFO - Output to hepstore.bbl
+[82] biber-darwin:290> INFO - === Mon Jul 10, 2017, 13:22:33
+[116] Biber.pm:351> INFO - Reading 'hepstore.bcf'
+[262] Biber.pm:776> INFO - Found 2 citekeys in bib section 0
+[276] Biber.pm:3493> INFO - Processing section 0
+[306] Biber.pm:3657> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
+[308] bibtex.pm:1187> INFO - Decoding LaTeX character macros into UTF-8
+[309] bibtex.pm:1048> INFO - Found BibTeX data source 'bibliography.bib'
+[335] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[336] UCollate.pm:66> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[336] Biber.pm:3306> INFO - Sorting list 'nyt/global/' of type 'entry' with scheme 'nyt' and locale 'en-US'
+[336] Biber.pm:3310> INFO - No sort tailoring available for locale 'en-US'
+[340] bbl.pm:526> INFO - Writing 'hepstore.bbl' with encoding 'UTF-8'
+[341] bbl.pm:619> INFO - Output to hepstore.bbl
