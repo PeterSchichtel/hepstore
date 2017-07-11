@@ -5,9 +5,9 @@ import os
 import numpy as np
 import sys
 
-import hepstore.tools as tools
+import hepstore.core.tools as tools
 
-from hepstore.errors import *
+from hepstore.core.errors import *
 from student import *
 from data import *
 
@@ -43,19 +43,25 @@ class Teacher(object):
                 self.student.add_data(data)
                 pass
             pass
-        # prepare student
-        self.student.prepare()
-        # check that training is allowed
-        if len(np.unique(self.student.label_train))<=1:
-            raise LabelError("not enough labels for training")
-        # explore classifier
-        if self.options.explore or self.options.only_explore:
-            self.student.explore()
+        if self.options.load == '':
+            # prepare student
+            self.student.prepare()
+            # check that training is allowed
+            if len(np.unique(self.student.label_train))<=1:
+                raise LabelError("not enough labels for training")
+            # explore classifier
+            if self.options.explore or self.options.only_explore:
+                self.student.explore()
+                pass
+            # train student
+            if not self.options.only_explore:
+                self.student.train()
+                self.student.test()
+                pass
             pass
-        # train student
-        if not self.options.only_explore:
-            self.student.train()
-            self.student.test()
+        else:
+            self.student.load()
+            self.student.classify()
             pass
         pass
 
@@ -64,7 +70,7 @@ class Teacher(object):
         # preparation results
         if self.options.explore or self.options.only_explore:
             pass
-        if not self.options.only_explore:
+        if not self.options.only_explore and self.options.load == '':
             self.student.save()
             pass
         pass

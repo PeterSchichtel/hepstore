@@ -2,7 +2,8 @@
 
 import numpy as np
 import os
-from hepstore.tools import *
+import time
+from hepstore.core.tools import *
 import sklearn.model_selection 
 
 # Utility function to report best scores
@@ -80,7 +81,12 @@ def tune(classifier, X, y, param_dist, path=os.getcwd(), n_iter_search=100, jobs
     # check for over/under-training
     for parameter in param_dist:
         param_range = np.logspace(-10, -0.001 , n_iter_search)
+        # save parameter
+        save_value = getattr( classifier, parameter )
+        # compute validation curve
         validation_curve( classifier, parameter, param_range, X, y, path=path, jobs=jobs )
+        # reset parameter
+        setattr( classifier, parameter , save_value )
         pass
     # generate learning curve
     cv = sklearn.model_selection.ShuffleSplit(n_splits=20, test_size=0.2, random_state=random_state)

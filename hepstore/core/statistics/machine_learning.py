@@ -3,9 +3,9 @@
 import numpy as np
 import os
 
-from hepstore.school.parser  import SchoolParser
-from hepstore.school.teacher import Teacher
-from hepstore.errors import *
+from hepstore.core.school.parser  import SchoolParser
+import hepstore.core.school.teacher
+from hepstore.core.errors import *
 
 def crossection_type(args):
     try:
@@ -28,14 +28,14 @@ class MachineLearningParser(SchoolParser):
         pass
 
     pass
-
-class Analysis(Teacher):
+"""
+class Analysis(hepstore.core.school.teacher.Teacher):
 
     def __init__(self,args=None):
         arg_parser = MachineLearningParser()
         # parse args
         parsed_args, unknown = arg_parser.parse_known_args(args)
-        Teacher.__init__(self,parsed_args)
+        hepstore.core.school.teacher.Teacher.__init__(self,parsed_args)
         pass
 
     def analyse(self):
@@ -140,3 +140,4 @@ class Analysis(Teacher):
     
     pass
  
+"""

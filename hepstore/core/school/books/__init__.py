@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import lda,qda,scv,mlp
+import lda,qda,svc,mlp
 
 class Book(object):
 

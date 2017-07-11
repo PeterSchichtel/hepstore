@@ -7,8 +7,8 @@ import time
 import os
 
 # from hepstore
-from hepstore.tools import *
-from hepstore.statistics.distributions import Log10Flat as Log10Flat
+from hepstore.core.tools import *
+from hepstore.core.statistics.distributions import Log10Flat as Log10Flat
 
 # from local
 import tuning

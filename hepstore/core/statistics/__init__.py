@@ -2,7 +2,7 @@
 
 import os
 import machine_learning
-from hepstore.errors import *
+from hepstore.core.errors import *
 import sys
 import argparse
 

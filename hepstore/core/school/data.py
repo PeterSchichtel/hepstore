@@ -5,7 +5,7 @@ import os
 import numpy as np
 import sys
 
-import hepstore.tools as tools
+import hepstore.core.tools as tools
 
 from itertools import cycle
 from sklearn.preprocessing import StandardScaler 
@@ -17,7 +17,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 
-from hepstore.errors import *
+from hepstore.core.errors import *
 
     
 class DataUnit(object):

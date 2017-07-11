@@ -4,7 +4,7 @@ import os
 import teacher
 import parser
 import sys
-from hepstore.errors import *
+from hepstore.core.errors import *
 
 ############################################################################
 ## run the app

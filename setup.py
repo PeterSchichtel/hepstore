@@ -20,17 +20,20 @@ setup(
     author           = 'Peter Schichtel',
     author_email     = 'peterschichtel@icloud.com',
     license          = 'Public',
-    # pckages shipped with hepstore
+    # packages shipped with hepstore
     packages=[
         'hepstore',
         'hepstore.core',
-        'hepstroe.core.statistics',
+        'hepstore.core.statistics',
         'hepstore.core.school',
         'hepstore.core.school.books',
         'hepstore.framework',
         'hepstore.framework.monte_carlo',
-        'hepstore.framework.anaylis',
-        'hepstore.framework.anaylis.eas',
+        'hepstore.framework.collider',
+        'hepstore.framework.eas',
+        'hepstore.framework.eas.generator',
+        'hepstore.framework.eas.structure',
+        'hepstore.framework.eas.analysis',
     ],
     # requirement
     install_requires = [
@@ -49,7 +52,8 @@ setup(
             'hepstore-sherpa         = hepstore.framework.monte_carlo.sherpa:main',
             'hepstore-corsika        = hepstore.frameworl.monte_carlo.corsika:run',
             'hepstore-hepmc2corsika  = hepstore.fromework.monte_carlo.hepmc2corsika:run',
-            'hepstore-eas            = hepstore.framework.analysis.eas:main',
+            'hepstore-eas            = hepstore.framework.eas:main',
+            'hepstore-collider       = hepstore.framework.collider:main',
         ]
     },
     # search words

@@ -10,9 +10,10 @@ from sklearn.model_selection import validation_curve
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
+from sklearn.externals import joblib
 
-import hepstore.tools as tools
-from hepstore.errors import *
+import hepstore.core.tools as tools
+from hepstore.core.errors import *
 from data import *
 import books
 
@@ -99,7 +100,25 @@ class Student(books.Book):
             np.save( os.path.join(self.options.path,'classifier_distribution_test_%s.npy' % str(label) ),
                      self.classifier_distribution(label,False) )
             pass
+        # save classifier as pkl
+        joblib.dump( (self.classifier,self.scaler) , self.options.save ) 
         pass
+
+    def load(self):
+        self.classifier,self.scaler = joblib.load( self.options.load ) 
+        pass
+
+    def classify(self):
+        # produce scaled data
+        scaled_data              = self.scaler.transform( self.data.data )
+        # classify data
+        probability_distribution = self.classifier.predict_proba( scaled_data )
+        # save output
+        tools.mkdir( self.options.path )
+        np.save(
+            os.path.join( self.options.path, "blind_classifier_output.npy" ),
+            probability_distribution )
+        pass 
 
     def classifier_distribution(self,label,train=True):
         # load data
@@ -140,7 +159,9 @@ class Student(books.Book):
             pass
         # fill field with classifier responce
         result = []
-        for classification,coordinates in zip(self.classifier.predict_proba(self.scaler.transform(field))[:,1:],field):
+        for classification,coordinates in zip(
+                self.classifier.predict_proba(self.scaler.transform(field)),
+                field ):
             if self.options.log_transform:
                 coordinates = np.exp(np.array(coordinates)).tolist()
                 pass

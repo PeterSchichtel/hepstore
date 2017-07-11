@@ -1,26 +1,89 @@
 
 \section{School}
 
-
-
-same data as above
-
-%
-%
+\subsection{Tuning}
+The following Phyton script generates a set of pseudo data to which we
+tune a Quadratic Discriminant Analysis (QDA) for classification
+purposes.
 %
 \begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=1,firstline=1,language=Bash]{../examples/hepstore_school/example.sh}
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/school/tuning.py}
 \end{changemargin}
 %
-show plots
 %
 \begin{figure}
   \centering
-  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/tol.pdf}
-  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/reg_param.pdf}
-  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/roc.pdf}
-  \includegraphics[width=0.22\textwidth]{../examples/hepstore_school/probability_map.pdf}
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/cross_validation.pdf}
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/learning_curve.pdf}
   \caption{}
-  \label{fig:example_plotting}
+  \label{fig:example_tuning}
 \end{figure}
 %
+In Fig.~\ref{fig:example_tuning} we show, from left to right, the
+parameter cross validation and the learning curve. We observe stable
+and convergent behaviour.
+%
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|c}
+    parameter & value \\
+    \hline \hline
+    tol       & $2.64\times10^{-9}$ \\
+    reg\_param& $1.18\times10^{-2}$\\
+    \hline
+    \end{tabular}
+  \caption{}
+  \label{tab:example_tuning}
+\end{table}
+%
+The best tune parameter values are presented in
+Tab.~\ref{tab:example_tuning}.
+
+\subsection{Training}
+The following Phyton script trains the previously tuned QDA on the
+same training data set.
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/school/learning.py}
+\end{changemargin}
+%
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/probability_map.pdf}
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/classifier_output.pdf}
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/roc.pdf}
+  \caption{}
+  \label{fig:example_training}
+\end{figure}
+%
+In Fig.~\ref{fig:example_tuning} we display the training and testing
+results. From the classifier output distribution we deduce that, as
+expected, no over training occured. Furthermore, the probability map
+shows that the classifier nicely maps the background shape. The ROC
+curve diplayed may be used as input for statistical analysis.
+
+\subsection{Working}
+
+The following Phyton script generates a second set of data. The
+distributions are the same. However, we changed the random
+seed. Therefore, we assume in the following that the model models the
+data correctly. We then let the trained classifier compute the
+classification probability for the data.
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/school/working.py}
+\end{changemargin}
+%
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/blind_distribution.pdf}
+  \caption{}
+  \label{fig:example_working}
+\end{figure}
+%
+In Fig.~\ref{fig:example_working} we present the classifier output
+distribution as computed from the new data set without labels. As can
+be seen from the first bin there where about 500 signal events in the
+sample.

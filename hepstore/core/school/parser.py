@@ -56,6 +56,8 @@ class SchoolParser(ArgumentParser):
         self.add_argument(      "--activation",        default='relu', type=str)
         self.add_argument(      "--alpha",             default=0.001, type=float)
         self.add_argument(      "--hidden_layers",     default=(100,), type=hidden_layer_type)
+        self.add_argument(      "--save", default=os.path.join(os.getcwd(),'classifier.pkl'), type=str)
+        self.add_argument(      "--load", default='', type=str)
         pass
         
     pass

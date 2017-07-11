@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import math,os,sys
 from itertools import cycle
-from hepstore.tools import *
+from hepstore.core.tools import *
 import numpy as np
 
 
-class subplot(object):
+class SubPlot(object):
     
     def __init__(self,options,subnumber):
         self.subnumber   = subnumber
@@ -65,7 +65,7 @@ class subplot(object):
         pass
 
     def errorbar(self,data):
-        plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
+        plt.subplot(self.options.rows,self.options.columns,self.subnumber)
         counts,bin_edges = np.histogram(data[:,self.options.axis[0]],
                                         bins   = self.options.bins,
                                         range  = (float(self.xmin),float(self.xmax)),
@@ -189,7 +189,7 @@ class subplot(object):
     
     pass
 
-class figure(object):
+class Figure(object):
 
     def __init__(self,options):
         # save all options
@@ -215,7 +215,7 @@ class figure(object):
         # create corresponding subplots
         self.subplots        = {}
         for i in range(1,options.rows*options.columns+1):
-            self.subplots[i] = subplot(options,i)
+            self.subplots[i] = SubPlot(options,i)
             pass
         self.figure          = plt.figure( figsize=options.figure_size, dpi=options.dpi, facecolor=None, edgecolor=None, linewidth=0.0, frameon=None, subplotpars=None, tight_layout=None)
         pass
@@ -404,7 +404,7 @@ def main(args=None):
     parsed_args = parser.parse_args(args)
 
     # plot figures
-    figure = plotter.figure(parsed_args)
+    figure = Figure(parsed_args)
     figure.plot()
     
     pass #main
