@@ -15,6 +15,7 @@ args = [
     os.path.join('..','school','learning','classifier_distribution_train_0.0.npy'),
     "--cls_s",
     os.path.join('..','school','learning','classifier_distribution_train_1.0.npy'),
+    "--axis", "1",
     "--xsec_s", "0.5",
     "--xsec_b", "10.0",
     "--luminosity", "100.0",

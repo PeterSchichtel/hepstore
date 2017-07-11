@@ -57,8 +57,8 @@ class Captain(object):
             cls_distr_sig = np.load( self.options.cls_s )
             cls_distr_bkg = np.load( self.options.cls_b )
             significane,es,eb = significance.poisson(
-                cls_distr_sig,
-                cls_distr_bkg,
+                cls_distr_sig[:,self.options.axis[0]],
+                cls_distr_bkg[:,self.options.axis[0]],
                 self.options.xsec_s,
                 self.options.xsec_b,
                 self.options.luminosity,

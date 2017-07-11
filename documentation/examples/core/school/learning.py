@@ -84,7 +84,7 @@ args = [
     "-c", "blue", "red", "Blues",
     "--xmin", "-5", "--ymin", "-5",
     "--xmax", "5", "--ymax", "5",
-    "--alpha", "0.2", "0.2", "1.0",
+    "--alpha", "0.2", "0.2", "0.5",
     "--legend", "background", "signal",
     "--title", "probability map QDA",
     "--path", os.path.join(os.getcwd(),"probability_map.pdf"),
