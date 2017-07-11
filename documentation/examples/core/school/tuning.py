@@ -74,7 +74,7 @@ args = [
     "-k", "errorband",
     "--legend", "train", "test",
     "-c", "yellow", "blue ",
-    "--xmin", "2500", "--xmax", "%s" % 23000,
+    "--xmin", "2500", "--xmax", "%s" % 12000,
     "--title", "Learning Curve QDA",
     "--ymax", "0.95",
     "--ymin", "0.65",
