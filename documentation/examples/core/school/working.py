@@ -40,7 +40,7 @@ args = [
     "--legend", "blinded data",
     "-c", "green",
     "--alpha", "0.6",
-    "--xmin", "0.1", "--xmax", "1.1",
+    "--xmin", "-0.1", "--xmax", "1.1",
     "--ymax", "%i" % 3500,
     "--title", "QDA",
     "--xlabel", "classifier",

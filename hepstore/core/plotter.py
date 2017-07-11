@@ -27,6 +27,7 @@ class SubPlot(object):
         self.ymax        = 1.
         self.zmin        = 0.
         self.zmax        = 1.
+        self.alpha       = 1.
         try:
             self.title = options.title[subnumber]
             pass
@@ -59,7 +60,7 @@ class SubPlot(object):
                   bins   = self.options.bins,
                   normed = self.options.normed,
                   range  = (float(self.xmin),float(self.xmax)),
-                  alpha  = self.options.alpha,
+                  alpha  = self.alpha,
                   color  = self.color,
                   label  = self.legend)
         pass
@@ -78,7 +79,7 @@ class SubPlot(object):
         plt.errorbar( bin_centres, counts,
                       yerr  = err,
                       fmt   = 'o',
-                      alpha = self.options.alpha,
+                      alpha = self.alpha,
                       color = self.color,
                       label = self.legend)
         pass
@@ -92,7 +93,7 @@ class SubPlot(object):
         plt.tricontourf(x,y,z,
                         cmap=self.color, #cm.Blues_r,
                         V=self.options.contour_levels, #[0.,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95],
-                        alpha=self.options.alpha,
+                        alpha=self.alpha,
         )
         pass
     
@@ -103,7 +104,7 @@ class SubPlot(object):
         plt.scatter(x, y,
                     c=self.color,
                     marker=self.marker, s=self.markersize,
-                    alpha=self.options.alpha,
+                    alpha=self.alpha,
                     label=self.legend)
         pass
 
@@ -167,7 +168,7 @@ class SubPlot(object):
             pass
         plt.fill_between(x, y-dym, y+dyp,
                          linestyle=self.linestyle,linewidth=self.linewidth,
-                         alpha=0.3*self.options.alpha,)
+                         alpha=0.3*self.alpha,)
         pass
         
     def finalize(self):
@@ -210,6 +211,7 @@ class Figure(object):
         self.ymaxs           = cycle(options_to_list(options.ymax))
         self.zmins           = cycle(options_to_list(options.zmin))
         self.zmaxs           = cycle(options_to_list(options.zmax))
+        self.alphas          = cycle(options_to_list(options.alphas))
         # create grid of subplots
         plt.subplots(options.rows,options.columns)
         # create corresponding subplots
@@ -245,6 +247,7 @@ class Figure(object):
             subplot.ymax       = next(self.ymaxs)
             subplot.zmin       = next(self.zmins)
             subplot.zmax       = next(self.zmaxs)
+            subplot.alpha      = next(self.alphas)
             # determine kind of plot
             kind               = next(self.kind)
             if   kind == "histogram":
@@ -357,6 +360,9 @@ def main(args=None):
                          help  = "cycle of zmaxs, understands multiplication",
                          nargs = '+',
                          type  = str)
+    parser.add_argument( "--alpha", default=['1*1.0'],
+                         help  = "alpha parameter for plt.plot, understand multiplication",
+                         type  = float)
 
     # further options
     parser.add_argument( "-b", "--bins", default=100,
@@ -368,9 +374,6 @@ def main(args=None):
                         type  = int,
                         help  = "select axis of data to be plotted (x,y,z)",
                         nargs = '+')
-    parser.add_argument(      "--alpha", default=1.0,
-                              help="alpha parameter for plt.plot",
-                              type=float)
     parser.add_argument(      "--contour_levels", default=[],
                               help="levelsfor contour plot",
                               nargs='+')
