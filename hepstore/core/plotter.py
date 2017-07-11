@@ -247,7 +247,7 @@ class Figure(object):
             subplot.ymax       = next(self.ymaxs)
             subplot.zmin       = next(self.zmins)
             subplot.zmax       = next(self.zmaxs)
-            subplot.alpha      = next(self.alphas)
+            subplot.alpha      = float(next(self.alphas))
             # determine kind of plot
             kind               = next(self.kind)
             if   kind == "histogram":
@@ -362,6 +362,7 @@ def main(args=None):
                          type  = str)
     parser.add_argument( "--alpha", default=['1*1.0'],
                          help  = "alpha parameter for plt.plot, understand multiplication",
+                         nargs = '+',
                          type  = str)
 
     # further options
