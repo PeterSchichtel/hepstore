@@ -10,7 +10,7 @@ import time
 import os
 
 from hepstore.core.tools import *
-from hepstore.core.statistics.distributions import Log10Flat
+from hepstore.core.statistics.distribution import Log10Flat
 
 from sklearn.preprocessing import StandardScaler 
 from sklearn.metrics import classification_report
