@@ -14,7 +14,7 @@ np.random.seed(7)
 
 # produce data set
 produce.main( seed     = 7,
-              nevents1 = 30000,
+              nevents1 = 10000,
               nevents2 = 5000,
               name1    = "data_1.npy",
               name2    = "data_2.npy" )

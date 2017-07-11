@@ -12,7 +12,7 @@ def produce( seed=7, nevents1=10000, nevents2=5000 ):
 
     # generate data set I
     mean  = np.array([0.0,0.0])
-    cov   = np.array([[8.0,0.0],[0.0,8.0]])
+    cov   = np.array([[3.0,0.0],[0.0,3.0]])
     data1 = np.random.multivariate_normal(
         mean, cov, nevents1 )
     
