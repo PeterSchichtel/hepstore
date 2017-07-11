@@ -28,12 +28,12 @@ def poisson( pdf_sig, pdf_bkg, xsec_s, xsec_b, luminosity,
     for edge,s,b in zip( edges.tolist(), signal.tolist(), background.tolist() ):
         int_s += s
         int_b += b
-        es.append( [ edge, 1.0 - int_s] )
-        eb.append( [ edge, int_b      ] )
+        es.append( [ edge, 1.0 - int_s ] )
+        eb.append( [ edge, 1.0 - int_b ] )
         z      = (
-            ( 1.0 - int_s ) * xsec_s * np.sqrt(luminosity)
+            (1.0 - int_s) * xsec_s * np.sqrt(luminosity)
         )/(
-            np.sqrt( ( 1.0 - int_s ) * xsec_s + int_b * xsec_b )
+            np.sqrt( (1.0 - int_s) * xsec_s + (1.0-int_b) * xsec_b )
         )
         significance.append( [ edge, z ] )
         pass
