@@ -10,7 +10,7 @@ from hepstore.core.errors import *
 # fit a sample of normed pdfs to some data
 # result should be pdf weight with errors
 # covariance if possible
-def pdfs( data, pdfs, start=1.0 ):
+def binned_pdfs( data, pdfs, start=1.0 ):
 
     # we need one parameter per pdf
     parameters_initial = np.array( [start]*len(pdfs) )

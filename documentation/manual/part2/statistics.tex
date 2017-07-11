@@ -1,8 +1,34 @@
 
-maximum significance
+\section{Statistics}
 
-cross section fit
+\subsection{Fit a Signal}
+The following Python script fits the number of background and signal
+events to a given data distribution. The pdfs for fitting as well as
+the data distribution are obtained from the classifier output as
+presented in the previous section.
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/statistics/fit.py}
+\end{changemargin}
+%
+We find $9974.5$ background events and $503.2$ signal events. The true
+value was $10000$ respectively $500$.
 
-upper limit calculation
+\subsection{Upper Bound on Signal Cross Section}
+The following Pyhton script computes the upper bound of a possible
+signal cross section given a ROC curve from some analysis.
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/statistics/upper_bound.py}
+\end{changemargin}
+%
+Assuming a luminosity $\mathcal{L} = 100$ and a background cross
+section of $\sigma_B = 10$, we compute an upper limit on the signal
+cross section of $\sigma_s \le 0.131$. We use the ROC curve obtained
+in the previous section. The optimal working point is at $\epsilon_S =
+39\%$, corresponding to $\epsilon_B = 0.0014$.
 
-maximum likelihood with estimated pdf
+\subsection{Maximal Poissonian Significance}
+
+
+\subsection{Significance from Loglikelihood}
