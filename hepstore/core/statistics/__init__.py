@@ -4,30 +4,28 @@ import os
 import machine_learning
 from hepstore.core.errors import *
 import sys
-import argparse
+
+import parser
+import ship
 
 ############################################################################
 ## run the app
 ############################################################################
 def main(args=None):
 
-    # we need to setup the arg parser
-    arg_parser      = argparse.ArgumentParser(
-        description = 'Meta code to analyse typical hep data in .npy format',
-        add_help    = False,
-        usage       = '''hepstore-analysis mode [mode ...]
-        allowed mode(s) are: learn,
-        ''')
-    arg_parser.add_argument('mode', type=str, nargs='+')
+    # load parser
+    arg_parser = parser.StatisticParser()
 
     # parse args
     parsed_args, unknown = arg_parser.parse_known_args(args)
 
-    # learn from data
-    if "learn" in parsed_args.mode:
-        analysis = machine_learning.Analysis(unknown)
-        analysis.analyse()
-        pass
+    # do not allow unknown args
+    if unknown != []:
+        raise  ParserError("unknown args in statistic '%s'" % " ".join(unknown))
+
+    # excute args
+    app = ship.Captain(parsed_args)
+    app.run()
     
     pass # main
 ############################################################################

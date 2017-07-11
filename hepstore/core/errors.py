@@ -11,4 +11,6 @@ class LabelError(IndexError):
 class ParserError(argparse.ArgumentTypeError):
     pass
 
-
+# fit error
+class FitError(Exception):
+    pass

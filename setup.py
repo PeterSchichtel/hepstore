@@ -46,8 +46,9 @@ setup(
         'console_scripts': [
             'hepstore                = hepstore:main',
             'hepstore-docker         = hepstore.core.docker_interface:main',
-            'hepstore-school         = hepstore.core.school:main',
             'hepstore-plot           = hepstore.core.plotter:main',
+            'hepstore-school         = hepstore.core.school:main',
+            'hepstroe-statistic      = hepstore.core.statistic:main',
             'hepstore-herwig         = hepstore.framework.monte_carlo.herwig:main',
             'hepstore-sherpa         = hepstore.framework.monte_carlo.sherpa:main',
             'hepstore-corsika        = hepstore.frameworl.monte_carlo.corsika:run',
