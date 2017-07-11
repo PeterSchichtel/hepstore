@@ -362,7 +362,7 @@ def main(args=None):
                          type  = str)
     parser.add_argument( "--alpha", default=['1*1.0'],
                          help  = "alpha parameter for plt.plot, understand multiplication",
-                         type  = float)
+                         type  = str)
 
     # further options
     parser.add_argument( "-b", "--bins", default=100,
