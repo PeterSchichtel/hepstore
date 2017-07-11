@@ -211,7 +211,7 @@ class Figure(object):
         self.ymaxs           = cycle(options_to_list(options.ymax))
         self.zmins           = cycle(options_to_list(options.zmin))
         self.zmaxs           = cycle(options_to_list(options.zmax))
-        self.alphas          = cycle(options_to_list(options.alphas))
+        self.alphas          = cycle(options_to_list(options.alpha))
         # create grid of subplots
         plt.subplots(options.rows,options.columns)
         # create corresponding subplots
