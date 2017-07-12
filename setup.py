@@ -24,7 +24,7 @@ setup(
     packages=[
         'hepstore',
         'hepstore.core',
-        'hepstore.core.interface',
+        'hepstore.core.docker',
         'hepstore.core.plotter',
         'hepstore.core.school',
         'hepstore.core.school.books',
@@ -42,11 +42,11 @@ setup(
     entry_points = {
         'console_scripts': [
             'hepstore                = hepstore:main',
-            'hepstore-docker         = hepstore.core.interface:main',
-            'hepstore-herwig         = hepstore.core.interface.herwig:main',
-            'hepstore-sherpa         = hepstore.core.interface.sherpa:main',
-            'hepstore-corsika        = hepstore.core.interface.corsika:run',
-            'hepstore-hepmc2corsika  = hepstore.core.interface.hepmc2corsika:run',
+            'hepstore-docker         = hepstore.core.docker:main',
+            'hepstore-herwig         = hepstore.core.docker.herwig:main',
+            'hepstore-sherpa         = hepstore.core.docker.sherpa:main',
+            'hepstore-corsika        = hepstore.core.docker.corsika:run',
+            'hepstore-hepmc2corsika  = hepstore.core.docker.hepmc2corsika:run',
             'hepstore-plot           = hepstore.core.plotter:main',
             'hepstore-school         = hepstore.core.school:main',
             'hepstore-statistic      = hepstore.core.statistic:main',
