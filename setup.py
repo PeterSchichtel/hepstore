@@ -24,16 +24,12 @@ setup(
     packages=[
         'hepstore',
         'hepstore.core',
-        'hepstore.core.statistics',
+        'hepstore.core.interface',
+        'hepstore.core.plotter',
         'hepstore.core.school',
         'hepstore.core.school.books',
+        'hepstore.core.statistic',
         'hepstore.framework',
-        'hepstore.framework.monte_carlo',
-        'hepstore.framework.collider',
-        'hepstore.framework.eas',
-        'hepstore.framework.eas.generator',
-        'hepstore.framework.eas.structure',
-        'hepstore.framework.eas.analysis',
     ],
     # requirement
     install_requires = [
@@ -45,16 +41,14 @@ setup(
     entry_points = {
         'console_scripts': [
             'hepstore                = hepstore:main',
-            'hepstore-docker         = hepstore.core.docker_interface:main',
+            'hepstore-docker         = hepstore.core.interface:main',
+            'hepstore-herwig         = hepstore.core.interface.herwig:main',
+            'hepstore-sherpa         = hepstore.core.interface.sherpa:main',
+            'hepstore-corsika        = hepstore.core.interface.corsika:run',
+            'hepstore-hepmc2corsika  = hepstore.core.interface.hepmc2corsika:run',
             'hepstore-plot           = hepstore.core.plotter:main',
             'hepstore-school         = hepstore.core.school:main',
             'hepstore-statistic      = hepstore.core.statistic:main',
-            'hepstore-herwig         = hepstore.framework.monte_carlo.herwig:main',
-            'hepstore-sherpa         = hepstore.framework.monte_carlo.sherpa:main',
-            'hepstore-corsika        = hepstore.frameworl.monte_carlo.corsika:run',
-            'hepstore-hepmc2corsika  = hepstore.fromework.monte_carlo.hepmc2corsika:run',
-            'hepstore-eas            = hepstore.framework.eas:main',
-            'hepstore-collider       = hepstore.framework.collider:main',
         ]
     },
     # search words
