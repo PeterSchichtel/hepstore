@@ -48,7 +48,7 @@ def roc( roc, xesc_s, xesc_b, luminosity ):
     significance = []
     # loop through ROC
     for es,eb in roc:
-        z = ( es * xsec_s * np.sqrt(luminosity) )/( es * xsec_s + (1.0-eb) * xsec_b ) )
+        z = ( es * xsec_s * np.sqrt(luminosity) )/ np.sqrt( es * xsec_s + (1.0-eb) * xsec_b ) 
         significance.append( [ es, z ] )
         pass
     return np.array(significance)

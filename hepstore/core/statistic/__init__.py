@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+# global imports
 import os
-import machine_learning
-from hepstore.core.error import *
-import sys
 
+# hepstore imports
+from hepstore.core.error import *
+
+# local imports
 import parser
 import ship
 

@@ -30,6 +30,7 @@ setup(
         'hepstore.core.school.books',
         'hepstore.core.statistic',
         'hepstore.framework',
+        'hepstore.framework.eas',
     ],
     # requirement
     install_requires = [
@@ -49,6 +50,7 @@ setup(
             'hepstore-plot           = hepstore.core.plotter:main',
             'hepstore-school         = hepstore.core.school:main',
             'hepstore-statistic      = hepstore.core.statistic:main',
+            'hepstore-eas            = hepstore.framework.eas:main',
         ]
     },
     # search words

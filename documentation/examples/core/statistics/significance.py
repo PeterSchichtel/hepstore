@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 # hepstore imports
-from hepstore.core.statistics import main as compute
+from hepstore.core.statistic import main as compute
 from hepstore.core.plotter    import main as plot
 
 args = [

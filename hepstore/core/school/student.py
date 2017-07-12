@@ -4,6 +4,7 @@
 import os
 import numpy as np
 from sklearn.externals import joblib
+import sklearn.preprocessing
 
 # hepstore imports
 from hepstore.core.utility import *
@@ -33,7 +34,7 @@ class Student(books.Book):
         # generate train and test data
         self.data_train,self.data_test,self.label_train,self.label_test = self.data.train_test_split(test_size=self.options.test_size,random_state=self.options.random_state)
         # scale
-        self.scaler            = StandardScaler()
+        self.scaler            = sklearn.preprocessing.StandardScaler()
         self.scaler.fit(self.data_train)
         self.data_train_scaled = self.scaler.transform(self.data_train)
         self.data_test_scaled  = self.scaler.transform(self.data_test)

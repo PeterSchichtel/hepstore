@@ -34,7 +34,7 @@ class Captain(object):
                                           self.bin_pdfs,
                                           start=self.options.start )
             for i,parameter in enumerate(self.parameters):
-                print "--statistics: fitted %9.2e to pdf '%s' " % ( parameter, self.options.pdf[i] )
+                print "--statistic: fitted %9.2e to pdf '%s' " % ( parameter, self.options.pdf[i] )
                 pass
             pass
 
@@ -46,9 +46,9 @@ class Captain(object):
                 self.options.luminosity
             )
             xsec_s,es,eb = self.working_point
-            print "--statistics: exclude cross sections above    xsec_s = %9.2e" % xsec_s
-            print "--statistics: computed with L = %9.2e and xsec_b = %9.2e" % ( self.options.luminosity, self.options.xsec_b )
-            print "--statistics: working point is  e_s = %9.2e, e_b = %9.2e" % ( es, eb )
+            print "--statistic: exclude cross sections above    xsec_s = %9.2e" % xsec_s
+            print "--statistic: computed with L = %9.2e and xsec_b = %9.2e" % ( self.options.luminosity, self.options.xsec_b )
+            print "--statistic: working point is  e_s = %9.2e, e_b = %9.2e" % ( es, eb )
             pass
 
         # compute poisonian significance as function
