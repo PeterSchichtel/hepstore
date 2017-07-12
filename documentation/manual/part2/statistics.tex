@@ -1,25 +1,38 @@
 
 \section{Statistics}
 
+In general, one can perform statisticla analyses once the pdf's for
+all processes are known. In addition, ROC curves contain all the
+information needed to perform certain statistical analyses. In the
+following we use the results produced with hepstore-school to compute
+statistical quantities.
+
 \subsection{Fit a Signal}
-The following Python script fits the number of background and signal
-events to a given data distribution. The pdfs for fitting as well as
-the data distribution are obtained from the classifier output as
-presented in the previous section.
+We like to estimate the number of signal and background events
+contained in the joined data set data\_3.npy and data\_4.npy. As pdf
+we use the trained and labeled classifier output distribution,
+computed in Sec.~\ref{sec:}. As data the blinded distribution from
+Sec.~\ref{sec:}.
 %
 \begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/statistics/fit.py}
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-statistics --fit --data blinded.npy --pdf cls_pdf_background.npy cls_pdf_signal.npy
+  \end{lstlisting}
 \end{changemargin}
 %
-We find $9974.5$ background events and $503.2$ signal events. The true
-value was $10000$ respectively $500$.
+We find $9974.5$ background events and $503.2$ signal events, whereas
+the true value was $10000$ respectively $500$.
 
 \subsection{Upper Bound on Signal Cross Section}
-The following Pyhton script computes the upper bound of a possible
-signal cross section given a ROC curve from some analysis.
+Next let us use the ROC curve from Sec.~\ref{sec:} to compute the
+upper limit on a possible signal cross section. 
 %
 \begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/statistics/upper_bound.py}
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-statistics --limit --roc roc.npy --xsec_b 10.0 --luminosity 100.0
+  \end{lstlisting}
 \end{changemargin}
 %
 Assuming a luminosity $\mathcal{L} = 100$ and a background cross
@@ -28,7 +41,29 @@ cross section of $\sigma_s \le 0.131$. We use the ROC curve obtained
 in the previous section. The optimal working point is at $\epsilon_S =
 39\%$, corresponding to $\epsilon_B = 0.0014$.
 
-\subsection{Maximal Poissonian Significance}
+\subsection{Poissonian Significance}
+For given expected signal and background number of events we can
+compute the expected Poissonian significance as function of the
+classifier output.
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-statistics --significance --cls_b cls_pdf_background.npy --cls_s cls_pdf_signal.npy --xsec_s 0.5 --xsec_b 10. --luminosity 100.
+  \end{lstlisting}
+\end{changemargin}
+%
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.32\textwidth]{../examples/core/statistics/significance.pdf}
+  \caption{}
+  \label{fig:example_statistics}
+\end{figure}
+%
+In Fig.~\ref{fig:example_statistics} we present the classifier output
+cut dependent significance. Furthermore, we show the corresponding
+signal and background efficiencies, $\epsilon_S$ and $\epsilon_B$.XS
 
+%\subsection{Significance from Loglikelihood}
 
-\subsection{Significance from Loglikelihood}

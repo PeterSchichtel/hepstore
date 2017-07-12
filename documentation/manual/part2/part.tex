@@ -4,14 +4,42 @@
 %	CHAPTER 1
 %----------------------------------------------------------------------------------------
 \chapter{Core}
+
+In the following we wish to demonstrate hepstores core abilities with
+short, simple examples. It is the aim to introduce the command line
+functionality, which should give the user a clear guidance on how to
+perform simple analyses. All arguments can be viewed via
+%
+\begin{changemargin}{1.5cm}{1.5cm} 
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-module -h
+  \end{lstlisting}
+\end{changemargin}
+%
+In addition, there is the possibility to use hepstores modules from
+within Pyhton, of course. In the appendix we collect the python
+scripts needed to reproduce the plots presented in the
+following. Furthermore, to support learning, these script contain one
+level of complexity more in the sense, that we only show the
+neccessary arguments in the following, while the scripts contain the
+full information. All scripts can be found in the git repository at
+'hepstore/documentation/examples/core'.
+
+\input{part2/data.tex}
 \input{part2/plotter.tex}
 \input{part2/school.tex}
 \input{part2/statistics.tex}
 
 %----------------------------------------------------------------------------------------
-%	CHAPTER 4
+%	CHAPTER 2
 %----------------------------------------------------------------------------------------
 \chapter{Framework}
 \input{part2/lhc.tex}
 \input{part2/eas.tex}
 
+%----------------------------------------------------------------------------------------
+%	CHAPTER 3
+%----------------------------------------------------------------------------------------
+\chapter{Example Scripts}
+\input{part2/scripts.tex}

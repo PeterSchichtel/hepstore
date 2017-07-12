@@ -1,28 +1,23 @@
 
 \section{School}
 
+In this section we provide an example of the full school year: tuning,
+learning and working. Again the dteailed scripts to reproduce the
+results can be found in Sec.~\ref{sec:}.
+
 \subsection{Tuning}
-The following Phyton script generates a set of pseudo data to which we
-tune a Quadratic Discriminant Analysis (QDA) for classification
-purposes.
+Using the data set presented above we tune a Quadratic Discriminant
+Analysis (QDA) to a subset of the randomly selected training data.
 %
 \begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/school/tuning.py}
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-school -c qda -f data_1.npy data_2.npy -l 0.0 1.0 --only_explore
+  \end{lstlisting}
 \end{changemargin}
 %
-%
-\begin{figure}
-  \centering
-  \includegraphics[width=0.32\textwidth]{../examples/core/school/cross_validation.pdf}
-  \includegraphics[width=0.32\textwidth]{../examples/core/school/learning_curve.pdf}
-  \caption{}
-  \label{fig:example_tuning}
-\end{figure}
-%
-In Fig.~\ref{fig:example_tuning} we show, from left to right, the
-parameter cross validation and the learning curve. We observe stable
-and convergent behaviour.
-%
+This yield a ranked output of parameter choice, see Sec.\ref{sec:}
+versus score.
 \begin{table}[h!]
   \centering
   \begin{tabular}{c|c}
@@ -38,20 +33,35 @@ and convergent behaviour.
 %
 The best tune parameter values are presented in
 Tab.~\ref{tab:example_tuning}.
+%
+\begin{figure}
+  \centering
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/cross_validation.pdf}
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/learning_curve.pdf}
+  \caption{}
+  \label{fig:example_tuning}
+\end{figure}
+%
+Using hepstore-plot we present in Fig.~\ref{fig:example_tuning} the
+parameter cross validation and the learning curve. We observe stable
+and convergent behaviour.
 
-\subsection{Training}
-The following Phyton script trains the previously tuned QDA on the
-same training data set.
+\subsection{Learning}
+Using the tuned parameter values from Tab.~\ref{tab:example_tuning} we
+train and test the QDA classifier on the full data set.
 %
 \begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/school/learning.py}
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-school -c qda -f data_1.npy data_2.npy -l 0.0 1.0 --reg_param 0.0118 --tol 2.64e-09
+  \end{lstlisting}
 \end{changemargin}
 %
 %
 \begin{figure}
   \centering
-  \includegraphics[width=0.32\textwidth]{../examples/core/school/probability_map.pdf}
   \includegraphics[width=0.32\textwidth]{../examples/core/school/classifier_output.pdf}
+  \includegraphics[width=0.32\textwidth]{../examples/core/school/probability_map.pdf}
   \includegraphics[width=0.32\textwidth]{../examples/core/school/roc.pdf}
   \caption{}
   \label{fig:example_training}
@@ -60,21 +70,26 @@ same training data set.
 In Fig.~\ref{fig:example_tuning} we display the training and testing
 results. From the classifier output distribution we deduce that, as
 expected, no over training occured. Furthermore, the probability map
-shows that the classifier nicely maps the background shape. The ROC
-curve diplayed may be used as input for statistical analysis.
+shows that the classifier nicely maps the background versus signal
+shape. The ROC curve diplayed may be used as input for statistical
+analysis.
 
 \subsection{Working}
-
-The following Phyton script generates a second set of data. The
-distributions are the same. However, we changed the random
-seed. Therefore, we assume in the following that the model models the
-data correctly. We then let the trained classifier compute the
-classification probability for the data.
+In regular learning mode hepstore.core.school automatically dumps the
+classifier and the scaler as pickable Python tuple. Therefore, one can
+load the classifier and work on unlabeled data. We use the same data
+as before. However, this time with a new random seed to produce
+independent samples and an unknwon number of signal respectively
+background events. Using
 %
 \begin{changemargin}{1.5cm}{1.5cm} 
-  \lstinputlisting[numbers=left,firstnumber=1,firstline=1]{../examples/core/school/working.py}
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-school --load qda.pkl -f data_3.npy data_4.npy
+  \end{lstlisting}
 \end{changemargin}
 %
+we generate a blinded, e.g. no labels, classifier output distribution.
 %
 \begin{figure}
   \centering
@@ -83,7 +98,9 @@ classification probability for the data.
   \label{fig:example_working}
 \end{figure}
 %
-In Fig.~\ref{fig:example_working} we present the classifier output
-distribution as computed from the new data set without labels. As can
-be seen from the first bin there where about 500 signal events in the
-sample.
+In Fig.~\ref{fig:example_working} we present this distribution as
+computed from the new data set without labels.
+
+
+
+

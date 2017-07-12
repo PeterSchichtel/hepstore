@@ -455,11 +455,63 @@ sets for testing.
 \end{enumerate}
 %
 
+\subsection{Classification}
+
+In the training stage the classifier and the scaler are dumped as
+pickable Python tuple. One can load the classifier and perform
+classifcation on any data set with the same feature shape. The result
+is saved in form of the classifier output probability.
+
 \section{hepstore.core.statistics}
 
-The statistics module provides the usual methods of high energy
+The statistics module collects the usual methods of high energy
 physics used, for example, for limit setting or significance
 computation.
+
+\subsection{Fit}
+
+For actual or estimated representations of probability density
+functions (pdf) we can fit the most likely amount they contribute to a
+given data set. The function to be fitted is
+%
+\begin{ceqn}
+  \begin{align}
+     f\left(\vec{w},\vec{x}\right) &= \sum w_i \times \text{pdf}_i\,\left(\vec{x}\right)\,.
+  \end{align}
+\end{ceqn}
+%
+Here $\vec{w}$ represents the weights to be fitted, while $\vec{x}$
+represents the feature space. Using a least square method we can fit
+$f$ with respect to a data set $D$ living on the same feature space.
+
+\subsection{Limit}
+
+For a given set of signal and background efficiencies, $\epsilon_S$
+and $\epsilon_B$, we can compute a simple estimate of the upper
+exclusion limit using counting statistics. In counting statistics the
+significance is given by
+%
+\begin{ceqn}
+  \begin{align}
+     Z &= \frac{ n_S }{ \sqrt{ n_s + n_b }}\,.
+  \end{align}
+\end{ceqn}
+%
+Usually $95\%$ clearance is used for limit setting in high energy
+particle physics. This corresponds to $Z=2$. For a given luminosity
+$\mathcal{L}$ and background cross section $\sigma_B$ we can now
+compute the signal cross section as
+%
+\begin{ceqn}
+  \begin{align}
+     \sigma_S &= 2\,\frac{ 1 + \sqrt{ 1 + \epsilon_B\,\sigma_B\,\mathcal{L} } }{ \epsilon_S\,\mathcal{L} }\,.
+  \end{align}
+\end{ceqn}
+%
+If an analysis provides a sample of $\epsilon_S$ and $\epsilon_B$,
+e.g. a ROC curve, we use the minimum as estimate.
+
+\subsection{Significance}
 
 \section{hepstore.core.tools}
 

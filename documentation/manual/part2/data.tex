@@ -1,0 +1,21 @@
+
+\section{Data}
+The data we wish to use in the following is divided in two subsets for
+classification, which one might call signal and background. The
+feature (phase) space is two dimensional and has no units. The
+background $B$ is gaussian with zero mean and a diagonal covariance
+matrix of width three. The signal however, is composed of two
+gaussians, $S_1$ and $S_2$. Mean and covariance ar quoted in the
+following.
+%
+\begin{alignat}{3}
+  \mu_{B}          &= \begin{bmatrix} 0.0 & 0.0 \end{bmatrix} &\qquad
+  \text{cov}_{B}   &= \begin{bmatrix} 3.0 & 0.0 \\ 0.0 & 3.0 \end{bmatrix} \notag\\
+  \mu_{S,1}        &= \begin{bmatrix} 2.5 & -2.5 \end{bmatrix} &\qquad
+  \text{cov}_{S,1} &= \begin{bmatrix} 1.0 & 0.0 \\ 0.0 & 1.0 \end{bmatrix} \notag\\
+  \mu_{S,2}        &= \begin{bmatrix} -1.4 & 0.8 \end{bmatrix} &\qquad
+  \text{cov}_{S,2} &= \begin{bmatrix} 0.02 & 1.2 \\ -1.7 & 0.01 \end{bmatrix}
+\end{alignat}
+%
+
+
