@@ -41,3 +41,14 @@ def poisson( pdf_sig, pdf_bkg, xsec_s, xsec_b, luminosity,
     return ( np.array(significance),
              np.array(es)          ,
              np.array(eb)          )
+
+# compute the poisson significance
+# from ROC
+def roc( roc, xesc_s, xesc_b, luminosity ):
+    significance = []
+    # loop through ROC
+    for es,eb in roc:
+        z = ( es * xsec_s * np.sqrt(luminosity) )/( es * xsec_s + (1.0-eb) * xsec_b ) )
+        significance.append( [ es, z ] )
+        pass
+    return np.array(significance)

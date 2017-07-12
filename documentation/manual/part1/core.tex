@@ -16,35 +16,7 @@ reproducibility program. It is a simple yet elegant piece of
   \centering
   \begin{lstlisting}
     
-    # import module
     import hepstore.core.docker_interface
-
-    # user vars
-    docker_repository    = 'repository_for_pull'
-    docker_image         = 'name_of_image'
-    docker_image_version = 'version_of_subimage'
-    directory_path       = 'mount_local_dir'
-    list_of_arguments    = [
-      'commands',
-      'piped',
-      'to',
-      'container',
-      ]
-    
-    # generate the app
-    app = hepstore.core.docker_interafce.DockerIF(    
-        image     = os.path.join( docker_repository,
-                                  docker_image,
-        ),
-        version   = docker_image_version,
-        verbose   = True,
-    )
-
-    # run the app
-    app.run(
-        directory = directory_path,
-        args      = list_of_arguments,
-    )
   \end{lstlisting}
 \end{changemargin}
 %
@@ -64,7 +36,17 @@ For a list of valid arguments use the '-h' flag.
 \index{hepstore.core.plotter}
 
 Another important building block of \hepstore~is its own plotting
-module. Via the command line
+module. It can be used in \python~via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}
+    
+    import hepstore.core.plotter
+  \end{lstlisting}
+\end{changemargin}
+%
+Or via the command line
 %
 \begin{changemargin}{1.5cm}{1.5cm}
   \centering
@@ -74,28 +56,11 @@ module. Via the command line
   \end{lstlisting}
 \end{changemargin}
 %
-produces any kind of collection of 1D or 2D figures. The plotting
-module allows not only for efficient plublishable figure production,
-but comes along as \python~class for usability in user modules
-%
-\begin{changemargin}{1.5cm}{1.5cm}
-  \centering
-  \begin{lstlisting}
-    
-    # import module
-    import hepstore.core.plotter
-
-    # user variables
-    options = namespace_of_plotter_option_objects
-
-    # create a figure
-    figure = hepstore.core.plotter.Figure(options)
-    figure.plot()
-    
-  \end{lstlisting}
-\end{changemargin}
-%
-At the time being \hepstore~suppoert the following displays
+For a list of valid arguments use the '-h' flag. It produces any kind
+of collection of 1D or 2D figures. The plotting module allows not only
+for efficient plublishable figure production, but comes along
+as \python~class for usability in user modules.  At the time
+being \hepstore~suppoert the following displays
 %
 \begin{enumerate}
 \item scatter
@@ -135,7 +100,17 @@ follows
 \hspace*{0.5cm}
 %
 It ensures correct and simple usage of classification tools in
-general. It may be invoked via
+general. It can be used in \python~via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}
+    
+    import hepstore.core.school
+  \end{lstlisting}
+\end{changemargin}
+%
+It may be invoked via
 %
 \begin{changemargin}{1.5cm}{1.5cm}
   \centering
@@ -463,7 +438,27 @@ is saved in form of the classifier output probability.
 
 The statistics module collects the usual methods of high energy
 physics used, for example, for limit setting or significance
-computation.
+computation. It can be used in \python~via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}
+    
+    import hepstore.core.statistics
+  \end{lstlisting}
+\end{changemargin}
+%
+It may be invoked via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}[language=Bash]
+    
+    hepstore-statistics list_of_arguments
+  \end{lstlisting}
+\end{changemargin}
+%
+For all options use the '-h' flag.
 
 \subsection{Fit}
 
@@ -491,6 +486,7 @@ significance is given by
 \begin{ceqn}
   \begin{align}
      Z &= \frac{ n_S }{ \sqrt{ n_s + n_b }}\,.
+     \label{eq:significance}
   \end{align}
 \end{ceqn}
 %
@@ -509,6 +505,31 @@ If an analysis provides a sample of $\epsilon_S$ and $\epsilon_B$,
 e.g. a ROC curve, we use the minimum as estimate.
 
 \subsection{Significance}
+
+Using Eq.~\ref{eq:significance} we can compute the expected
+significance as function of a cut through a given set of pdfs.
+%
+\begin{ceqn}
+  \begin{align}
+     Z &= \frac{
+     \int \limits_\text{cut}^\infty \, \text{pdf}_S(x) \,dx
+     \, \sigma_S \, \sqrt{\mathcal{L}}
+     }{
+     \sqrt{
+     \int \limits_\text{cut}^\infty \, \text{pdf}_S(x) \,dx
+     \, \sigma_S
+     + 
+     \int \limits_\text{cut}^\infty \, \text{pdf}_B(x) \,dx
+     \, \sigma_B
+     }}\,.  
+     \label{eq:significance}
+  \end{align}
+\end{ceqn}
+%
+Here $\sigma_S$ and $\sigma_B$ are the signal respectively background
+cross sections and $\mathcal{L}$ is the luminosity. Of course, one
+could also use the ROC curve to determine the behaviour of the
+expected significance, now as a function of $\epsilon_S$.
 
 \section{hepstore.core.tools}
 
