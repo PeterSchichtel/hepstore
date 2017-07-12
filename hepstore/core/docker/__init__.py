@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ######################################################################################
-# module   : hepstore.core.docker_interface
+# module   : hepstore.core.docker
 # author(s): Peter Schichtel
 # year     : 2017
 # version  : 0.1
@@ -38,10 +38,10 @@ def main(args=None):
 
     # run the app
     app.run(
-        directory = parsed_args.directory,
+        directory = parsed_args.docker_directory,
         args      = [ '/bin/bash',
                       '-c',
-                      '%s' % " ".join( unknown )
+                      '%s' % " ".join( unknown ),
         ]
     )
 
