@@ -3,7 +3,7 @@
 import numpy as np
 import os
 import time
-from hepstore.core.tools import *
+from hepstore.core.utility import *
 import sklearn.model_selection 
 
 # Utility function to report best scores

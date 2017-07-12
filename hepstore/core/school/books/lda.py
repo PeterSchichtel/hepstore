@@ -7,7 +7,7 @@ import time
 import os
 
 # from hepstore
-from hepstore.core.tools import *
+from hepstore.core.utility import *
 from hepstore.core.statistics.distribution import Log10Flat as Log10Flat
 
 # from local

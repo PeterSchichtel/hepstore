@@ -1,56 +1,54 @@
 #!/usr/bin/env python
 
-import os
-
+# global imports
 import numpy as np
-import sys
+import sklearn.model_selection
 
-import hepstore.core.tools as tools
-
-from itertools import cycle
-from sklearn.preprocessing import StandardScaler 
-from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
-from sklearn.model_selection import validation_curve
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
-
-from hepstore.core.errors import *
-
-    
+# data class wrapper containing
+# features and labels
 class DataUnit(object):
 
-    def __init__(self,data=None,classification=None):
-        self.data           = data
-        self.classification = classification
+    # constructor
+    def __init__( self,
+                  data           = None,
+                  classification = None ):
+        self.data                = data
+        self.classification      = classification
         pass
 
-    def __add__(self,other):
+    # allow addition
+    def __add__( self, other ):
         result = DataUnit()
-        result.data            = np.concatenate((self.data,           other.data))
-        result.classification  = np.concatenate((self.classification, other.classification))
+        result.data              = np.concatenate((self.data,           other.data))
+        result.classification    = np.concatenate((self.classification, other.classification))
         return result
 
-    def train_test_split(self,test_size=0.25,random_state=0):
-        return train_test_split(self.data,self.classification,test_size=test_size,random_state=random_state)
-        pass
+    # interface to sklearn train test split
+    def train_test_split( self,
+                          test_size    = 0.25,
+                          random_state = 0):
+        return sklearn.model_selection.train_test_split(
+            self.data, self.classification,
+            test_size    = test_size,
+            random_state = random_state )
 
-    def zip(self):
-        return zip(self.data.tolist(),self.classification.tolist())
-    
-    def log_transform(self):
-        new_data = []
-        new_label= []
+    # zip through data feature,label
+    def zip( self ):
+        return zip( self.data.tolist(),
+                    self.classification.tolist() )
+
+    # transform data (log)
+    def log_transform( self ):
+        new_data  = []
+        new_label = []
         for data,label in self.zip():
-            if any(d<=0.0 for d in data):
+            if any( d<=0.0 for d in data ):
                 continue
             new_data.append(data)
             new_label.append(label)
             pass
-        self.data = np.log(np.array(new_data))
-        self.classification = np.array(new_label)
+        self.data           = np.log( np.array(new_data) )
+        self.classification = np.array( new_label )
         pass
 
     pass

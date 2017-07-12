@@ -1,34 +1,26 @@
 #!/usr/bin/env python
 
+# global imports
 import os
-
 import numpy as np
-import sys
+from itertools import cycle
 
-import hepstore.core.tools as tools
+# hepstore imports
+from hepstore.core.utility import *
+from hepstore.core.error import *
 
-from hepstore.core.errors import *
+# local imports
 from student import *
 from data import *
 
-from itertools import cycle
-from sklearn.preprocessing import StandardScaler 
-from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
-from sklearn.model_selection import validation_curve
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
-
-
+# the teacher of our school
 class Teacher(object):
 
     def __init__(self,options):
         self.options = options
         self.student = None
         # create cyclers for options
-        self.label = cycle(tools.options_to_list(options.label))
+        self.label = cycle( options_to_list(options.label) )
         pass
 
     def teach(self):
@@ -66,7 +58,7 @@ class Teacher(object):
         pass
 
     def save(self):
-        tools.mkdir(self.options.path)
+        mkdir(self.options.path)
         # preparation results
         if self.options.explore or self.options.only_explore:
             pass

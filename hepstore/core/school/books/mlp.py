@@ -9,7 +9,7 @@ import numpy as np
 import time
 import os
 
-from hepstore.core.tools import *
+from hepstore.core.utility import *
 from hepstore.core.statistics.distribution import Log10Flat
 
 from sklearn.preprocessing import StandardScaler 

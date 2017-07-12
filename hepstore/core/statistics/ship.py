@@ -6,7 +6,7 @@ from sklearn import preprocessing
 import os
 
 # hepstore imports
-from hepstore.core.tools import *
+from hepstore.core.utility import *
 
 # local imports
 import fit

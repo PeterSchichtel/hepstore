@@ -1,23 +1,19 @@
 #!/usr/bin/env python
 
+# global imports 
 import os
 import numpy as np
-import sys
-from itertools import cycle
-
-from sklearn.preprocessing import StandardScaler 
-from sklearn.model_selection import validation_curve
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
 from sklearn.externals import joblib
 
-import hepstore.core.tools as tools
-from hepstore.core.errors import *
+# hepstore imports
+from hepstore.core.utility import *
+from hepstore.core.error import *
+
+# local imports
 from data import *
 import books
 
-
+# our student class
 class Student(books.Book):
 
     def __init__(self,options,data):
@@ -114,7 +110,7 @@ class Student(books.Book):
         # classify data
         probability_distribution = self.classifier.predict_proba( scaled_data )
         # save output
-        tools.mkdir( self.options.path )
+        mkdir( self.options.path )
         np.save(
             os.path.join( self.options.path, "blind_classifier_output.npy" ),
             probability_distribution )

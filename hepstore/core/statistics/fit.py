@@ -5,10 +5,10 @@ import numpy as np
 from scipy.optimize import leastsq
 
 # hepstore imports
-from hepstore.core.errors import *
+from hepstore.core.error import *
 
 # fit a sample of normed pdfs to some data
-# result should be pdf weight with errors
+# result should be pdf weight with error
 # covariance if possible
 def binned_pdfs( data, pdfs, start=1.0 ):
 

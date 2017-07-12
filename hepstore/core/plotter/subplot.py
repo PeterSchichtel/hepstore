@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import math,os,sys
 from itertools import cycle
-from hepstore.core.tools import *
+from hepstore.core.utility import *
 import numpy as np
 
 
