@@ -3,7 +3,7 @@
 \tikz\node at (0pt,0pt) [draw=none,fill=ocre!50,line width=1pt,inner sep=5pt]{\parbox{\linewidth-2\fboxsep-2\fboxrule-2pt}{\centering\large\sffamily\bfseries\textcolor{white}{H}}};\vspace*{0.2cm}\nopagebreak
 
   \item hepstore.core.docker\_interface\dotfill \hyperpage{15}
-  \item hepstore.core.plotter\dotfill \hyperpage{16}
-  \item hepstore.core.school\dotfill \hyperpage{17}
+  \item hepstore.core.plotter\dotfill \hyperpage{15}
+  \item hepstore.core.school\dotfill \hyperpage{16}
 
 \end{theindex}

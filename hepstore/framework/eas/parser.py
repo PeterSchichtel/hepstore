@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# gloal imports
+# global imports
 import os
 from argparse import ArgumentParser
 

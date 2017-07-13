@@ -7,9 +7,43 @@ import os
 import sys
 import shutil
 
+# hepstore imports
+from hepstore.core.physics.particle import *
+
 # local imports
 import parser
 import interface
+############################################################################
+# add particles to a corsika event file
+############################################################################
+def add_particles( filen_in, file_out, particles ):
+    total_number  = len(particles)
+    total_energy  = sum( [ p.energy for p in particles ] )    
+    with open( fname_in, 'r' ) as fin:
+        with open( fname_out, 'w' ) as fout:
+            line_count = 0
+            for i,line in enumerate( fin.readlines() ):
+                if i==0:
+                    count  = int(   line.split()[0] ) + total_number
+                    energy = float( line.split()[0] ) + total_energy
+                    fout.write("  %i %f \n" % ( count, energy ) )
+                    pass
+                else:
+                    fout.write(line)
+                    pass
+                line_count += 1
+                pass
+            for p in particles:
+                line_count += 1
+                fout.write(
+                    "%5i%5i%15.7e%15.7e%15.7e%15.7e \n" % (
+                        line_count, p.pid, p.energy, p.pz, p.px, p.py ) )
+                pass
+            pass
+        pass
+    pass    
+############################################################################
+
 ############################################################################
 ## run the app
 ############################################################################

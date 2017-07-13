@@ -32,6 +32,7 @@ def main(args=None):
                                   parsed_args.docker_image ),
         version   = parsed_args.docker_image_version,
         verbose   = parsed_args.docker_verbose
+    )
     app.run(
         directory = parsed_args.docker_directory,
         args      = [ '/bin/bash',

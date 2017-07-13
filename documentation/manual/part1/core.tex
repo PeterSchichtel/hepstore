@@ -3,8 +3,8 @@ In this chapter we shortly introduce each of \hepstore s core
 modules. The next part of the manual actually contains real life
 examples ready for use out of the box. 
 
-\section{hepstore.core.docker\_interface}
-\index{hepstore.core.docker\_interface}
+\section{hepstore.core.docker}
+\index{hepstore.core.docker}
 
 The docker\_interface module is at the heart of \hepstore s
 reproducibility program. It is a simple yet elegant piece of
@@ -16,7 +16,7 @@ reproducibility program. It is a simple yet elegant piece of
   \centering
   \begin{lstlisting}
     
-    import hepstore.core.docker_interface
+    import hepstore.core.docker
   \end{lstlisting}
 \end{changemargin}
 %
@@ -434,7 +434,7 @@ pickable Python tuple. One can load the classifier and perform
 classifcation on any data set with the same feature shape. The result
 is saved in form of the classifier output probability.
 
-\section{hepstore.core.statistics}
+\section{hepstore.core.statistic}
 
 The statistics module collects the usual methods of high energy
 physics used, for example, for limit setting or significance
@@ -531,7 +531,7 @@ cross sections and $\mathcal{L}$ is the luminosity. Of course, one
 could also use the ROC curve to determine the behaviour of the
 expected significance, now as a function of $\epsilon_S$.
 
-\section{hepstore.core.tools}
+\section{hepstore.core.tool}
 
 This module provides some useful utility methods used throughout the
 code.
@@ -543,7 +543,7 @@ code.
 \hspace*{0.5cm}
 %
 
-\section{hepstore.core.errors}
+\section{hepstore.core.error}
 
 Dispite the large and useful collection of Pythons own error classes,
 we allow for hepstore interanl errors to be raised by the code.

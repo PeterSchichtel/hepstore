@@ -9,18 +9,17 @@
 #
 #######################################################################################
 
-## python imports
+## gloabl imports
 import os,sys
 import glob
 import time
 import collections
 
 # hepstore imports
-from hepstore.tools import *
-from hepstore.multiprocess.pipes import Multipipeline
+from hepstore.core.tool import *
+from hepstore.core.multiprocess import Multipipeline
 
-
-## project imports
+## local imports
 import generator
 import shower
 import observables

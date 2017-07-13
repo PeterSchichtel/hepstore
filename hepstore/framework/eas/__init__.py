@@ -5,7 +5,7 @@ import os
 import sys
 
 # hepstore imports
-from hepstore.errors import *
+from hepstore.core.error import *
 
 # local imports
 import parser

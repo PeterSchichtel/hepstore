@@ -1,104 +1,55 @@
 #!/usr/bin/env python
 
+# global imports
 import os
-import hepstore.docker.herwig as herwig
 
-import element,final`
+# hepstore imports
+from hepstore.framework.herwig import runcard
 
-def runcard(fpath,energy,process,final):
-    name = os.path.basename(fpath)
-    with open( os.path.join("%s.in" % fpath), 'w' ) as fcard:
-        fcard.write( "##################################################\n" )
-        fcard.write( "## Collider type                                  \n" )
-        fcard.write( "read Matchbox/PPCollider.in                       \n" )
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## Beam energy sqrt(s)                            \n" )
-        fcard.write( "cd /Herwig/EventHandlers                          \n" )
-        fcard.write( "set EventHandler:LuminosityFunction:Energy     %.2f*GeV\n" % (energy+1.0) )
-        fcard.write( "set EventHandler:LuminosityFunction:BeamEMaxA  %.2f*GeV\n" %  energy      )
-        fcard.write( "set EventHandler:LuminosityFunction:BeamEMaxB  1.0*GeV \n"                )
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## Model assumptions                              \n" )
-        fcard.write( "read Matchbox/StandardModelLike.in                \n" )
-        fcard.write( "read Matchbox/DiagonalCKM.in                      \n" )
-        fcard.write( "## Set the order of the couplings                 \n" )
-        fcard.write( "cd /Herwig/MatrixElements/Matchbox                \n" )
-        if process == "qcd":
-            fcard.write( "set Factory:OrderInAlphaS 2                       \n" )
-            fcard.write( "set Factory:OrderInAlphaEW 0                      \n" )
-            fcard.write( "## Select the process                             \n" )
-            fcard.write( "do Factory:Process p p -> %s                      \n" % final )
-            fcard.write( "                                                  \n" )
-            fcard.write( "##################################################\n" )
-            fcard.write( "## Cut selection                                  \n" )
-            fcard.write( "read Matchbox/DefaultPPJets.in                    \n" )
-            fcard.write( "insert JetCuts:JetRegions 0 FirstJet              \n" )
-            fcard.write( "insert JetCuts:JetRegions 1 SecondJet             \n" )
-            pass
-        elif process == "zlo":
-            raise NotImplemented("unknown process '%s'" % process)
-        #pass
-        else:
-            raise NotImplemented("unknown process '%s'" % process)
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "##Matrix element provider                         \n" )
-        fcard.write( "read Matchbox/MadGraph-MadGraph.in                \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## Scale choice                                   \n" )
-        fcard.write( "cd /Herwig/MatrixElements/Matchbox/               \n" )
-        fcard.write( "set Factory:ScaleChoice /Herwig/MatrixElements/Matchbox/Scales/SHatScale\n" )
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## Matching and shower selection                  \n" )
-        fcard.write( "read Matchbox/LO-DefaultShower.in                 \n" )
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## PDF choice                                     \n" )
-        fcard.write( "read Matchbox/FourFlavourScheme.in                \n" )
-        fcard.write( "read Matchbox/MMHT2014.in                         \n" )
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## HepMC output                                   \n" )
-        fcard.write( "insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile\n" )
-        fcard.write( "set /Herwig/Analysis/HepMCFile:PrintEvent 10000   \n" )
-        fcard.write( "set /Herwig/Analysis/HepMCFile:Format GenEvent    \n" )
-        fcard.write( "set /Herwig/Analysis/HepMCFile:Units GeV_mm       \n" )
-        fcard.write( "                                                  \n" )
-        fcard.write( "##################################################\n" )
-        fcard.write( "## Save the generator                             \n" )
-        fcard.write( "do /Herwig/MatrixElements/Matchbox/Factory:ProductionMode\n" )
-        fcard.write( "cd /Herwig/Generators                             \n" )
-        fcard.write( "saverun %s EventGenerator                         \n" % name)
-        pass #with
-    pass
-
+# h7 generator
 class Generator(object):
 
-    def __init__(self,options):
+    def __init__( self, options ):
         self.options = options
         self.seed    = options.seed
         self.folder  = os.getcwd()
         self.name    = 'herwig'
         pass
+    
+    def card( self ):
+        fpath = os.path.join( self.path, self.name )
+        name  = os.path.basename(fpath)
+        with open( os.path.join("%s.in" % fpath), 'w' ) as fcard:
+            runcard.collider( fcard )
+            runcard.beams(    fcard, energy1   = self.options.energy, energy2 = 1.0 )
+            runcard.model(    fcard )
+            runcard.final(    fcard, particles = self.final )
+            runcard.process(  fcard, process   = self.process )
+            runcard.cuts(     fcard, process   = self.process )
+            runcard.provider( fcard )
+            runcard.scale(    fcard )
+            runcard.shower(   fcard )
+            runcard.pdf(      fcard )
+            runcard.hepmc(    fcard )
+            runcard.save(     fcard, name      = self.name )
+            pass #with
+        pass
 
-    def run(self,path):
+    def run( self, path ):
         args           = os.path.normpath(path).split('/')
         self.path      = path
         self.energy    = float(args[0])
-        self.element   = element.Element(args[1])
+        self.element   = args[1]
         self.process   = args[2]
         self.generator = args[3]
         self.model     = args[4]
-        self.final     = final.Final(args[5])
+        self.final     = args[5]
         print "--h7: working on '%s'" % path
         # create directory
         mkdir( path )
         # create runcard
         print "--h7: runcard"
-        runcard( os.path.join(path,self.name), self.target_energy(), self.process, self.final.h7() )
+        self.card()
         #build
         print "--h7: build"
         herwig.run([ '--directory', path,
@@ -150,9 +101,6 @@ class Generator(object):
             pass
         self.folder = "run_%i" % count
         pass
-
-    def target_energy(self):
-        return self.energy/self.element.nucleons
     
     pass
             
