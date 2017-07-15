@@ -39,12 +39,12 @@ for dim in range(1,data.shape[1]):
         '-c', 'blue',
         '--xmin', '0.000001', '--xmax', '0.202', 
         '--ymin', '-0.05', '--ymax', '1.05', 
-        '--legend', 'state: %i' % dim-1,
+        '--legend', 'state: %i' % (dim-1),
         '--alpha', '0.6',
         '--title', 'State as function of time',
         '--xlabel', 't',
-        '--ylabel', r'St$(x_{%i},t)$' % dim-1 ,
-        '--path', os.path.join(os.getcwd(),'state_%04d.pdf' % dim-1),
+        '--ylabel', r'St$(x_{%i},t)$' % (dim-1) ,
+        '--path', os.path.join(os.getcwd(),'state_%04d.pdf' % (dim-1)),
     ]
     plot(args)
     hepstore.core.plotter.plt.close('all')
