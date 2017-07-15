@@ -16,10 +16,14 @@ cd school
 ./working.py
 cd ../
 
-cd statistics
+cd statistic
 ./fit.py
 ./upper_bound.py
 ./significance.py
+cd ../
+
+cd physics
+./particles.py
 cd ../
 
 exit 0

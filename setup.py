@@ -32,7 +32,7 @@ setup(
         'hepstore.core.school.books',
         'hepstore.core.statistic',
         'hepstore.framework',
-        'hepstore.framework.herwig',
+        'hepstore.framework.herwig7',
         'hepstore.framework.eas',
     ],
     # requirement

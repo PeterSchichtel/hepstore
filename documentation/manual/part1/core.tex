@@ -444,7 +444,7 @@ computation. It can be used in \python~via
   \centering
   \begin{lstlisting}
     
-    import hepstore.core.statistics
+    import hepstore.core.statistic
   \end{lstlisting}
 \end{changemargin}
 %
@@ -454,7 +454,7 @@ It may be invoked via
   \centering
   \begin{lstlisting}[language=Bash]
     
-    hepstore-statistics list_of_arguments
+    hepstore-statistic list_of_arguments
   \end{lstlisting}
 \end{changemargin}
 %
@@ -531,7 +531,41 @@ cross sections and $\mathcal{L}$ is the luminosity. Of course, one
 could also use the ROC curve to determine the behaviour of the
 expected significance, now as a function of $\epsilon_S$.
 
-\section{hepstore.core.tool}
+\section{hepstore.core.physics}
+\index{hepstore.core.physics}
+
+The physics module contains building blocks heavily used in particle
+physics for the obvious re-usage reasons. It can be used
+in \python~via
+%
+\begin{changemargin}{1.5cm}{1.5cm}
+  \centering
+  \begin{lstlisting}
+    
+    import hepstore.core.physics
+  \end{lstlisting}
+\end{changemargin}
+%
+
+\subsection{Momentum}
+The FourMomentum class is an implementation of what its name suggests
+and performs the usual arithmetic operations.
+\subsection{Particle}
+The particle inherits from the FourMomentum, but in addition knows
+about its on-shell mass and identy.
+\subsection{Process}
+This module contains knowledge and methods about particle interaction
+processes. It an abstract class in the sense that it allows other
+hepsore modules to steer the monte carlo code dependent parts of
+process setup and generation.
+\subsection{Model}
+The model section utilizes tools and classes to model physicsl
+behavior.
+\subsubsection{Nucleon Interaction}
+We implement the full fragmentation model, which fragments a given
+mother particle into the protons and neutrons it consists of.
+
+\section{hepstore.core.utility}
 
 This module provides some useful utility methods used throughout the
 code.

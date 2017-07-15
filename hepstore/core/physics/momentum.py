@@ -18,6 +18,14 @@ class FourMomentum(object):
                              px     = self.px/scalar,
                              py     = self.py/scalar,
                              pz     = self.pz/scalar  )
+
+    def __add__( self, other ):
+        return FourMomentum( energy = self.energy + other.energy,
+                             px     = self.px     + other.px ,
+                             py     = self.py     + other.px ,
+                             pz     = self.pz     + other.px  )
+        
+    
     def __eq__( self, other ):
         answer = True
         answer = answer and (self.energy == other.energy)

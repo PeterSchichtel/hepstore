@@ -5,20 +5,107 @@ special user classes as well as some meta analysis packages. In the
 example part of the book you will find how these interact to produce
 completely reproducible analyses with just a view lines of code.
 
+\section{hepstore.framework.herwig}
+
+\subsection{Runcard}
+\subsubsection{Collider}
+\subsubsection{Beam}
+\subsubsection{Model}
+\subsubsection{Final State}
+\subsubsection{Process}
+\subsubsection{Cuts}
+\subsubsection{Matrix Element}
+\subsubsection{Scales}
+\subsubsection{Shower}
+\subsubsection{PDF}
+\subsubsection{HepMC}
+\subsubsection{Save}
+
+\subsection{Generator}
+generates a runcard from above,
+build
+integrate
+find an empty run dir, take care of random seed
+run MC
+return folder where results are stored
+
+
 \section{hepstore.framework.collider}
-This section describes particular interfaces to Monte Carlo (MC)
-tools. They are derived from hepstore.core.docker\_interface. To
-provide simple and efficient access to reproducible analyses we
-provide these specialized interfaces. All of them are connected to a
-corresponding command line tool.
+
 
 \section{hepstore.framework.eas}
 
-the hepstore-analysis module is a high level package to perform the
-usual statistical computations needed in high energy physics. it
-utilizes hepstore.school to provide signal and background
-classification and extract statistical quantities such as the maximal
-poissonian significance, the upper exclusion bound on the signal cross
-section etc.
+The Extended Air Shower (EAS) framework provides a convienent tool box
+to analyse the physics of cosmic rays. To our knowledge it is the only
+tool box available, which allows for the simulation of any hard
+physics interaction from any primary species.
 
-still missing: traditional cut analysis
+\subsection{Cosmic Ray Interaction}
+The interaction of the primary cosmic ray consists of two major
+parts. First one needs to take care of the fact that it are actually
+nuclei which collide. Second, we need to specify which sort of hard
+interaction we are interested in.
+
+\subsubsection{Nucleonic Modeling}
+The simplest ansatz is to view the primary cosmic ray as an unbound
+collection of neutrons and protons. One of these interacts with either
+a proton or neutron from the air within earths athmosphere. The
+remainder particles are viewed as secondary particles in the upcoming
+air shower. Note, that this is what is actually used in hepstore-eas,
+when one computes the hard interaction independently. Furthermore, the
+opposite point of view would be a wounded nucleus which lost a proton
+as secondary input for the air shower.
+
+Of course, there are more sophisticated models. However, at the time
+being, the only access from within hepstore is via direct simulation
+with Corsika.
+
+\subsubsection{Hard Interaction}
+hepstore-eas uses the docker interface to simulate hard
+interactions. At the time being, we provide access to the following MC
+generators and physics processes:
+%
+\begin{description}
+  \setstretch{1.5}
+\item[Corsika] Di-jet production
+\item[Herwig 7] Di-jet production; heavy resonance decaying to tops,
+  jets, leptons, neutrinos, photons
+\item[Herwig++] Sphalerons   
+\end{description}
+%
+
+\subsection{Air Shower}
+The air shower simulation is handled by Corsika which allows for
+secondary particles to be showerd, too. The following modules compose
+the Corsika installation interfaced in hepstore-eas:
+%
+\begin{description}
+  \setstretch{1.5}
+\item[Hadronic Interactions] ...
+\end{description}
+%
+
+\subsection{Observables}
+EAS are complicated objects containing millions of particles
+populating the full $(x,p)$ phase space. Obviously, we have to reduce
+complexity and use projected or integrated observables. In
+hepstore-eas we include $\rho_\mu$ and $X_\text{max}$. The former is
+the number of muons in between 500m and 600m of shower core
+distance. The latter indicates the maximal shower penetration depth
+into the atmosphere.
+
+
+\subsection{Analysis}
+Our analysis consists of two separated building blocks, following the
+hepstore philosophy. The data itself is analysed with hepstore-school
+to have outputs for comparison and cross validation.
+
+\subsubsection{Machine Learning}
+We use hepstore.core.school to learn from the observables
+extracted. All provided learning algorithms may be used for comparison
+here.
+
+\subsubsection{Statistical Analysis}
+Depending on the set of choosen hard interactions we can perform the
+analyses contained in hepstore.core.statistic, e.g compute
+significances or perform limit setting.

@@ -3,8 +3,8 @@
 # global imports
 import os
 
-# hepstore imports
-from hepstore.framework.herwig import runcard
+# import runcard
+import runcard
 
 # h7 generator
 class Generator(object):
