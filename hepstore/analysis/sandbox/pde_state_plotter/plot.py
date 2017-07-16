@@ -28,8 +28,7 @@ xmin = np.amin(data[:,1:])
 tmax = np.amax(data[:,0] )
 tmin = np.amin(data[:,0] )
 print "--info: t_min = %.2f, t_max = %.2f, x_min = %.2f, x_max = %.2f" % (tmin,tmax,xmin,xmax)
-               
-                          
+                            
 ## plot scatter
 for dim in range(1,data.shape[1]):
     args = [
@@ -39,9 +38,10 @@ for dim in range(1,data.shape[1]):
         '-c', 'blue',
         '--xmin', '0.000001', '--xmax', '0.202', 
         '--ymin', '-0.05', '--ymax', '1.05', 
-        '--legend', 'state: %i' % (dim-1),
+#       '--legend', 'state: %i' % (dim-1),
+        '-w', '2.0',
         '--alpha', '0.6',
-        '--title', 'State as function of time',
+        '--title', 'State: %i' % (dim-1),
         '--xlabel', 't',
         '--ylabel', r'St$(x_{%i},t)$' % (dim-1) ,
         '--path', os.path.join(os.getcwd(),'state_%04d.pdf' % (dim-1)),
