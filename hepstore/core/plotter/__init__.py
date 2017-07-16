@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-# imports 
+# imports
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
+from matplotlib.ticker import FormatStrFormatter
 import math,os,sys
 from itertools import cycle
 from hepstore.core.utility import *
@@ -151,6 +153,25 @@ class SubPlot(object):
             self.zticks_min = self.zmin
             pass
         pass
+        try:
+            self.xaxis_format = options.xaxis_format[subnumber-1]
+            pass
+        except Exception:
+            self.xaxis_format = None
+            pass
+        try:
+            self.yaxis_format = options.yaxis_format[subnumber-1]
+            pass
+        except Exception:
+            self.yaxis_format = None
+            pass
+        try:
+            self.zaxis_format = options.zaxis_format[subnumber-1]
+            pass
+        except Exception:
+            self.zaxis_format = None
+            pass
+        pass
     
     def histogram(self,data):
         plt.subplot(self.options.rows,self.options.columns,self.subnumber) 
@@ -287,6 +308,13 @@ class SubPlot(object):
             for tick in subplot.zaxis.get_major_ticks():
                 tick.label.set_fontsize(self.zaxis_fontsize)
                 pass
+            pass
+        except AttributeError:
+            pass
+        subplot.xaxis.set_major_formatter(FormatStrFormatter(self.xaxis_format))
+        subplot.yaxis.set_major_formatter(FormatStrFormatter(self.yaxis_format))
+        try:
+            subplot.zaxis.set_major_formatter(FormatStrFormatter(self.zaxis_format))
             pass
         except AttributeError:
             pass
@@ -508,6 +536,12 @@ def main(args=None):
     parser.add_argument( "--yaxis_fontsize", default=[12],
                          nargs='+')
     parser.add_argument( "--zaxis_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--xaxis_format", default=[r'%.2f'],
+                         nargs='+')
+    parser.add_argument( "--yaxis_format", default=[r'%.2f'],
+                         nargs='+')
+    parser.add_argument( "--zaxis_format", default=[r'%.2f'],
                          nargs='+')
     parser.add_argument( "--xticks", default=[],
                          nargs='+')
