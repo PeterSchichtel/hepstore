@@ -30,7 +30,7 @@ tmin = np.amin(data[:,0] )
 print "--info: t_min = %.2f, t_max = %.2f, x_min = %.2f, x_max = %.2f" % (tmin,tmax,xmin,xmax)
                             
 ## plot scatter
-for dim in range(1,10): ##data.shape[1]):
+for dim in range(1,data.shape[1]):
     args = [
         '-f', 'grid_data.npy', 
         '-k', 'line',
