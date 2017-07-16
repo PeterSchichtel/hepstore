@@ -20,7 +20,9 @@ class SubPlot(object):
         self.markersize  = None
         self.linewidth   = None
         self.legend      = None
+        self.legend_fontsize = 12.
         self.title       = None
+        self.title_fontsize       = 'medium'
         self.xmin        = 0.
         self.xmax        = 1.
         self.ymin        = 0.
@@ -51,6 +53,102 @@ class SubPlot(object):
             pass
         except Exception:
             self.zlabel = 'z'
+            pass
+        try:
+            self.title_fontsize = options.title_fontsize[subnumber]
+            pass
+        except Exception:
+            self.title_fontsize = 12.
+            pass
+        try:
+            self.xaxis_fontsize = options.xaxis_fontsize[subnumber-1]
+            pass
+        except Exception:
+            self.xaxis_fontsize = 12.
+            pass
+        try:
+            self.yaxis_fontsize = options.yaxis_fontsize[subnumber-1]
+            pass
+        except Exception:
+            self.yaxis_fontsize = 12
+            pass
+        try:
+            self.zaxis_fontsize = options.zaxis_fontsize[subnumber-1]
+            pass
+        except Exception:
+            self.zaxis_fontsize = 12.
+            pass
+        try:
+            self.xlabel_fontsize = options.xlabel_fontsize[subnumber-1]
+            pass
+        except Exception:
+            self.xlabel_fontsize = 12.
+            pass
+        try:
+            self.ylabel_fontsize = options.ylabel_fontsize[subnumber-1]
+            pass
+        except Exception:
+            self.ylabel_fontsize = 12
+            pass
+        try:
+            self.zlabel_fontsize = options.zlabel_fontsize[subnumber-1]
+            pass
+        except Exception:
+            self.zlabel_fontsize = 12.
+            pass
+        try:
+            self.xticks = options.xticks[subnumber-1]
+            pass
+        except Exception:
+            self.xticks = 4
+            pass
+        try:
+            self.yticks = options.yticks[subnumber-1]
+            pass
+        except Exception:
+            self.yticks = 4
+            pass
+        try:
+            self.zticks = options.zticks[subnumber-1]
+            pass
+        except Exception:
+            self.zticks = 4
+            pass
+        try:
+            self.xticks_max = options.xticks_max[subnumber-1]
+            pass
+        except Exception:
+            self.xticks_max = self.xmax
+            pass
+        try:
+            self.yticks_max = options.yticks_max[subnumber-1]
+            pass
+        except Exception:
+            self.yticks_max = self.ymax
+            pass
+        try:
+            self.zticks_max = options.zticks_max[subnumber-1]
+            pass
+        except Exception:
+            self.zticks_max = self.zmax
+            pass
+        try:
+            self.xticks_min = options.xticks_min[subnumber-1]
+            pass
+        except Exception:
+            self.xticks_min = self.xmin
+            pass
+        try:
+            self.yticks_min = options.yticks_min[subnumber-1]
+            pass
+        except Exception:
+            self.yticks_min = self.ymin
+            pass
+        try:
+            self.zticks_min = options.zticks_min[subnumber-1]
+            pass
+        except Exception:
+            self.zticks_min = self.zmin
             pass
         pass
     
@@ -175,14 +273,34 @@ class SubPlot(object):
         subplot = plt.subplot(self.options.rows,self.options.columns,self.subnumber)
         plt.legend()
         if self.title!=None:
-            plt.title(self.title)
+            plt.title(self.title,fontsize=self.title_fontsize)
+            pass
+        subplot.set_xlabel(self.xlabel,fontsize=self.xlabel_fontsize)
+        subplot.set_ylabel(self.ylabel,fontsize=self.ylabel_fontsize)
+        for tick in subplot.xaxis.get_major_ticks():
+            tick.label.set_fontsize(self.xaxis_fontsize)
+            pass    
+        for tick in subplot.yaxis.get_major_ticks():
+            tick.label.set_fontsize(self.yaxis_fontsize)
+            pass
+        try:
+            for tick in subplot.zaxis.get_major_ticks():
+                tick.label.set_fontsize(self.zaxis_fontsize)
+                pass
+            pass
+        except AttributeError:
+            pass
+        plt.xticks( np.linspace( float(self.xticks_min), float(self.xticks_max), num=int(self.xticks) ) )
+        plt.yticks( np.linspace( float(self.yticks_min), float(self.yticks_max), num=int(self.yticks) ) )
+        try:
+            plt.linspace( np.arange( float(self.zticks_min), float(self.zticks_max), num=int(self.zticks) ) )
+            pass
+        except AttributeError:
             pass
         subplot.set_xlim([float(self.xmin),float(self.xmax)])
         subplot.set_ylim([float(self.ymin),float(self.ymax)])
-        subplot.set_xlabel(self.xlabel)
-        subplot.set_ylabel(self.ylabel)
         try:
-            subplot.set_zlabel(self.zlabel)
+            subplot.set_zlabel(self.zlabel,fontsize=self.zlabel_fontsize)
             pass
         except AttributeError:
             pass
@@ -205,6 +323,7 @@ class Figure(object):
         self.markersizes     = cycle(options_to_list(options.markersize))
         self.linewidths      = cycle(options_to_list(options.linewidth))
         self.legends         = cycle(options_to_list(options.legend))
+        self.legends_fontsize= cycle(options_to_list(options.legend_fontsize))
         self.xmins           = cycle(options_to_list(options.xmin))
         self.xmaxs           = cycle(options_to_list(options.xmax))
         self.ymins           = cycle(options_to_list(options.ymin))
@@ -241,6 +360,7 @@ class Figure(object):
             subplot.markersize = float(next(self.markersizes))
             subplot.linewidth  = float(next(self.linewidths))
             subplot.legend     = next(self.legends)
+            subplot.legend_fontsize     = float(next(self.legends_fontsize))
             subplot.xmin       = next(self.xmins)
             subplot.xmax       = next(self.xmaxs)
             subplot.ymin       = next(self.ymins)
@@ -276,7 +396,7 @@ class Figure(object):
 
     def save(self):
         try:
-            self.figure.suptitle(self.options.title[0])
+            self.figure.suptitle(self.options.title[0], fontsize=int(self.options.title_fontsize[0]))
             pass
         except IndexError:
             pass
@@ -285,6 +405,8 @@ class Figure(object):
             pass
         print "--plotter: saving figure to %s" % self.options.path
         mkdir(os.path.dirname(self.options.path))
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.85)
         self.figure.savefig(self.options.path, format=self.options.format, dpi=self.options.dpi)
         plt.close(self.figure)
         pass
@@ -364,6 +486,47 @@ def main(args=None):
                          help  = "alpha parameter for plt.plot, understand multiplication",
                          nargs = '+',
                          type  = str)
+    parser.add_argument(      "--title", default=[],
+                              help="figure title and subfigure titles as list",
+                              nargs='+')
+    parser.add_argument(      "--xlabel", default=[],
+                              help="x axis label as list",
+                              nargs='+')
+    parser.add_argument(      "--ylabel", default=[],
+                              help="y axis label as list",
+                              nargs='+')
+    parser.add_argument( "--title_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--xlabel_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--ylabel_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--legend_fontsize", default=["1*12"],
+                         nargs='+')
+    parser.add_argument( "--xaxis_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--yaxis_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--zaxis_fontsize", default=[12],
+                         nargs='+')
+    parser.add_argument( "--xticks", default=[],
+                         nargs='+')
+    parser.add_argument( "--yticks", default=[],
+                         nargs='+')
+    parser.add_argument( "--zticks", default=[],
+                         nargs='+')
+    parser.add_argument( "--xticks_max", default=[],
+                         nargs='+')
+    parser.add_argument( "--xticks_min", default=[],
+                         nargs='+')
+    parser.add_argument( "--yticks_max", default=[],
+                         nargs='+')
+    parser.add_argument( "--yticks_min", default=[],
+                         nargs='+')
+    parser.add_argument( "--zticks_max", default=[],
+                         nargs='+')
+    parser.add_argument( "--zticks_min", default=[],
+                         nargs='+')
 
     # further options
     parser.add_argument( "-b", "--bins", default=100,
@@ -390,15 +553,6 @@ def main(args=None):
                               help="how many rows of plots")
     parser.add_argument(      "--columns", default=1,
                               help="how many columns of plots")
-    parser.add_argument(      "--title", default=[],
-                              help="figure title and subfigure titles as list",
-                              nargs='+')
-    parser.add_argument(      "--xlabel", default=[],
-                              help="x axis label as list",
-                              nargs='+')
-    parser.add_argument(      "--ylabel", default=[],
-                              help="y axis label as list",
-                              nargs='+')
     parser.add_argument(      "--shake", action='store_true',
                               help="shake data")
     parser.add_argument(      "--logx", action="store_true")
