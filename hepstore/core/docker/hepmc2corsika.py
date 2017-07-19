@@ -9,7 +9,7 @@ import parser
 ############################################################################
 ## run the app
 ############################################################################
-def run(args=None):
+def main(args=None):
 
     # we need to setup the arg parser
     arg_parser = parser.DockerParser()
@@ -19,20 +19,20 @@ def run(args=None):
         docker_image_version = "0.1",
     )
     # files to be converted
-    parser.add_argument( "-f", "--file",
-                         default = [],
-                         nargs   = '+',
-                         help    = "list of files to be converted (must be .hepmc)"
+    arg_parser.add_argument( "-f", "--file",
+                             default = [],
+                             nargs   = '+',
+                             help    = "list of files to be converted (must be .hepmc)"
     )
     # prefix to be used for corsika file format
-    parser.add_argument( "-o", "--output",
-                         type    = str,
-                         default = "event",
-                         help    = "output file name (will be appended by event num)"
+    arg_parser.add_argument( "-o", "--output",
+                             type    = str,
+                             default = "event",
+                             help    = "output file name (will be appended by event num)"
     )
     
     # parse args
-    parsed_args, unknown = parser.parse_known_args(args)
+    parsed_args, unknown = arg_parser.parse_known_args(args)
             
     # run the app
     from interface import DockerIF as Hepmc2Corsika
@@ -47,7 +47,7 @@ def run(args=None):
             directory = parsed_args.docker_directory,
             args      = [ '/bin/bash',
                           '-c',
-                          'source $ACTIVATE && hepmc2corsika %s %s' % (name,parsed_args.output) 
+                          'source $ACTIVATE && hepmc2corsika %s %s' % (fname,parsed_args.output) 
             ]
         )
         pass

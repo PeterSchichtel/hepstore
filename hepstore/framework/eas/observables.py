@@ -4,7 +4,7 @@ import numpy as np
 import glob
 import os
 
-from hepstore.tools import *
+from hepstore.core.utility import *
 from event import *
 
 class Extractor(object):

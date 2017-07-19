@@ -4,35 +4,37 @@
 import numpy as np
 
 # hepstore imports
-from hepstore.core.tool             import *
+from hepstore.core.utility          import *
 from hepstore.core.physics.particle import *
 from hepstore.core.physics.momentum import *
 
 
-def fragment( self, mother ):
-    # how many protons and neutrons
-    # do we have
-    n_p       = mother.pid[1]
-    n_n       = mother.pid[2]
-    # generate particles
+def fragment( mother ):
     particles = []
-    # protons
-    for i in range(0,n_p):
-        particles.append(
-            Particle(
-                momentum = ( mother.momentum / float(n_p+n_n)
-                ).on_shell_noise( width = 0.05 ),
-                pid      = PID['proton'] ))
+    for i in range( 0, mother.n_p+mother.n_n ):
+        p = mother/mother.energy
+        if i<mother.n_p:
+            p.set_pid( 'proton' )
+            pass
+        else:
+            p.set_pid( 'neutron' )
+            pass
+        p.add_on_shell_noise( width = 0.1 )
+        particles.append( p )
         pass
-    # neutrons
-    for i in range(0,n_n):
-        particles.append(
-            Particle(
-                momentum = ( mother.momentum / float(n_p+n_n)
-                ).on_shell_noise( width = 0.05 ),
-                pid      = PID['neutron'] ))
-        pass
-    # return particles
     return particles
 
 
+def remainder( mother, model='frac' ):
+    if model == 'frac':
+        particles = fragment( mother )
+        for p in particles:
+            if p.name == 'proton':
+                incoming = p
+                particles.remove(p)
+                break
+            pass
+        return (incoming,particles)
+    else:
+        raise KeyError( "unknown model in remainder '%s' " % model )
+    pass

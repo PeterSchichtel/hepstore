@@ -65,12 +65,12 @@ class EasParser(ArgumentParser):
                            action  = "store_true"     ,
                            help    = "list statistics")
 
-        self.add_argument( "-A", "--analyse",
+        self.add_argument( "-O", "--observables",
                            action  = "store_true"     ,
-                           help    = "start analysis in all allowed folders")
+                           help    = "start extracting obsrvables")
 
         self.add_argument( "-C", "--corsika",
-                           default = "7.4_stackin"   ,
+                           default = "7.4"   ,
                            type    = str    ,
                            help    = "which corsika (sub)version")
 

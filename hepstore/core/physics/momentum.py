@@ -6,11 +6,17 @@ import numpy as np
 
 class FourMomentum(object):
 
-    def __init__( self, energy=0.0, px=0.0, py=0.0, pz=0.0 ):
-        self.energy = energy
-        self.px     = px
-        self.py     = py
-        self.pz     = pz
+    def __init__( self, *args, **kwargs):
+        try:
+            self.energy,self.px,self.py,self.pz = args[0]
+            pass
+        except IndexError:
+            self.energy   = kwargs.get('energy',0.0)
+            self.px       = kwargs.get('px'    ,0.0)
+            self.py       = kwargs.get('py'    ,0.0)
+            self.pz       = kwargs.get('pz'    ,0.0)
+            pass
+        self.momentum = ( self.energy, self.px, self.py, self.pz )
         pass
 
     def __div__( self, scalar ) :
@@ -19,13 +25,28 @@ class FourMomentum(object):
                              py     = self.py/scalar,
                              pz     = self.pz/scalar  )
 
+    def __mul__( self, other ):
+        try: 
+            return FourMomentum( energy = self.energy*other,
+                                 px     = self.px*other,
+                                 py     = self.py*other,
+                                 pz     = self.pz*other  )
+        except TypeError:
+            return ( self.energy * other.energy -
+                     self.px     * other.px     -
+                     self.py     * other.py     -
+                     self.pz     * other.pz )
+        pass
+
+    def __rmul__( self, other ):
+        return self.__mul__( other )
+
     def __add__( self, other ):
         return FourMomentum( energy = self.energy + other.energy,
                              px     = self.px     + other.px ,
                              py     = self.py     + other.px ,
                              pz     = self.pz     + other.px  )
         
-    
     def __eq__( self, other ):
         answer = True
         answer = answer and (self.energy == other.energy)
@@ -36,6 +57,11 @@ class FourMomentum(object):
     
     def __ne__(self, other):
         return not ( self == other )
+
+    def set_momentum( self, momentum ) :
+        self.energy,self.px,self.py,self.pz = momentum
+        self.momentum = momentum
+        pass
     
     def m2( self ):
         return self.energy**2 - self.px**2 -self.py**2 - self.pz**2
@@ -46,15 +72,13 @@ class FourMomentum(object):
     def mass( self ):
         return self.m()
 
-    def on_shell_noise( self, width = 0.05 ):
-        e,px,py = np.random.normal(
+    def add_on_shell_noise( self, width = 0.05 ):
+        self.energy,self.px,self.py = np.random.normal(
             loc   =         np.array( [self.energy, self.px, self.py] ),
             scale = width * np.array( [self.energy, self.px, self.py] ),
         )
-        pz = np.sqrt( e**2 - px**2 - py**2 - self.m2() )
-        return FourMomentum( energy = e,
-                             px     = px,
-                             py     = py,
-                             pz     = pz, )
+        self.pz = np.sqrt( self.energy**2 - self.px**2 - self.py**2 - self.m2() )
+        self.set_momentum( (self.energy,self.px,self.py,self.pz) )
+        pass
 
     pass

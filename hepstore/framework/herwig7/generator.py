@@ -2,28 +2,40 @@
 
 # global imports
 import os
+import subprocess
+import StringIO
+
+# hepstore imports
+from hepstore.core.utility import *
+from hepstore.core.physics.model.nucleon_interaction import fragment
+from hepstore.core.physics.process import Process
+from hepstore.core.physics.particle import *
+from hepstore.core.physics.momentum import *
+from hepstore.core.docker import hepmc2corsika
 
 # import runcard
 import runcard
+
 
 # h7 generator
 class Generator(object):
 
     def __init__( self, options ):
-        self.options = options
-        self.seed    = options.seed
-        self.folder  = os.getcwd()
-        self.name    = 'herwig'
+        self.options    = options
+        self.path       = os.getcwd()
+        self.name       = 'herwig'
+        self.process    = Process()
+        self.primary    = Particle()
+        self.eventfiles = None
+        self.hepmc_dir  = None
         pass
     
     def card( self ):
         fpath = os.path.join( self.path, self.name )
-        name  = os.path.basename(fpath)
         with open( os.path.join("%s.in" % fpath), 'w' ) as fcard:
             runcard.collider( fcard )
-            runcard.beams(    fcard, energy1   = self.options.energy, energy2 = 1.0 )
+            runcard.beams(    fcard, energy1   = self.process.initial[0].energy, energy2 = self.process.initial[1].energy )
             runcard.model(    fcard )
-            runcard.final(    fcard, particles = self.final )
             runcard.process(  fcard, process   = self.process )
             runcard.cuts(     fcard, process   = self.process )
             runcard.provider( fcard )
@@ -35,44 +47,49 @@ class Generator(object):
             pass #with
         pass
 
-    def run( self, path ):
-        args           = os.path.normpath(path).split('/')
-        self.path      = path
-        self.energy    = float(args[0])
-        self.element   = args[1]
-        self.process   = args[2]
-        self.generator = args[3]
-        self.model     = args[4]
-        self.final     = args[5]
-        print "--h7: working on '%s'" % path
+    def run( self ):
+        # make sure full path is available
+        self.path = os.path.abspath( self.path )
+        # start herwig run
+        print "--h7: working on '%s'" % self.path
         # create directory
-        mkdir( path )
+        mkdir( self.path )
         # create runcard
         print "--h7: runcard"
         self.card()
-        #build
+        # build
         print "--h7: build"
-        herwig.run([ '--directory', path,
-                     'build'    , '%s.in'  % self.name, ])
-        #integrate
+        args = [ 'hepstore-herwig',
+                 '--docker_verbose',
+                 '--docker_directory', self.path,
+                 'build', '%s.in'  % self.name ]
+        subprocess( args, onscreen=False, fname=os.path.join(self.path,'build-std') )
+        # integrate
         print "--h7: integrate"
-        herwig.run([ '--directory', path,
-                     'integrate', '%s.run' % self.name, ])
+        args = [  'hepstore-herwig',
+                  '--docker_verbose',
+                  '--docker_directory', self.path,
+                  'integrate', '%s.run' % self.name, ]
+        subprocess( args, onscreen=False, fname=os.path.join(self.path,'integrate-std') )
         # find a clean generation folder
         self.next()
-        mkdir( os.path.join( path, self.folder))
-        os.link( os.path.abspath( os.path.join(path,'Herwig-scratch') ),
-                 os.path.abspath( os.path.join(path,self.folder,'Herwig-scratch') )
+        mkdir( os.path.join( self.path, self.folder))
+        os.link( os.path.abspath( os.path.join(self.path,'Herwig-scratch') ),
+                 os.path.abspath( os.path.join(self.path,self.folder,'Herwig-scratch') )
         )
-        os.link( os.path.abspath( os.path.join(path,'%s.run' % self.name) ),
-                 os.path.abspath( os.path.join(path,self.folder,'%s.run' % self.name) )
+        os.link( os.path.abspath( os.path.join(self.path,'%s.run' % self.name) ),
+                 os.path.abspath( os.path.join(self.path,self.folder,'%s.run' % self.name) )
         )
         # run
         print "--h7: run"
-        herwig.run([ '--directory', os.path.join(path,self.folder),
-                     'run'      , '%s.run' % self.name, '-N', '%i' % self.options.nevents, '-s', '%i' % self.seed ])
+        args = [  'hepstore-herwig',
+                  '--docker_verbose',
+                  '--docker_directory', os.path.join(self.path,self.folder),
+                  'run'      , '%s.run' % self.name, '-N', '%i' % self.options.nevents, '-s', '%i' % self.seed ]
+        subprocess( args, onscreen=False, fname=os.path.join(self.path,self.folder,'run-std') )
         # return the path to the hepmc file
-        return os.path.join( path, self.folder, '%s.hepmc' % self.name )
+        self.hepmc_dir = os.path.join( self.path, self.folder )
+        pass
 
     def next(self):
         # use the given random seed
@@ -101,6 +118,10 @@ class Generator(object):
             pass
         self.folder = "run_%i" % count
         pass
+
+    
+
+    
     
     pass
             

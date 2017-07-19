@@ -16,12 +16,11 @@ import time
 import collections
 
 # hepstore imports
-from hepstore.core.tool import *
-from hepstore.core.multiprocess import Multipipeline
+from hepstore.core.utility import *
+from hepstore.core.multiprocess import MultiPipe
 
 ## local imports
 import generator
-import shower
 import observables
 
 class Captian:
@@ -43,12 +42,13 @@ class Captian:
             options.energy,
             options.element,
             options.process,
+            options.final,
             options.generator,
             options.model,
-            options.final,
         ]
         ## go to working directory
         self.current = os.getcwd()
+        mkdir(options.directory)
         os.chdir(options.directory)
         for path in list_of_folders(["./"],all_constrains,exclude=['mc_generation','events','showers','observables','analysis']):
             self.pathes[path] = glob.glob( os.path.join(os.path.abspath(os.path.join(path,"events")),"event-*") )
@@ -88,10 +88,10 @@ class Captian:
         # if we want to shower
         if self.options.shower:
             self.begin()
-            self.execute(shower.Shower)
+            self.execute(generator.Generator)
             pass
         # if we want to extract observables
-        if self.options.analyse:
+        if self.options.observables:
             self.begin()
             self.execute(observables.Extractor)
             pass 
@@ -105,7 +105,7 @@ class Captian:
     
     def execute(self,app):
         # create multiprocessing processes
-        processes = Multipipeline( app=app, args=self.options, job=self.options.job )
+        processes = MultiPipe( app=app, args=self.options, job=self.options.job )
         # feed the data into the processes
         while self.next():
             processes.send(self.path)

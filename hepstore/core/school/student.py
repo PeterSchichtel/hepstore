@@ -15,12 +15,19 @@ from data import *
 import books
 
 # our student class
-class Student(books.Book):
+class Student(object): ##books.Classifier,books.Regressor):
 
-    def __init__(self,options,data):
-        books.Book.__init__(self,options)
+    def __init__( self, options, data=None ):
         self.options      = options
         self.data         = data
+        if   options.classifier != '' and options.classifier != None:
+            self.brain    = books.Classifier( options ).classifier
+            pass
+        elif options.regressor != '' and options.regressor != None:
+            self.brain    = books.Regressor(  options ).regressor
+            pass
+        else:
+            raise KeyError("brainless student")
         pass
 
     def add_data(self,data):
@@ -41,34 +48,34 @@ class Student(books.Book):
         pass
 
     def explore(self):
-        self.classifier.explore(self.data_train_scaled,self.label_train)
+        self.brain.explore(self.data_train_scaled,self.label_train)
         pass
 
     def train(self):
-        self.classifier.fit(self.data_train_scaled,self.label_train)
-        results_train={}
-        for label,classification in zip(self.label_train,self.classifier.predict_proba(self.data_train_scaled)):
+        self.brain.fit(self.data_train_scaled,self.label_train)
+        results_train = {}
+        for label,prediction in zip(self.label_train,self.brain.predict_proba(self.data_train_scaled)):
             if label in results_train:
-                results_train[label].append(classification[0])
+                results_train[label].append(prediction)
                 pass
             else:
-                results_train[label] = [classification[0]]
+                results_train[label] = [prediction]
                 pass
             pass
-        self.train_results = results_train
+        self.train_results = np.array(results_train)
         pass
 
     def test(self):
         results_test={}
-        for label,classification in zip(self.label_test,self.classifier.predict_proba(self.data_test_scaled)):
+        for label,prediction in zip(self.label_test,self.brain.predict_proba(self.data_test_scaled)):
             if label in results_test:
-                results_test[label].append(classification[0])
+                results_test[label].append(prediction)
                 pass
             else:
-                results_test[label] = [classification[0]]
+                results_test[label] = [prediction]
                 pass
             pass
-        self.test_results = results_test
+        self.test_results = np.array(results_test)
         pass
 
     def save(self):
@@ -86,38 +93,38 @@ class Student(books.Book):
         # testing data
         np.save(os.path.join(self.options.path,"data_test.npy")      ,dtest)
         np.save(os.path.join(self.options.path,"label_test.npy")     ,ltest)
-        # classifier map
+        # probability map
         np.save(os.path.join(self.options.path,"probability_map.npy"),self.probability_map())
         # ROC
         np.save(os.path.join(self.options.path,"roc.npy")            ,self.roc())
-        # classifier distributions
+        # prediction distributions
         for label in np.unique(np.concatenate((ltrain,ltest))):
-            np.save( os.path.join(self.options.path,'classifier_distribution_train_%s.npy' % str(label) ),
-                     self.classifier_distribution(label,True) )
-            np.save( os.path.join(self.options.path,'classifier_distribution_test_%s.npy' % str(label) ),
-                     self.classifier_distribution(label,False) )
+            np.save( os.path.join(self.options.path,'prediction_distribution_train_%s.npy' % str(label) ),
+                     self.brain_distribution(label,True) )
+            np.save( os.path.join(self.options.path,'prediction_distribution_test_%s.npy' % str(label) ),
+                     self.brain_distribution(label,False) )
             pass
-        # save classifier as pkl
-        joblib.dump( (self.classifier,self.scaler) , self.options.save ) 
+        # save brain as pkl
+        joblib.dump( (self.brain,self.scaler) , self.options.save ) 
         pass
 
     def load(self):
-        self.classifier,self.scaler = joblib.load( self.options.load ) 
+        self.brain,self.scaler = joblib.load( self.options.load ) 
         pass
 
-    def classify(self):
+    def predict(self):
         # produce scaled data
         scaled_data              = self.scaler.transform( self.data.data )
-        # classify data
-        probability_distribution = self.classifier.predict_proba( scaled_data )
+        # predicted data
+        probability_distribution = self.brain.predict_proba( scaled_data )
         # save output
         mkdir( self.options.path )
         np.save(
-            os.path.join( self.options.path, "blind_classifier_output.npy" ),
+            os.path.join( self.options.path, "blind_predicted_output.npy" ),
             probability_distribution )
         pass 
 
-    def classifier_distribution(self,label,train=True):
+    def prediction_distribution(self,label,train=True):
         # load data
         data_scaled = self.data_train_scaled 
         data_labels = self.label_train  
@@ -127,9 +134,9 @@ class Student(books.Book):
             pass
         # generate distribution
         distr = []
-        for classification,true_label in zip( self.classifier.predict_proba(data_scaled), data_labels):
+        for prediction,true_label in zip( self.brain.predict_proba(data_scaled), data_labels):
             if label == true_label:
-                distr.append(classification)
+                distr.append(prediction)
                 pass
             pass
         # return as np array
@@ -154,15 +161,15 @@ class Student(books.Book):
                 pass
             field.append(point)
             pass
-        # fill field with classifier responce
+        # fill field with responce
         result = []
-        for classification,coordinates in zip(
-                self.classifier.predict_proba(self.scaler.transform(field)),
+        for prediction,coordinates in zip(
+                self.brain.predict_proba(self.scaler.transform(field)),
                 field ):
             if self.options.log_transform:
                 coordinates = np.exp(np.array(coordinates)).tolist()
                 pass
-            result.append( coordinates + classification.tolist() )
+            result.append( coordinates + prediction.tolist() )
             pass
         return np.array(result)
 
@@ -174,8 +181,8 @@ class Student(books.Book):
         for label in np.unique(data_labels):
             data[label] = []
             pass
-        for label,classification in zip( data_labels, self.classifier.predict_proba( data_scaled ) ):
-            data[label].append(classification[0])
+        for label,prediciton in zip( data_labels, self.brain.predict_proba( data_scaled ) ):
+            data[label].append(prediction)
             pass
         # collect signal and background
         results     = None
@@ -190,7 +197,7 @@ class Student(books.Book):
                 pass
             pass
         # compute signal and background efficiencies
-        return np.histogram(results,bins=bins,range=(0,1),normed=True)
+        return np.histogram(results[:,0],bins=bins,range=(0,1),normed=True)
         
     def roc(self,bins=1000):
         delta                                   = 1./float(bins)

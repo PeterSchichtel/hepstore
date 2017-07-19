@@ -7,6 +7,7 @@ import errno
 import numpy as np
 import glob
 import shutil, errno
+from subprocess import Popen
 
 # create new dir mkdir -p
 def mkdir(path): 
@@ -145,3 +146,27 @@ def shake(data):
         item[...] = (1.0 + 0.1 * (np.random.random()-0.5)) * item
         pass
     return data
+
+def subprocess( args, onscreen=False, fname=os.path.join(os.getcwd(),'std') ):
+    fout = '%s.out' % fname
+    ferr = '%s.err' % fname
+    with open(fout,'w') as out:
+        with open(ferr,'w') as err:
+            proc   = Popen( args,
+                            stdout=out, stderr=err )
+            proc.wait()
+            pass
+        pass
+    if onscreen:
+        with open(fout,'r') as out:
+            for line in out.readlines():
+                print "--stdout[%i]:" % os.getpid(), line.strip()
+                pass
+            pass
+        with open(ferr,'r') as err:
+            for line in err.readlines():
+                print "--stderr[%i]:" % os.getpid(), line.strip()
+                pass
+            pass
+        pass
+    pass

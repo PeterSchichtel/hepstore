@@ -1,10 +1,13 @@
 #!/usr/bin/enc python
 
 # hepstore imports
-import hepstore.core.docker.herwig as herwig
 from hepstore.core.physics.process  import Process
 from hepstore.core.physics.particle import Particle
 from hepstore.core.error import *
+
+h7_dict = {
+    'jet' : 'j',
+}
 
 def collider( fcard, collider='pp' ):
     fcard.write( "##################################################\n" )
@@ -49,7 +52,7 @@ def process( fcard, process=Process() ):
     fcard.write( "set Factory:OrderInAlphaS  %i                     \n" % process.qcd)
     fcard.write( "set Factory:OrderInAlphaEW %i                     \n" % process.qed)
     fcard.write( "## Select the process                             \n" )
-    fcard.write( "do Factory:Process p p -> %s                      \n" % final(process.final) )
+    fcard.write( "do Factory:Process p p -> %s                      \n" % final( particles=process.final ) )
     fcard.write( "                                                  \n" )
     pass
 
@@ -71,8 +74,8 @@ def cuts( fcard, process=Process() ):
         fcard.write( "insert JetCuts:JetRegions 3 FourthJet         \n" )
         pass
     if process.qed>1:
-        fcard.write( "set /Herwig/Cuts/ChargedLeptonPairMassCut:MinMass %.2f*GeV\n" process.mass[0] )
-        fcard.write( "set /Herwig/Cuts/ChargedLeptonPairMassCut:MaxMass %.2f*GeV\n" process.mass[1])
+        fcard.write( "set /Herwig/Cuts/ChargedLeptonPairMassCut:MinMass %.2f*GeV\n" % process.mass[0] )
+        fcard.write( "set /Herwig/Cuts/ChargedLeptonPairMassCut:MaxMass %.2f*GeV\n" % process.mass[1])
         pass
     fcard.write( "                                                  \n" )
     pass

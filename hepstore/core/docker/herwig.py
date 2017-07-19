@@ -18,7 +18,7 @@ def main(args=None):
     arg_parser = parser.DockerParser()
     
     # parse args
-    parsed_args, unknown = parser.parse_known_args(args)
+    parsed_args, unknown = arg_parser.parse_known_args(args)
             
     # run the app
     from interface import DockerIF as Herwig
