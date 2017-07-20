@@ -10,16 +10,16 @@ from hepstore.core.physics.momentum import *
 
 
 def fragment( mother ):
+    momentum = mother.momentum / float(mother.pid.n_p+mother.pid.n_n)
     particles = []
-    for i in range( 0, mother.n_p+mother.n_n ):
-        p = mother/mother.energy
-        if i<mother.n_p:
-            p.set_pid( 'proton' )
+    for i in range( 0, mother.pid.n_p+mother.pid.n_n ):
+        if i<mother.pid.n_p:
+            p = Particle( name = 'proton' )
             pass
         else:
-            p.set_pid( 'neutron' )
+            p = Particle( name = 'neutron' )
             pass
-        p.add_on_shell_noise( width = 0.1 )
+        p.momentum = momentum.on_shell_noise( (0.5,0.5,0.5) )
         particles.append( p )
         pass
     return particles
@@ -29,7 +29,7 @@ def remainder( mother, model='frac' ):
     if model == 'frac':
         particles = fragment( mother )
         for p in particles:
-            if p.name == 'proton':
+            if p.pid.name == 'proton':
                 incoming = p
                 particles.remove(p)
                 break

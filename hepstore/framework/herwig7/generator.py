@@ -34,7 +34,7 @@ class Generator(object):
         fpath = os.path.join( self.path, self.name )
         with open( os.path.join("%s.in" % fpath), 'w' ) as fcard:
             runcard.collider( fcard )
-            runcard.beams(    fcard, energy1   = self.process.initial[0].energy, energy2 = self.process.initial[1].energy )
+            runcard.beams(    fcard, energy1   = self.process.initial[0].momentum.energy, energy2 = self.process.initial[1].momentum.energy )
             runcard.model(    fcard )
             runcard.process(  fcard, process   = self.process )
             runcard.cuts(     fcard, process   = self.process )
@@ -51,21 +51,21 @@ class Generator(object):
         # make sure full path is available
         self.path = os.path.abspath( self.path )
         # start herwig run
-        print "--h7: working on '%s'" % self.path
+        print "--h7[%i]: working on '%s'" % (os.getpid(),self.path)
         # create directory
         mkdir( self.path )
         # create runcard
-        print "--h7: runcard"
+        print "--h7[%i]: runcard" % os.getpid()
         self.card()
         # build
-        print "--h7: build"
+        print "--h7[%i]: build" % os.getpid()
         args = [ 'hepstore-herwig',
                  '--docker_verbose',
                  '--docker_directory', self.path,
                  'build', '%s.in'  % self.name ]
         subprocess( args, onscreen=False, fname=os.path.join(self.path,'build-std') )
         # integrate
-        print "--h7: integrate"
+        print "--h7[%i]: integrate" % os.getpid()
         args = [  'hepstore-herwig',
                   '--docker_verbose',
                   '--docker_directory', self.path,
@@ -81,7 +81,7 @@ class Generator(object):
                  os.path.abspath( os.path.join(self.path,self.folder,'%s.run' % self.name) )
         )
         # run
-        print "--h7: run"
+        print "--h7[%i]: run" % os.getpid()
         args = [  'hepstore-herwig',
                   '--docker_verbose',
                   '--docker_directory', os.path.join(self.path,self.folder),

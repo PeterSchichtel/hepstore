@@ -64,7 +64,7 @@ class FourMomentum(object):
         pass
     
     def m2( self ):
-        return self.energy**2 - self.px**2 -self.py**2 - self.pz**2
+        return self.energy**2 - self.px**2 - self.py**2 - self.pz**2
 
     def m( self ):
         return np.sqrt( self.m2() )
@@ -72,13 +72,12 @@ class FourMomentum(object):
     def mass( self ):
         return self.m()
 
-    def add_on_shell_noise( self, width = 0.05 ):
-        self.energy,self.px,self.py = np.random.normal(
-            loc   =         np.array( [self.energy, self.px, self.py] ),
-            scale = width * np.array( [self.energy, self.px, self.py] ),
+    def on_shell_noise( self, width = (0.1,0.1,0.1) ):
+        energy,px,py = np.random.normal(
+            loc   = np.array( [self.energy, self.px, self.py] ),
+            scale = np.array( width )
         )
-        self.pz = np.sqrt( self.energy**2 - self.px**2 - self.py**2 - self.m2() )
-        self.set_momentum( (self.energy,self.px,self.py,self.pz) )
-        pass
-
+        pz = np.sqrt( energy**2 - px**2 - py**2 - self.m2() )
+        return FourMomentum( energy = energy, px = px, py = py, pz = pz )
+        
     pass

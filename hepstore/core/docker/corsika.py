@@ -72,7 +72,12 @@ def main(args=None):
         )
         # save file
         num = int(datfile.split('T')[1])
-        shutil.move( os.path.join(parsed_args.docker_directory,"fort.8"), os.path.join(parsed_args.docker_directory,"particle_file_%i" % num) )
+        try:
+            shutil.move( os.path.join(parsed_args.docker_directory,"fort.8"), os.path.join(parsed_args.docker_directory,"particle_file_%i" % num) )
+            pass
+        except IOError as err:
+            print err
+            pass
         pass #for datfile
     
     pass # run

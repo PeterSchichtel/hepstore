@@ -9,16 +9,10 @@ from hepstore.core.physics.particle import *
 # special eas particles
 class Primary(Particle):
 
-    def __init__( self,
-                  energy = 1.0,
-                  name   = 'proton',
-                  zsign  = 1.0      ):
-        Particle.__init__( self, name = name ,
-                           energy = energy,
-                           px     = 0.0,
-                           py     = 0.0,
-                           pz     = 0.0 )
-        self.set_momentum( (self.energy, self.px, self.py, zsign*np.sqrt( self.energy**2 - self.mass**2 )) )
+    def __init__( self, energy = 1.0, name = 'proton', zsign = 1.0 ):
+        mass = Pid( name = name ).mass
+        pz   = zsign * np.sqrt( energy**2 - mass**2 )
+        Particle.__init__( self, name = name , energy = energy, pz = pz )
         pass
 
     pass

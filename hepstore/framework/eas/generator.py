@@ -36,10 +36,10 @@ def add_particles( fname_in, fname_out, particles ):
                 line_count += 1
                 pass
             for p in particles:
-                line_count += 1
                 fout.write(
-                    "%5i%5i%15.7e%15.7e%15.7e%15.7e \n" % (
-                        line_count, p.pid, p.energy, p.pz, p.px, p.py ) )
+                    "%5i%5i  %15.7e %15.7e %15.7e %15.7e \n" % (
+                        line_count, p.corsika, p.energy, p.pz, p.px, p.py ) )
+                line_count += 1
                 pass
             pass
         pass
@@ -111,7 +111,7 @@ class Generator(object):
                  '-f', ] + hepmcfiles + [
                  '-o', 'event' ]
         ###print ' '.join(args)
-        subprocess( args, path=self.hepmc_dir )
+        subprocess( args, onscreen=False, fname=os.path.join(self.hepmc_dir,'h2c-std') )
         pass
     
     def run( self, path ):
@@ -122,12 +122,12 @@ class Generator(object):
         if self.options.generate and generator == 'corsika':
             print "--generator[%i]: ignore corsika request for hard events" % os.getpid()
             return None
-        elif self.options.shower:
+        if self.options.shower:
             generator = 'corsika'
             pass
         # create primary particle
         self.primary   = Primary( name     = element,
-                                  energy   = float(energy)   )
+                                  energy   = float(energy) )
         # check if we have to model the nucleonic interaction
         if self.options.generator != 'corsika':
             incoming,self.remainder = nucleon_interaction.remainder( self.primary )
@@ -163,6 +163,8 @@ class Generator(object):
         if self.options.generate:
             # find event file
             self.hepmc_dir = app.hepmc_dir
+            if self.hepmc_dir == None:
+                return
             # convert to stackin
             self.hepmc2corsika()
             # enriche nucleons

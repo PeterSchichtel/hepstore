@@ -31,7 +31,7 @@ class Generator(object):
         with open( self.fpath , 'w' ) as fcard:
             runcard.run(               fcard, number=self.seed )
             if self.eventfile == None:
-                runcard.primary(       fcard, pid=self.primary.corsika, e_start=self.primary.energy, e_stop=(self.primary.energy+float(self.options.erange)), )
+                runcard.primary(       fcard, pid=self.primary.pid.corsika, e_start=self.primary.momentum.energy, e_stop=(self.primary.momentum.energy+float(self.options.erange)), )
                 self.version  = '7.4'
                 pass
             else:

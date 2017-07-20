@@ -43,7 +43,7 @@ def model( fcard, model='sm' ):
     pass
 
 def final( particles = (Particle(),Particle()) ):
-    names = [ h7_dict[p.name] for p in particles ]
+    names = [ h7_dict[p.pid.name] for p in particles ]
     return " ".join(names)
 
 def process( fcard, process=Process() ):

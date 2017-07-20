@@ -82,13 +82,19 @@ class Captian:
     def run(self):
         # if we want to generate events
         if self.options.generate:
+            oos = self.options.shower
+            self.options.shower = False
             self.begin()
             self.execute(generator.Generator)
+            self.options.shower = oos
             pass
         # if we want to shower
         if self.options.shower:
+            oog = self.options.generate
+            self.options.generate = False
             self.begin()
             self.execute(generator.Generator)
+            self.options.generate = oog
             pass
         # if we want to extract observables
         if self.options.observables:

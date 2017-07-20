@@ -13,14 +13,14 @@ nevents    = 250
 args       = [
     '-d', os.path.join( os.getcwd(), 'data' ),
     '-E', '1.0e+06',
-    '-e', 'proton', 'lithium', 'carbon', 'neon', 'iron'
+    '-e', 'proton', 'lithium', 'carbon', 'neon', 'iron',
     '-p', 'qcd',
     '-g', 'h7', 'corsika',
     '-f', 'dijet',
     '-m', 'frac',
     '-N', '%i' % nevents,
-    '-j', '3',
-    '-S', '-L',
+    '-j', '1',
+    '-G', '-L',
     ]
 eas(args)
 
