@@ -19,8 +19,8 @@ args       = [
     '-f', 'dijet',
     '-m', 'frac',
     '-N', '%i' % nevents,
-    '-j', '1',
-    '-G', '-L',
+    '-j', '3',
+    '-S', '-L',
     ]
 eas(args)
 

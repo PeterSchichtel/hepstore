@@ -20,14 +20,14 @@ from particle import *
 ############################################################################
 def add_particles( fname_in, fname_out, particles ):
     total_number  = len(particles)
-    total_energy  = sum( [ p.energy for p in particles ] )    
+    total_energy  = sum( [ p.momentum.energy for p in particles ] )    
     with open( fname_in, 'r' ) as fin:
         with open( fname_out, 'w' ) as fout:
             line_count = 0
             for i,line in enumerate( fin.readlines() ):
                 if i==0:
                     count  = int(   line.split()[0] ) + total_number
-                    energy = float( line.split()[0] ) + total_energy
+                    energy = float( line.split()[1] ) + total_energy
                     fout.write("  %i %f \n" % ( count, energy ) )
                     pass
                 else:
@@ -38,7 +38,7 @@ def add_particles( fname_in, fname_out, particles ):
             for p in particles:
                 fout.write(
                     "%5i%5i  %15.7e %15.7e %15.7e %15.7e \n" % (
-                        line_count, p.corsika, p.energy, p.pz, p.px, p.py ) )
+                        line_count, p.pid.corsika, p.momentum.energy, p.momentum.pz, p.momentum.px, p.momentum.py ) )
                 line_count += 1
                 pass
             pass
@@ -103,7 +103,7 @@ class Generator(object):
         pass
 
     def hepmc2corsika( self ):
-        print "--generator[%i]: convert hepmc to corsika format" % os.getpid()
+        print "--eas[%i]: convert hepmc to corsika format" % os.getpid()
         hepmcfiles = [ os.path.basename(f) for f in glob.glob( os.path.join(self.hepmc_dir,'*.hepmc') )]
         args = [ 'hepstore-hepmc2corsika',
                  '--docker_verbose',
@@ -120,7 +120,7 @@ class Generator(object):
         energy,element,process,final,generator,model = os.path.normpath(self.path).split('/')
         # check if we actually want to generate hard events
         if self.options.generate and generator == 'corsika':
-            print "--generator[%i]: ignore corsika request for hard events" % os.getpid()
+            print "--eas[%i]: ignore corsika request for hard events" % os.getpid()
             return None
         if self.options.shower:
             generator = 'corsika'
